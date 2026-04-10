@@ -32,39 +32,13 @@ const TABS: { id: TabId; label: string; icon: ReactElement }[] = [
 	{ id: "status", label: "状态", icon: <Inventory2RoundedIcon fontSize="small" /> },
 	{ id: "backstory", label: "背景故事", icon: <HistoryEduRoundedIcon fontSize="small" /> },
 	{ id: "combat", label: "战斗装备", icon: <GavelRoundedIcon fontSize="small" /> },
-	{ id: "rules", label: "规则速查", icon: <MenuBookRoundedIcon fontSize="small" /> },
 ];
 
 export default function CharacterSheet() {
 	const [activeTab, setActiveTab] = useState<TabId>("status");
 	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
-	const exportJSON = useCharacterStore((s) => s.exportJSON);
-	const importJSON = useCharacterStore((s) => s.importJSON);
 	const info = useCharacterStore((s) => s.info);
 	const derived = useCharacterStore((s) => s.derived);
-
-	const handleExport = () => {
-		const json = exportJSON();
-		const blob = new Blob([json], { type: "application/json" });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = `${info.name || "character"}.json`;
-		a.click();
-		URL.revokeObjectURL(url);
-	};
-
-	const handleImport = () => {
-		const input = document.createElement("input");
-		input.type = "file";
-		input.accept = ".json";
-		input.onchange = async (e) => {
-			const file = (e.target as HTMLInputElement).files?.[0];
-			if (!file) return;
-			importJSON(await file.text());
-		};
-		input.click();
-	};
 
 	const tabContent = useMemo(() => {
 		if (activeTab === "status") return <StatusPanel />;
@@ -78,14 +52,6 @@ export default function CharacterSheet() {
 				/>
 			);
 		}
-
-		return (
-			<PlaceholderPanel
-				title="规则速查模块"
-				description="这里可以继续加入理智检定、追逐规则和常用参考表，作为跑团时的辅助区域。"
-				chips={["属性检定", "SAN 损失", "追逐规则"]}
-			/>
-		);
 	}, [activeTab]);
 
 	return (
@@ -93,7 +59,7 @@ export default function CharacterSheet() {
 			<Box sx={{ mx: "5vw" }}>
 				<Box sx={{ display: "grid", gap: 3 }}>
 					<Header onOpenInfo={() => setInfoDialogOpen(true)} />
-          
+
 					<Box
 						sx={{
 							display: "grid",
@@ -102,23 +68,6 @@ export default function CharacterSheet() {
 							alignItems: "start",
 						}}>
 						<SkillTable />
-						{/* <Box
-							sx={{
-								display: "flex",
-								gap: 1.25,
-								flexDirection: { xs: "column", sm: "row" },
-								width: { xs: "100%", md: "auto" },
-							}}>
-							<Button variant="outlined" startIcon={<UploadRoundedIcon />} onClick={handleImport}>
-								导入人物卡
-							</Button>
-							<Button
-								variant="contained"
-								startIcon={<DownloadRoundedIcon />}
-								onClick={handleExport}>
-								导出人物卡
-							</Button>
-						</Box> */}
 
 						<Box sx={{ display: "grid", gap: 3 }}>
 							<AttributePanel />

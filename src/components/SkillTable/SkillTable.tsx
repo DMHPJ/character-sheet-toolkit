@@ -35,6 +35,11 @@ export default function SkillTable() {
     );
   }, [search, skills]);
 
+  const [leftSkills, rightSkills] = useMemo(() => {
+    const splitIndex = Math.ceil(filtered.length / 2);
+    return [filtered.slice(0, splitIndex), filtered.slice(splitIndex)];
+  }, [filtered]);
+
   return (
     <Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha('#171d1b', 0.84) }}>
       <Box sx={{ display: 'grid', gap: 2.5 }}>
@@ -65,28 +70,17 @@ export default function SkillTable() {
           />
         </Box>
 
-        <TableContainer sx={{ borderRadius: 0.5, border: (theme) => `1px solid ${theme.palette.divider}` }}>
-          <Table stickyHeader size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{width: '4.5rem !important'}} padding="checkbox">成长</TableCell>
-                <TableCell>技能</TableCell>
-                <TableCell sx={{width: '5rem'}} align="center">初始</TableCell>
-                <TableCell sx={{width: '8rem'}} align="center">成长</TableCell>
-                <TableCell sx={{width: '8rem'}} align="center">职业</TableCell>
-                <TableCell sx={{width: '8rem'}} align="center">兴趣</TableCell>
-                <TableCell sx={{width: '5.5rem'}} align="center">常规</TableCell>
-                <TableCell sx={{width: '5rem'}} align="center">困难</TableCell>
-                <TableCell sx={{width: '5rem'}} align="center">极限</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filtered.map((skill) => (
-                <SkillRow key={skill.id} skill={skill} onFieldChange={setSkillField} onToggleCheck={toggleSkillCheck} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 2,
+            gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
+            alignItems: 'start',
+          }}
+        >
+          <SkillTableSection skills={leftSkills} onFieldChange={setSkillField} onToggleCheck={toggleSkillCheck} />
+          <SkillTableSection skills={rightSkills} onFieldChange={setSkillField} onToggleCheck={toggleSkillCheck} />
+        </Box>
 
         {filtered.length === 0 && (
           <Typography variant="body2" color="text.secondary">
@@ -95,6 +89,57 @@ export default function SkillTable() {
         )}
       </Box>
     </Paper>
+  );
+}
+
+function SkillTableSection({
+  skills,
+  onFieldChange,
+  onToggleCheck,
+}: {
+  skills: Skill[];
+  onFieldChange: (id: string, field: 'growth' | 'occupationPoints' | 'interestPoints' | 'subName', value: number | string) => void;
+  onToggleCheck: (id: string) => void;
+}) {
+  return (
+    <TableContainer sx={{ borderRadius: 0.5, border: (theme) => `1px solid ${theme.palette.divider}` }}>
+      <Table stickyHeader size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{minWidth: 60}} padding="checkbox">
+              成长
+            </TableCell>
+            <TableCell>技能</TableCell>
+            <TableCell align="center">
+              初始
+            </TableCell>
+            <TableCell align="center">
+              成长
+            </TableCell>
+            <TableCell align="center">
+              职业
+            </TableCell>
+            <TableCell align="center">
+              兴趣
+            </TableCell>
+            <TableCell align="center">
+              常规
+            </TableCell>
+            <TableCell align="center">
+              困难
+            </TableCell>
+            <TableCell align="center">
+              极限
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {skills.map((skill) => (
+            <SkillRow key={skill.id} skill={skill} onFieldChange={onFieldChange} onToggleCheck={onToggleCheck} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
 
@@ -115,10 +160,10 @@ function SkillRow({
 
   return (
     <TableRow hover sx={{ backgroundColor: skill.checked ? (theme) => alpha(theme.palette.primary.main, 0.08) : isSpecial ? (theme) => alpha(theme.palette.secondary.main, 0.05) : undefined }}>
-      <TableCell padding="checkbox">
+      <TableCell sx={{minWidth: 60}} padding="checkbox">
         <Checkbox checked={skill.checked} onChange={() => onToggleCheck(skill.id)} color="primary" />
       </TableCell>
-      <TableCell sx={{ minWidth: 220 }}>
+      <TableCell sx={{ minWidth: 160, padding: '6px' }}>
         <Box sx={{ display: 'grid', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
             <Typography variant="body2" sx={{ fontWeight: 700 }}>
@@ -131,27 +176,27 @@ function SkillRow({
               sx={{maxWidth: '16rem'}}
               value={skill.subName ?? ''}
               onChange={(e) => onFieldChange(skill.id, 'subName', e.target.value)}
-              placeholder="子类 / 语言 / 专精"
+              placeholder="自定义"
               size="small"
               fullWidth
             />
           ) : null}
         </Box>
       </TableCell>
-      <TableCell align="center">{skill.baseValue}</TableCell>
+      <TableCell sx={{ minWidth: 60, padding: '6px' }} align="center">{skill.baseValue}</TableCell>
       <EditableNumberCell value={skill.growth} onChange={(value) => onFieldChange(skill.id, 'growth', value)} />
       <EditableNumberCell value={skill.occupationPoints} onChange={(value) => onFieldChange(skill.id, 'occupationPoints', value)} disabled={skill.cannotAssignOccupation} />
       <EditableNumberCell value={skill.interestPoints} onChange={(value) => onFieldChange(skill.id, 'interestPoints', value)} disabled={skill.cannotAssignInterest} />
-      <TableCell align="center">{total}</TableCell>
-      <TableCell align="center">{hard}</TableCell>
-      <TableCell align="center">{extreme}</TableCell>
+      <TableCell sx={{ padding: '6px' }} align="center">{total}</TableCell>
+      <TableCell sx={{ padding: '6px' }} align="center">{hard}</TableCell>
+      <TableCell sx={{ padding: '6px' }} align="center">{extreme}</TableCell>
     </TableRow>
   );
 }
 
 function EditableNumberCell({ value, onChange, disabled = false }: { value: number; onChange: (value: number) => void; disabled?: boolean }) {
   return (
-    <TableCell align="center" sx={{ minWidth: 88 }}>
+    <TableCell align="center" sx={{ minWidth: 88, padding: '6px' }}>
       <TextField
         type="number"
         value={value || ''}
@@ -159,7 +204,7 @@ function EditableNumberCell({ value, onChange, disabled = false }: { value: numb
         size="small"
         disabled={disabled}
         slotProps={{ htmlInput: { min: 0, style: { textAlign: 'center' },  } }}
-        sx={{ width: 80 }}
+        sx={{ width: 75 }}
       />
     </TableCell>
   );

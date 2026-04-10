@@ -1,9 +1,12 @@
 'use client';
 
+import GetAppRoundedIcon from '@mui/icons-material/GetAppRounded';
+import UploadRounded from "@mui/icons-material/UploadRounded";
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import {
   Avatar,
   Box,
+  Button,
   Chip,
   CircularProgress,
   Paper,
@@ -18,6 +21,8 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
   const attrs = useCharacterStore((s) => s.attributes);
   const derived = useCharacterStore((s) => s.derived);
   const status = useCharacterStore((s) => s.currentStatus);
+	const exportJSON = useCharacterStore((s) => s.exportJSON);
+	const importJSON = useCharacterStore((s) => s.importJSON);
 
   const conditions = [
     status.conditions.majorWound ? '重伤' : null,
@@ -27,6 +32,29 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
     status.conditions.indefInsanity ? '不定疯狂' : null,
     status.conditions.permInsanity ? '永久疯狂' : null,
   ].filter(Boolean) as string[];
+
+  const handleExport = () => {
+    const json = exportJSON();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${info.name || "character"}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  
+    const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      importJSON(await file.text());
+    };
+    input.click();
+  };
 
   return (
     <Paper sx={{ p: { xs: 2, md: 3 }, position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(23,29,27,0.96), rgba(15,20,18,0.96))' }}>
@@ -67,6 +95,15 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
               <Chip label={info.occupation || '未设置职业'} color="secondary" variant="outlined" />
               <Chip label={info.era || '未设置时代'} variant="outlined" />
               <Chip label={info.player || '未填写玩家'} variant="outlined" />
+              <Button variant="outlined" startIcon={<GetAppRoundedIcon />} onClick={handleImport}>
+                导入人物卡
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<UploadRounded />}
+                onClick={handleExport}>
+                导出人物卡
+              </Button>
             </Box>
           </Box>
         </Box>
