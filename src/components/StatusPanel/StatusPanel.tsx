@@ -1,7 +1,6 @@
 ﻿'use client';
 
-import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded';
-import { Box, Button, LinearProgress, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, Paper, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { useCharacterStore } from '@/stores/useCharacterStore';
 

@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "CoC 7th 调查员工具箱",
-  description: "基于克苏鲁的呼唤第七版规则的在线人物卡创建与管理工具。",
+  description: "基于克苏鲁的呼唤第七版规则的在线人物卡创建与管理工具",
 };
 
 export default function RootLayout({

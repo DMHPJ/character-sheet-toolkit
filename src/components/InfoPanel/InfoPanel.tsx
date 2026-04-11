@@ -30,7 +30,7 @@ export default function InfoPanel({ inDialog = false }: { inDialog?: boolean }) 
             调查员信息
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            先录入基本身份信息，后续属性与技能会围绕这些信息继续完善。
+            先录入基本身份信息，后续属性与技能会围绕这些信息继续完善
           </Typography>
         </Box>
       </Box>

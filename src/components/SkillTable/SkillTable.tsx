@@ -49,7 +49,7 @@ export default function SkillTable() {
               技能表
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              支持检索、成长标记和基础成功率自动换算。
+              支持检索、成长标记和基础成功率自动换算
             </Typography>
           </Box>
           <TextField
@@ -84,7 +84,7 @@ export default function SkillTable() {
 
         {filtered.length === 0 && (
           <Typography variant="body2" color="text.secondary">
-            没有找到匹配的技能。
+            没有找到匹配的技能
           </Typography>
         )}
       </Box>

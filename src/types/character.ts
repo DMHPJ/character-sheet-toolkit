@@ -117,10 +117,16 @@ export interface Assets {
   currentCash: number;
   currency: string;
   vehicles: string;
+  vehiclesValue: number;
   residences: string;
+  residencesValue: number;
   luxuries: string;
+  luxuriesValue: number;
   securities: string;
+  securitiesValue: number;
   other: string;
+  otherValue: number;
+  overviews: string;
 }
 
 /** 背景故事 */
@@ -133,6 +139,7 @@ export interface Backstory {
   traits: string;               // 特质
   injuriesScars: string;        // 伤口和疤痕
   phobiasManias: string;        // 恐惧症和狂躁症
+  overviews: string;        // 概述
   keyConnection: boolean[];     // 是否为关键连接 [对应6个背景条目]
 }
 
