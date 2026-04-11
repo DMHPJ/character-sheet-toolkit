@@ -2,7 +2,7 @@
 
 import { Box, Button, LinearProgress, Paper, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { useCharacterStore } from '@/stores/useCharacterStore';
+import { useCharacterStore } from "@/stores/useCharacterStore";
 
 export default function StatusPanel() {
   const derived = useCharacterStore((s) => s.derived);

@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
 import { Alert, Box, Chip, Paper, TextField, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useCharacterStore } from "@/stores/useCharacterStore";

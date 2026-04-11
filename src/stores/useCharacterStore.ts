@@ -1,11 +1,18 @@
-﻿"use client";
+"use client";
 
 import { create } from "zustand";
+import {
+  createDefaultOccupationSelections,
+  getOccupationById,
+  getOccupationFormulaLabel,
+  getOccupationPoints,
+  getResolvedOccupationSkills,
+} from "@/data/occupations";
 import { DEFAULT_SKILLS, getComputedBaseValue } from "@/data/skills";
 import type {
   Assets,
-  Attributes,
   AttributeKey,
+  Attributes,
   Backstory,
   CurrentStatus,
   DerivedStats,
@@ -13,6 +20,8 @@ import type {
   InventoryItem,
   ModuleExperience,
   MythosEncounter,
+  OccupationState,
+  OccupationSummary,
   Skill,
   Spell,
   Weapon,
@@ -27,13 +36,11 @@ function calcMaxMP(pow: number): number {
 }
 
 function calcMOV(str: number, dex: number, siz: number, age: number | ""): number {
-  let base: number;
+  let base = 8;
   if (dex < siz && str < siz) {
     base = 7;
   } else if (dex > siz && str > siz) {
     base = 9;
-  } else {
-    base = 8;
   }
 
   const ageValue = typeof age === "number" ? age : 0;
@@ -81,6 +88,60 @@ function calcDerived(attrs: Attributes, info: InvestigatorInfo, skills: Skill[])
   };
 }
 
+function buildOccupationSummary(
+  attrs: Attributes,
+  skills: Skill[],
+  occupationState: OccupationState,
+): OccupationSummary {
+  const occupation = getOccupationById(occupationState.occupationId);
+  const { allowedSkillIds, skillSubNames } = getResolvedOccupationSkills(occupation, occupationState);
+  const creditRatingValue = getSkillTotal(skills.find((skill) => skill.id === "credit_rating"));
+  const occupationPointsTotal = getOccupationPoints(occupation, attrs);
+  const occupationPointsSpent = skills.reduce((sum, skill) => sum + skill.occupationPoints, 0);
+  const interestPointsTotal = attrs.INT * 2;
+  const interestPointsSpent = skills.reduce((sum, skill) => sum + skill.interestPoints, 0);
+
+  return {
+    occupationId: occupation?.id ?? null,
+    occupationName: occupation?.name ?? "",
+    formulaLabel: getOccupationFormulaLabel(occupation),
+    contacts: occupation?.contacts ?? "",
+    description: occupation?.description ?? "",
+    occupationPointsTotal,
+    occupationPointsSpent,
+    occupationPointsRemaining: occupationPointsTotal - occupationPointsSpent,
+    interestPointsTotal,
+    interestPointsSpent,
+    interestPointsRemaining: interestPointsTotal - interestPointsSpent,
+    creditRatingMin: occupation?.creditRatingMin ?? null,
+    creditRatingMax: occupation?.creditRatingMax ?? null,
+    creditRatingValue,
+    creditRatingInRange:
+      !occupation || (creditRatingValue >= occupation.creditRatingMin && creditRatingValue <= occupation.creditRatingMax),
+    allowedSkillIds,
+    skillSubNames,
+  };
+}
+
+function sanitizeSkills(skills: Skill[], attrs: Attributes, occupationState: OccupationState): Skill[] {
+  const summary = buildOccupationSummary(attrs, skills, occupationState);
+
+  return skills.map((skill) => {
+    const computedBaseValue = getComputedBaseValue(skill.id, { DEX: attrs.DEX, EDU: attrs.EDU });
+    const forcedSubName = summary.skillSubNames[skill.id];
+    const isOccupationAllowed = summary.allowedSkillIds.includes(skill.id);
+
+    return {
+      ...skill,
+      baseValue: computedBaseValue ?? skill.baseValue,
+      subName: forcedSubName ?? skill.subName,
+      occupationPoints:
+        skill.cannotAssignOccupation || !isOccupationAllowed ? 0 : Math.max(0, Math.min(100, skill.occupationPoints)),
+      interestPoints: skill.cannotAssignInterest ? 0 : Math.max(0, Math.min(100, skill.interestPoints)),
+    };
+  });
+}
+
 interface CharacterStore {
   info: InvestigatorInfo;
   attributes: Attributes;
@@ -93,9 +154,13 @@ interface CharacterStore {
   spells: Spell[];
   moduleExperiences: ModuleExperience[];
   mythosEncounters: MythosEncounter[];
+  occupationState: OccupationState;
+  occupationSummary: OccupationSummary;
   derived: DerivedStats;
   setInfo: (field: keyof InvestigatorInfo, value: string | number) => void;
   setAttribute: (key: AttributeKey, value: number) => void;
+  setOccupation: (occupationId: number | null) => void;
+  setOccupationSelection: (groupId: string, values: string[]) => void;
   setCurrentHP: (value: number) => void;
   setCurrentMP: (value: number) => void;
   setCurrentSAN: (value: number) => void;
@@ -116,6 +181,29 @@ interface CharacterStore {
   exportJSON: () => string;
   importJSON: (json: string) => void;
 }
+
+type StoreState = Omit<
+  CharacterStore,
+  | "setInfo"
+  | "setAttribute"
+  | "setOccupation"
+  | "setOccupationSelection"
+  | "setCurrentHP"
+  | "setCurrentMP"
+  | "setCurrentSAN"
+  | "setCondition"
+  | "setSkillField"
+  | "toggleSkillCheck"
+  | "addWeapon"
+  | "updateWeapon"
+  | "removeWeapon"
+  | "addInventoryItem"
+  | "updateInventoryItem"
+  | "removeInventoryItem"
+  | "updateAsset"
+  | "exportJSON"
+  | "importJSON"
+>;
 
 const DEFAULT_INFO: InvestigatorInfo = {
   name: "",
@@ -177,6 +265,7 @@ const DEFAULT_ASSETS: Assets = {
   securitiesValue: 0,
   other: "",
   otherValue: 0,
+  overviews: "",
 };
 
 const DEFAULT_BACKSTORY: Backstory = {
@@ -192,32 +281,45 @@ const DEFAULT_BACKSTORY: Backstory = {
   keyConnection: [false, false, false, false, false, false, false],
 };
 
-export const useCharacterStore = create<CharacterStore>((set, get) => {
-  function recalc(state: Partial<CharacterStore>) {
-    const attrs = state.attributes ?? get().attributes;
-    const info = state.info ?? get().info;
-    const skills = (state.skills ?? get().skills).map((skill) => {
-      const computed = getComputedBaseValue(skill.id, { DEX: attrs.DEX, EDU: attrs.EDU });
-      if (computed === null) {
-        return skill;
-      }
-      return { ...skill, baseValue: computed };
-    });
+const DEFAULT_OCCUPATION_STATE: OccupationState = {
+  occupationId: null,
+  selectedSkills: {},
+};
 
-    const assets = {
-      ...(state.assets ?? get().assets),
-      creditRating: getSkillTotal(skills.find((skill) => skill.id === "credit_rating")),
-    };
-
-    return {
-      ...state,
-      skills,
-      assets,
-      derived: calcDerived(attrs, info, skills),
-    };
-  }
+function recalcState(state: StoreState): StoreState {
+  const skills = sanitizeSkills(state.skills, state.attributes, state.occupationState);
+  const occupationSummary = buildOccupationSummary(state.attributes, skills, state.occupationState);
+  const assets = {
+    ...state.assets,
+    creditRating: getSkillTotal(skills.find((skill) => skill.id === "credit_rating")),
+  };
 
   return {
+    ...state,
+    skills,
+    assets,
+    occupationSummary,
+    derived: calcDerived(state.attributes, state.info, skills),
+  };
+}
+
+function getMaxAssignablePoints(
+  skills: Skill[],
+  skillId: string,
+  field: "occupationPoints" | "interestPoints",
+  total: number,
+): number {
+  const currentSkill = skills.find((item) => item.id === skillId);
+  if (!currentSkill) {
+    return 0;
+  }
+
+  const spent = skills.reduce((sum, skill) => sum + skill[field], 0);
+  return Math.max(0, total - spent + currentSkill[field]);
+}
+
+export const useCharacterStore = create<CharacterStore>((set, get) => ({
+  ...recalcState({
     info: DEFAULT_INFO,
     attributes: DEFAULT_ATTRIBUTES,
     currentStatus: DEFAULT_STATUS,
@@ -232,153 +334,254 @@ export const useCharacterStore = create<CharacterStore>((set, get) => {
     spells: [],
     moduleExperiences: [],
     mythosEncounters: [],
+    occupationState: DEFAULT_OCCUPATION_STATE,
+    occupationSummary: {
+      occupationId: null,
+      occupationName: "",
+      formulaLabel: "",
+      contacts: "",
+      description: "",
+      occupationPointsTotal: 0,
+      occupationPointsSpent: 0,
+      occupationPointsRemaining: 0,
+      interestPointsTotal: 0,
+      interestPointsSpent: 0,
+      interestPointsRemaining: 0,
+      creditRatingMin: null,
+      creditRatingMax: null,
+      creditRatingValue: 0,
+      creditRatingInRange: true,
+      allowedSkillIds: [],
+      skillSubNames: {},
+    },
     derived: calcDerived(DEFAULT_ATTRIBUTES, DEFAULT_INFO, DEFAULT_SKILLS),
+  }),
 
-    setInfo: (field, value) =>
-      set((state) => {
-        const info = { ...state.info, [field]: value };
-        return recalc({ info });
+  setInfo: (field, value) =>
+    set((state) =>
+      recalcState({
+        ...state,
+        info: { ...state.info, [field]: value },
       }),
+    ),
 
-    setAttribute: (key, value) =>
-      set((state) => {
-        const attributes = { ...state.attributes, [key]: value };
-        return recalc({ attributes });
+  setAttribute: (key, value) =>
+    set((state) =>
+      recalcState({
+        ...state,
+        attributes: { ...state.attributes, [key]: value },
       }),
+    ),
 
-    setCurrentHP: (value) =>
-      set((state) => ({ currentStatus: { ...state.currentStatus, currentHP: value } })),
-    setCurrentMP: (value) =>
-      set((state) => ({ currentStatus: { ...state.currentStatus, currentMP: value } })),
-    setCurrentSAN: (value) =>
-      set((state) => ({ currentStatus: { ...state.currentStatus, currentSAN: value } })),
-    setCondition: (field, value) =>
-      set((state) => ({
-        currentStatus: {
-          ...state.currentStatus,
-          conditions: { ...state.currentStatus.conditions, [field]: value },
+  setOccupation: (occupationId) =>
+    set((state) => {
+      const occupation = getOccupationById(occupationId);
+      const occupationState: OccupationState = {
+        occupationId,
+        selectedSkills: createDefaultOccupationSelections(occupation),
+      };
+
+      return recalcState({
+        ...state,
+        info: {
+          ...state.info,
+          occupation: occupation?.name ?? "",
+          occupationId: occupationId ?? "",
         },
-      })),
+        occupationState,
+      });
+    }),
 
-    setSkillField: (skillId, field, value) =>
-      set((state) => {
-        const skills = state.skills.map((skill) => {
-          if (skill.id !== skillId) {
-            return skill;
-          }
-          return {
-            ...skill,
-            [field]: typeof value === "number" ? Math.min(100, value) : value,
-          };
-        });
-        return recalc({ skills });
-      }),
-    toggleSkillCheck: (skillId) =>
-      set((state) => ({
-        skills: state.skills.map((skill) =>
-          skill.id === skillId ? { ...skill, checked: !skill.checked } : skill,
-        ),
-      })),
-
-    addWeapon: () =>
-      set((state) => ({
-        weapons: [
-          ...state.weapons,
-          {
-            id: `w_${Date.now()}`,
-            name: "",
-            type: "",
-            skill: "",
-            damage: "",
-            range: "",
-            penetration: false,
-            attacksPerRound: 1,
-            ammo: "",
-            malfunction: "",
+  setOccupationSelection: (groupId, values) =>
+    set((state) =>
+      recalcState({
+        ...state,
+        occupationState: {
+          ...state.occupationState,
+          selectedSkills: {
+            ...state.occupationState.selectedSkills,
+            [groupId]: values,
           },
-        ],
-      })),
-    updateWeapon: (id, field, value) =>
-      set((state) => ({
-        weapons: state.weapons.map((weapon) =>
-          weapon.id === id ? { ...weapon, [field]: value } : weapon,
-        ),
-      })),
-    removeWeapon: (id) =>
-      set((state) => ({
-        weapons: state.weapons.filter((weapon) => weapon.id !== id),
-      })),
-
-    addInventoryItem: () =>
-      set((state) => ({
-        inventory: [
-          ...state.inventory,
-          {
-            id: `i_${Date.now()}`,
-            name: "",
-            status: "",
-            location: "",
-          },
-        ],
-      })),
-    updateInventoryItem: (id, field, value) =>
-      set((state) => ({
-        inventory: state.inventory.map((item) =>
-          item.id === id ? { ...item, [field]: value } : item,
-        ),
-      })),
-    removeInventoryItem: (id) =>
-      set((state) => ({
-        inventory: state.inventory.filter((item) => item.id !== id),
-      })),
-
-    updateAsset: (field, value) =>
-      set((state) => ({
-        assets: { ...state.assets, [field]: value },
-      })),
-
-    exportJSON: () => {
-      const state = get();
-      return JSON.stringify(
-        {
-          info: state.info,
-          attributes: state.attributes,
-          currentStatus: state.currentStatus,
-          skills: state.skills,
-          weapons: state.weapons,
-          inventory: state.inventory,
-          assets: state.assets,
-          backstory: state.backstory,
-          spells: state.spells,
-          moduleExperiences: state.moduleExperiences,
-          mythosEncounters: state.mythosEncounters,
         },
-        null,
-        2,
-      );
-    },
+      }),
+    ),
 
-    importJSON: (json) => {
-      try {
-        const data = JSON.parse(json);
-        set(
-          recalc({
-            info: data.info ?? DEFAULT_INFO,
-            attributes: data.attributes ?? DEFAULT_ATTRIBUTES,
-            currentStatus: data.currentStatus ?? DEFAULT_STATUS,
-            skills: data.skills ?? [...DEFAULT_SKILLS],
-            weapons: data.weapons ?? [],
-            inventory: data.inventory ?? [],
-            assets: { ...DEFAULT_ASSETS, ...(data.assets ?? {}) },
-            backstory: data.backstory ?? DEFAULT_BACKSTORY,
-            spells: data.spells ?? [],
-            moduleExperiences: data.moduleExperiences ?? [],
-            mythosEncounters: data.mythosEncounters ?? [],
-          }),
-        );
-      } catch (error) {
-        console.error("导入 JSON 失败:", error);
+  setCurrentHP: (value) =>
+    set((state) => ({ currentStatus: { ...state.currentStatus, currentHP: value } })),
+  setCurrentMP: (value) =>
+    set((state) => ({ currentStatus: { ...state.currentStatus, currentMP: value } })),
+  setCurrentSAN: (value) =>
+    set((state) => ({ currentStatus: { ...state.currentStatus, currentSAN: value } })),
+  setCondition: (field, value) =>
+    set((state) => ({
+      currentStatus: {
+        ...state.currentStatus,
+        conditions: { ...state.currentStatus.conditions, [field]: value },
+      },
+    })),
+
+  setSkillField: (skillId, field, rawValue) =>
+    set((state) => {
+      const currentSkill = state.skills.find((skill) => skill.id === skillId);
+      if (!currentSkill) {
+        return state;
       }
-    },
-  };
-});
+
+      const value = typeof rawValue === "number" ? Math.max(0, Math.min(100, rawValue)) : rawValue;
+      let nextValue = value;
+
+      if (field === "occupationPoints" && typeof nextValue === "number") {
+        if (!state.occupationSummary.allowedSkillIds.includes(skillId) || currentSkill.cannotAssignOccupation) {
+          return state;
+        }
+        const maxAssignable = getMaxAssignablePoints(
+          state.skills,
+          skillId,
+          "occupationPoints",
+          state.occupationSummary.occupationPointsTotal,
+        );
+        nextValue = Math.min(nextValue, maxAssignable);
+      }
+
+      if (field === "interestPoints" && typeof nextValue === "number") {
+        if (currentSkill.cannotAssignInterest) {
+          return state;
+        }
+        const maxAssignable = getMaxAssignablePoints(
+          state.skills,
+          skillId,
+          "interestPoints",
+          state.occupationSummary.interestPointsTotal,
+        );
+        nextValue = Math.min(nextValue, maxAssignable);
+      }
+
+      return recalcState({
+        ...state,
+        skills: state.skills.map((skill) =>
+          skill.id === skillId
+            ? {
+                ...skill,
+                [field]: nextValue,
+              }
+            : skill,
+        ),
+      });
+    }),
+
+  toggleSkillCheck: (skillId) =>
+    set((state) => ({
+      skills: state.skills.map((skill) =>
+        skill.id === skillId ? { ...skill, checked: !skill.checked } : skill,
+      ),
+    })),
+
+  addWeapon: () =>
+    set((state) => ({
+      weapons: [
+        ...state.weapons,
+        {
+          id: `w_${Date.now()}`,
+          name: "",
+          type: "",
+          skill: "",
+          damage: "",
+          range: "",
+          penetration: false,
+          attacksPerRound: 1,
+          ammo: "",
+          malfunction: "",
+        },
+      ],
+    })),
+
+  updateWeapon: (id, field, value) =>
+    set((state) => ({
+      weapons: state.weapons.map((weapon) =>
+        weapon.id === id ? { ...weapon, [field]: value } : weapon,
+      ),
+    })),
+
+  removeWeapon: (id) =>
+    set((state) => ({
+      weapons: state.weapons.filter((weapon) => weapon.id !== id),
+    })),
+
+  addInventoryItem: () =>
+    set((state) => ({
+      inventory: [
+        ...state.inventory,
+        {
+          id: `i_${Date.now()}`,
+          name: "",
+          status: "",
+          location: "",
+        },
+      ],
+    })),
+
+  updateInventoryItem: (id, field, value) =>
+    set((state) => ({
+      inventory: state.inventory.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item,
+      ),
+    })),
+
+  removeInventoryItem: (id) =>
+    set((state) => ({
+      inventory: state.inventory.filter((item) => item.id !== id),
+    })),
+
+  updateAsset: (field, value) =>
+    set((state) => ({
+      assets: { ...state.assets, [field]: value },
+    })),
+
+  exportJSON: () => {
+    const state = get();
+    return JSON.stringify(
+      {
+        info: state.info,
+        attributes: state.attributes,
+        currentStatus: state.currentStatus,
+        skills: state.skills,
+        weapons: state.weapons,
+        inventory: state.inventory,
+        assets: state.assets,
+        backstory: state.backstory,
+        spells: state.spells,
+        moduleExperiences: state.moduleExperiences,
+        mythosEncounters: state.mythosEncounters,
+        occupationState: state.occupationState,
+      },
+      null,
+      2,
+    );
+  },
+
+  importJSON: (json) => {
+    try {
+      const data = JSON.parse(json);
+      set(
+        recalcState({
+          info: data.info ?? DEFAULT_INFO,
+          attributes: data.attributes ?? DEFAULT_ATTRIBUTES,
+          currentStatus: data.currentStatus ?? DEFAULT_STATUS,
+          skills: data.skills ?? [...DEFAULT_SKILLS],
+          weapons: data.weapons ?? [],
+          inventory: data.inventory ?? [],
+          assets: { ...DEFAULT_ASSETS, ...(data.assets ?? {}) },
+          backstory: data.backstory ?? DEFAULT_BACKSTORY,
+          spells: data.spells ?? [],
+          moduleExperiences: data.moduleExperiences ?? [],
+          mythosEncounters: data.mythosEncounters ?? [],
+          occupationState: data.occupationState ?? DEFAULT_OCCUPATION_STATE,
+          occupationSummary: get().occupationSummary,
+          derived: get().derived,
+        }),
+      );
+    } catch (error) {
+      console.error("导入 JSON 失败:", error);
+    }
+  },
+}));

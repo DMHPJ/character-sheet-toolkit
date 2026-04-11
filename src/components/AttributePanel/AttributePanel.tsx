@@ -2,8 +2,8 @@
 
 import { Box, Chip, Paper, TextField, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { useCharacterStore } from '@/stores/useCharacterStore';
-import type { AttributeKey } from '@/types/character';
+import { useCharacterStore } from "@/stores/useCharacterStore";
+import type { AttributeKey } from "@/types/character";
 
 const ATTR_META: { key: AttributeKey; label: string; en: string }[] = [
   { key: 'STR', label: '力量', en: 'STR' },

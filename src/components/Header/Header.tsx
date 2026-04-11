@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { useCharacterStore } from '@/stores/useCharacterStore';
+import { useCharacterStore } from "@/stores/useCharacterStore";
 
 export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
   const info = useCharacterStore((s) => s.info);

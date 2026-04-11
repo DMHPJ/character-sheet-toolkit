@@ -14,6 +14,7 @@ import BackstoryPanel from "@/components/BackstoryPanel/BackstoryPanel";
 import CombatPanel from "@/components/CombatPanel/CombatPanel";
 import Header from "@/components/Header/Header";
 import InfoPanel from "@/components/InfoPanel/InfoPanel";
+import OccupationPanel from "@/components/OccupationPanel/OccupationPanel";
 import SkillTable from "@/components/SkillTable/SkillTable";
 import StatusPanel from "@/components/StatusPanel/StatusPanel";
 import { useCharacterStore } from "@/stores/useCharacterStore";
@@ -56,6 +57,7 @@ export default function CharacterSheet() {
 
             <Box sx={{ display: "grid", gap: 3 }}>
               <AttributePanel />
+              <OccupationPanel />
 
               <Paper sx={{ overflow: "hidden", backgroundColor: alpha("#171d1b", 0.86) }}>
                 <Box
@@ -108,7 +110,10 @@ export default function CharacterSheet() {
 
       <Dialog open={infoDialogOpen} onClose={() => setInfoDialogOpen(false)} maxWidth="md" fullWidth>
         <DialogContent sx={{ pt: 1, marginTop: "1rem" }}>
-          <InfoPanel inDialog />
+          <Box sx={{ display: "grid", gap: 3 }}>
+            <InfoPanel inDialog />
+            <OccupationPanel inDialog />
+          </Box>
         </DialogContent>
       </Dialog>
     </Box>

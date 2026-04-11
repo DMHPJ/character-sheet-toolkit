@@ -1,9 +1,7 @@
 ﻿"use client";
 
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import BackpackRoundedIcon from "@mui/icons-material/BackpackRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import SportsMmaRoundedIcon from "@mui/icons-material/SportsMmaRounded";
 import {
   Box,
   Button,
@@ -81,7 +79,7 @@ export default function CombatPanel() {
                 武器表
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                成功率会根据所选技能自动换算为常规 / 困难 / 极限
+                成功率会根据技能自动换算为常规 / 困难 / 极限
               </Typography>
             </Box>
             <Button variant="outlined" startIcon={<AddRoundedIcon />} onClick={addWeapon}>
