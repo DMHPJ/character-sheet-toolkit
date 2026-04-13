@@ -4,6 +4,7 @@ import GetAppRoundedIcon from "@mui/icons-material/GetAppRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import UploadRounded from "@mui/icons-material/UploadRounded";
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -11,6 +12,7 @@ import {
   CircularProgress,
   FormControlLabel,
   Paper,
+  Snackbar,
   Switch,
   TextField,
   Typography,
@@ -18,8 +20,11 @@ import {
 import { alpha } from "@mui/material/styles";
 import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import { convertCharacterJsonToSt } from "@/utils/jsonToSt";
+import { useState } from "react";
 
 export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const readOnly = useCharacterStore((state) => state.readOnly);
   const setReadOnly = useCharacterStore((state) => state.setReadOnly);
   const info = useCharacterStore((state) => state.info);
@@ -37,6 +42,20 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
     status.conditions.indefInsanity ? "不定疯狂" : null,
     status.conditions.permInsanity ? "永久疯狂" : null,
   ].filter(Boolean) as string[];
+
+  const handleJsonToSt = () => {
+    const json = exportJSON();
+    const stInfo = convertCharacterJsonToSt(json);
+    navigator.clipboard.writeText(stInfo).catch(() => {
+      const el = document.createElement('textarea');
+      el.value = stInfo;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    });
+    setOpenSnackbar(true);
+  };
 
   const handleExport = () => {
     const json = exportJSON();
@@ -72,6 +91,17 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
         background: "linear-gradient(135deg, rgba(23,29,27,0.96), rgba(15,20,18,0.96))",
       }}
     >
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success" variant="outlined">
+            已复制到剪切板
+        </Alert>
+      </Snackbar>
+
       <Box
         sx={{
           position: "absolute",
@@ -148,6 +178,9 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
               </Button>
               <Button variant="contained" startIcon={<UploadRounded />} onClick={handleExport}>
                 导出人物卡
+              </Button>
+              <Button variant="outlined" startIcon={<UploadRounded />} onClick={handleJsonToSt}>
+                导出为骰娘可用格式
               </Button>
               <FormControlLabel
                 control={
