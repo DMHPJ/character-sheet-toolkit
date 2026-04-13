@@ -2,6 +2,7 @@
 
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import { Box, TextField, Typography } from "@mui/material";
+import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 
 const STORY_FIELDS = [
@@ -17,7 +18,8 @@ const STORY_FIELDS = [
 ] as const;
 
 export default function BackstoryPanel() {
-  const backstory = useCharacterStore((s) => s.backstory);
+  const readOnly = useCharacterStore((state) => state.readOnly);
+  const backstory = useCharacterStore((state) => state.backstory);
 
   return (
     <Box sx={{ display: "grid", gap: 2.5 }}>
@@ -34,21 +36,25 @@ export default function BackstoryPanel() {
       </Box>
 
       <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr" } }}>
-        {STORY_FIELDS.map(({ key, label, rows }) => (
-          <TextField
-            key={key}
-            label={label}
-            value={backstory[key]}
-            onChange={(e) => {
-              useCharacterStore.setState((state) => ({
-                backstory: { ...state.backstory, [key]: e.target.value },
-              }));
-            }}
-            multiline
-            minRows={rows}
-            fullWidth
-          />
-        ))}
+        {STORY_FIELDS.map(({ key, label, rows }) =>
+          readOnly ? (
+            <ReadOnlyField key={key} label={label} value={backstory[key]} multiline minHeight={rows * 24 + 20} />
+          ) : (
+            <TextField
+              key={key}
+              label={label}
+              value={backstory[key]}
+              onChange={(event) => {
+                useCharacterStore.setState((state) => ({
+                  backstory: { ...state.backstory, [key]: event.target.value },
+                }));
+              }}
+              multiline
+              minRows={rows}
+              fullWidth
+            />
+          ),
+        )}
       </Box>
     </Box>
   );

@@ -50,10 +50,9 @@ export default function CharacterSheet() {
             sx={{
               display: "grid",
               gap: 3,
-              gridTemplateColumns: { xs: "1fr", xl: "minmax(0, 1.55fr) minmax(360px, 0.68fr)" },
+              gridTemplateColumns: { xs: "1fr", xl: "minmax(360px, 0.68fr) minmax(0, 1.55fr)" },
               alignItems: "start",
             }}>
-            <SkillTable />
 
             <Box sx={{ display: "grid", gap: 3 }}>
               <AttributePanel />
@@ -104,6 +103,8 @@ export default function CharacterSheet() {
                 <Box sx={{ p: { xs: 2, md: 3 } }}>{tabContent}</Box>
               </Paper>
             </Box>
+
+            <SkillTable />
           </Box>
         </Box>
       </Box>

@@ -143,6 +143,7 @@ function sanitizeSkills(skills: Skill[], attrs: Attributes, occupationState: Occ
 }
 
 interface CharacterStore {
+  readOnly: boolean;
   info: InvestigatorInfo;
   attributes: Attributes;
   currentStatus: CurrentStatus;
@@ -157,6 +158,8 @@ interface CharacterStore {
   occupationState: OccupationState;
   occupationSummary: OccupationSummary;
   derived: DerivedStats;
+  setReadOnly: (value: boolean) => void;
+  toggleReadOnly: () => void;
   setInfo: (field: keyof InvestigatorInfo, value: string | number) => void;
   setAttribute: (key: AttributeKey, value: number) => void;
   setOccupation: (occupationId: number | null) => void;
@@ -184,6 +187,8 @@ interface CharacterStore {
 
 type StoreState = Omit<
   CharacterStore,
+  | "setReadOnly"
+  | "toggleReadOnly"
   | "setInfo"
   | "setAttribute"
   | "setOccupation"
@@ -320,6 +325,7 @@ function getMaxAssignablePoints(
 
 export const useCharacterStore = create<CharacterStore>((set, get) => ({
   ...recalcState({
+    readOnly: false,
     info: DEFAULT_INFO,
     attributes: DEFAULT_ATTRIBUTES,
     currentStatus: DEFAULT_STATUS,
@@ -356,6 +362,9 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
     },
     derived: calcDerived(DEFAULT_ATTRIBUTES, DEFAULT_INFO, DEFAULT_SKILLS),
   }),
+
+  setReadOnly: (value) => set(() => ({ readOnly: value })),
+  toggleReadOnly: () => set((state) => ({ readOnly: !state.readOnly })),
 
   setInfo: (field, value) =>
     set((state) =>
@@ -564,6 +573,7 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
       const data = JSON.parse(json);
       set(
         recalcState({
+          readOnly: get().readOnly,
           info: data.info ?? DEFAULT_INFO,
           attributes: data.attributes ?? DEFAULT_ATTRIBUTES,
           currentStatus: data.currentStatus ?? DEFAULT_STATUS,

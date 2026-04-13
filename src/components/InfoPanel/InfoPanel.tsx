@@ -1,13 +1,14 @@
-"use client";
+﻿"use client";
 
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 import { Box, Paper, TextField, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 
 const INFO_FIELDS = [
   { key: "name" as const, label: "姓名", placeholder: "调查员姓名" },
-  { key: "player" as const, label: "玩家", placeholder: "玩家名" },
+  { key: "player" as const, label: "玩家", placeholder: "玩家姓名" },
   { key: "age" as const, label: "年龄", placeholder: "25", type: "number" },
   { key: "era" as const, label: "时代", placeholder: "1920s" },
   { key: "gender" as const, label: "性别", placeholder: "男 / 女 / 其他" },
@@ -18,6 +19,7 @@ const INFO_FIELDS = [
 ] as const;
 
 export default function InfoPanel({ inDialog = false }: { inDialog?: boolean }) {
+  const readOnly = useCharacterStore((state) => state.readOnly);
   const info = useCharacterStore((state) => state.info);
   const setInfo = useCharacterStore((state) => state.setInfo);
 
@@ -46,26 +48,30 @@ export default function InfoPanel({ inDialog = false }: { inDialog?: boolean }) 
           },
         }}
       >
-        {INFO_FIELDS.map(({ key, label, placeholder, ...rest }) => (
-          <TextField
-            key={key}
-            type={(rest as { type?: string }).type || "text"}
-            label={label}
-            placeholder={placeholder}
-            value={info[key] ?? ""}
-            onChange={(event) => {
-              const value =
-                (rest as { type?: string }).type === "number"
-                  ? event.target.value === ""
-                    ? ""
-                    : Number(event.target.value)
-                  : event.target.value;
-              setInfo(key, value as string & number);
-            }}
-            fullWidth
-            size="small"
-          />
-        ))}
+        {INFO_FIELDS.map(({ key, label, placeholder, ...rest }) =>
+          readOnly ? (
+            <ReadOnlyField key={key} label={label} value={info[key] ?? ""} placeholder={placeholder} />
+          ) : (
+            <TextField
+              key={key}
+              type={(rest as { type?: string }).type || "text"}
+              label={label}
+              placeholder={placeholder}
+              value={info[key] ?? ""}
+              onChange={(event) => {
+                const value =
+                  (rest as { type?: string }).type === "number"
+                    ? event.target.value === ""
+                      ? ""
+                      : Number(event.target.value)
+                    : event.target.value;
+                setInfo(key, value as string & number);
+              }}
+              fullWidth
+              size="small"
+            />
+          ),
+        )}
       </Box>
     </Box>
   );
@@ -74,9 +80,5 @@ export default function InfoPanel({ inDialog = false }: { inDialog?: boolean }) 
     return content;
   }
 
-  return (
-    <Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) }}>
-      {content}
-    </Paper>
-  );
+  return <Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) }}>{content}</Paper>;
 }

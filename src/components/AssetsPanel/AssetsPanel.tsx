@@ -2,6 +2,7 @@
 
 import { Alert, Box, Chip, Paper, TextField, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 import type { Assets } from "@/types/character";
 
@@ -28,24 +29,15 @@ const DETAIL_FIELDS: {
 ];
 
 export default function AssetsPanel() {
+  const readOnly = useCharacterStore((state) => state.readOnly);
   const assets = useCharacterStore((state) => state.assets);
   const updateAsset = useCharacterStore((state) => state.updateAsset);
 
-  const totalAssetValue =
-    assets.vehiclesValue +
-    assets.residencesValue +
-    assets.luxuriesValue +
-    assets.securitiesValue +
-    assets.otherValue;
+  const totalAssetValue = assets.vehiclesValue + assets.residencesValue + assets.luxuriesValue + assets.securitiesValue + assets.otherValue;
 
   return (
     <Box sx={{ display: "grid", gap: 2.5 }}>
-      <Box
-        sx={{
-          display: "grid",
-          gap: 2,
-          gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
-        }}>
+      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" } }}>
         <MetricCard label="信用评级" value={String(assets.creditRating)} />
         <MetricCard label="当前现金" value={`${assets.currentCash || 0} ${assets.currency || ""}`.trim()} />
         <MetricCard label="资产总和" value={String(totalAssetValue)} />
@@ -57,50 +49,48 @@ export default function AssetsPanel() {
             资产概览
           </Typography>
 
-          <Box
-            sx={{
-              display: "grid",
-              gap: 1.5,
-              gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
-            }}>
-            {MAIN_FIELDS.map(({ key, label, type, multiline, minRows }) => (
-              <TextField
-                key={String(key)}
-                label={label}
-                type={type ?? "text"}
-                value={assets[key] ?? ""}
-                onChange={(event) =>
-                  updateAsset(key, type === "number" ? Number(event.target.value) || 0 : event.target.value)
-                }
-                fullWidth
-                size="small"
-                multiline={multiline}
-                minRows={minRows}
-                disabled={key === "creditRating"}
-              />
-            ))}
+          <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" } }}>
+            {MAIN_FIELDS.map(({ key, label, type, multiline, minRows }) =>
+              readOnly ? (
+                <ReadOnlyField
+                  key={String(key)}
+                  label={label}
+                  value={assets[key] ?? ""}
+                  multiline={Boolean(multiline)}
+                  minHeight={multiline ? (minRows ?? 2) * 24 + 20 : undefined}
+                />
+              ) : (
+                <TextField
+                  key={String(key)}
+                  label={label}
+                  type={type ?? "text"}
+                  value={assets[key] ?? ""}
+                  onChange={(event) => updateAsset(key, type === "number" ? Number(event.target.value) || 0 : event.target.value)}
+                  fullWidth
+                  size="small"
+                  multiline={multiline}
+                  minRows={minRows}
+                  disabled={key === "creditRating"}
+                />
+              ),
+            )}
           </Box>
-          <TextField
-            key={String("overviews")}
-            label={"资产概览"}
-            type={"text"}
-            value={assets["overviews"] ?? ""}
-            onChange={(event) =>
-              updateAsset("overviews", event.target.value)
-            }
-            fullWidth
-            size="small"
-            multiline={true}
-            minRows={3}
-          />
 
-          <Alert
-            severity="info"
-            sx={{
-              alignItems: "flex-start",
-              border: (theme) => `1px solid ${alpha(theme.palette.info.main, 0.24)}`,
-              backgroundColor: (theme) => alpha(theme.palette.info.main, 0.08),
-            }}>
+          {readOnly ? (
+            <ReadOnlyField label="资产概览" value={assets.overviews ?? ""} multiline minHeight={92} />
+          ) : (
+            <TextField
+              label="资产概览"
+              value={assets.overviews ?? ""}
+              onChange={(event) => updateAsset("overviews", event.target.value)}
+              fullWidth
+              size="small"
+              multiline
+              minRows={3}
+            />
+          )}
+
+          <Alert severity="info" sx={{ alignItems: "flex-start", border: (theme) => `1px solid ${alpha(theme.palette.info.main, 0.24)}`, backgroundColor: (theme) => alpha(theme.palette.info.main, 0.08) }}>
             <Box sx={{ display: "grid", gap: 1 }}>
               <Typography variant="subtitle2">信用评级参考</Typography>
               <Typography variant="body2">{getCreditRatingHint(assets.creditRating)}</Typography>
@@ -125,32 +115,34 @@ export default function AssetsPanel() {
 
           <Box sx={{ display: "grid", gap: 1.5 }}>
             {DETAIL_FIELDS.map(({ textKey, valueKey, label, placeholder }) => (
-              <Box
-                key={String(textKey)}
-                sx={{
-                  display: "grid",
-                  gap: 1.25,
-                  gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) 180px" },
-                  alignItems: "start",
-                }}>
-                <TextField
-                  label={label}
-                  placeholder={placeholder}
-                  value={assets[textKey] ?? ""}
-                  onChange={(event) => updateAsset(textKey, event.target.value)}
-                  fullWidth
-                  size="small"
-                  multiline
-                  minRows={2}
-                />
-                <TextField
-                  label={`${label}价值`}
-                  type="number"
-                  value={assets[valueKey] || ""}
-                  onChange={(event) => updateAsset(valueKey, Number(event.target.value) || 0)}
-                  fullWidth
-                  size="small"
-                />
+              <Box key={String(textKey)} sx={{ display: "grid", gap: 1.25, gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) 180px" }, alignItems: "start" }}>
+                {readOnly ? (
+                  <>
+                    <ReadOnlyField label={label} value={assets[textKey] ?? ""} placeholder={placeholder} multiline minHeight={68} />
+                    <ReadOnlyField label={`${label}价值`} value={assets[valueKey] || ""} />
+                  </>
+                ) : (
+                  <>
+                    <TextField
+                      label={label}
+                      placeholder={placeholder}
+                      value={assets[textKey] ?? ""}
+                      onChange={(event) => updateAsset(textKey, event.target.value)}
+                      fullWidth
+                      size="small"
+                      multiline
+                      minRows={2}
+                    />
+                    <TextField
+                      label={`${label}价值`}
+                      type="number"
+                      value={assets[valueKey] || ""}
+                      onChange={(event) => updateAsset(valueKey, Number(event.target.value) || 0)}
+                      fullWidth
+                      size="small"
+                    />
+                  </>
+                )}
               </Box>
             ))}
           </Box>

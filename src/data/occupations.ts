@@ -58,23 +58,29 @@ const SOCIAL_OPTIONS = [
 ];
 
 const FIREARM_OPTIONS = [
-  skill("firearms_handgun", "射击（手枪）", "手枪"),
-  skill("firearms_1", "射击（步枪/霰弹枪）", "步枪/霰弹枪"),
-  skill("firearms_2", "射击（冲锋枪）", "冲锋枪"),
-  skill("firearms_3", "射击（弓弩）", "弓弩"),
+  skill("firearms_handgun", "射击", "手枪"),
+  skill("firearms_1", "射击", "步枪/霰弹枪"),
+  skill("firearms_2", "射击", "冲锋枪"),
+  skill("firearms_3", "射击", "弓弩"),
 ];
 
 const FIGHTING_OPTIONS = [
-  skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
-  skill("fighting_1", "格斗（剑术）", "剑术"),
-  skill("fighting_2", "格斗（长鞭）", "长鞭"),
-  skill("fighting_3", "格斗（绞索）", "绞索"),
+  skill("fighting_brawl", "格斗", "斗殴"),
+  skill("fighting_1", "格斗", "剑术"),
+  skill("fighting_2", "格斗", "长鞭"),
+  skill("fighting_3", "格斗", "绞索"),
 ];
 
 const ART_OPTIONS = [
   skill("art_craft_1", "技艺（自定义 1）"),
   skill("art_craft_2", "技艺（自定义 2）"),
   skill("art_craft_3", "技艺（自定义 3）"),
+];
+
+const PILOT_OPTIONS = [
+  skill("pilot_1", "驾驶（自定义 1）"),
+  skill("pilot_2", "驾驶（自定义 2）"),
+  skill("pilot_3", "驾驶（自定义 3）"),
 ];
 
 const SCIENCE_OPTIONS = [
@@ -123,7 +129,7 @@ const ANY_SKILL_OPTIONS = [
   skill("occult", "神秘学"),
   skill("heavy_machinery", "操作重型机械"),
   skill("persuade", "说服"),
-  skill("pilot", "驾驶（自定义）"),
+  ...PILOT_OPTIONS,
   skill("psychoanalysis", "精神分析"),
   skill("psychology", "心理学"),
   skill("ride", "骑术"),
@@ -337,8 +343,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
     [
       predefinedGroup("alienist-science", "选择一项科学技能", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（化学）", "化学"),
+        skill("science_1", "科学", "生物学"),
+        skill("science_2", "科学", "化学"),
       ]),
     ],
   ),
@@ -355,7 +361,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("listen", "聆听"),
       skill("natural_world", "博物学"),
       skill("psychology", "心理学"),
-      skill("science_1", "科学（动物学）", "动物学"),
+      skill("science_1", "科学", "动物学"),
       skill("stealth", "潜行"),
       skill("track", "追踪"),
     ],
@@ -455,12 +461,12 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "建设和城市规划部门、建筑公司。",
     [
       skill("accounting", "会计"),
-      skill("art_craft_1", "技艺（技术制图）", "技术制图"),
+      skill("art_craft_1", "技艺", "技术制图"),
       skill("law", "法律"),
       skill("lang_own", "母语"),
       skill("persuade", "说服"),
       skill("psychology", "心理学"),
-      skill("science_1", "科学（数学）", "数学"),
+      skill("science_1", "科学", "数学"),
     ],
     [
       predefinedGroup("architect-last", "选择计算机使用或图书馆使用", 1, [
@@ -511,7 +517,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "医护人员、患者和患者家属。",
     [
       skill("dodge", "闪避"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("first_aid", "急救"),
       skill("listen", "聆听"),
       skill("psychology", "心理学"),
@@ -534,7 +540,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("climb", "攀爬"),
       skill("jump", "跳跃"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("ride", "骑术"),
       skill("swim", "游泳"),
       skill("throw", "投掷"),
@@ -595,7 +601,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "常客、可能有犯罪组织。",
     [
       skill("accounting", "会计"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("listen", "聆听"),
       skill("psychology", "心理学"),
       skill("spot_hidden", "侦查"),
@@ -644,8 +650,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         "选择科学（生物学）或科学（植物学）",
         1,
         [
-          skill("science_1", "科学（生物学）", "生物学"),
-          skill("science_2", "科学（植物学）", "植物学"),
+          skill("science_1", "科学", "生物学"),
+          skill("science_1", "科学", "植物学"),
         ],
       ),
     ],
@@ -724,7 +730,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "运动会主办者、记者、犯罪组织、训练人员。",
     [
       skill("dodge", "闪避"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("intimidate", "恐吓"),
       skill("jump", "跳跃"),
       skill("psychology", "心理学"),
@@ -785,7 +791,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("elec_repair", "电气维修"),
       skill("electronics", "电子学"),
       skill("library_use", "图书馆使用"),
-      skill("science_1", "科学（数学）", "数学"),
+      skill("science_1", "科学", "数学"),
       skill("spot_hidden", "侦查"),
     ],
     [
@@ -873,10 +879,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
     [
       predefinedGroup("occ-26-choice-1", "格斗或射击", 1, [
-        skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
-        skill("fighting_1", "格斗（自定义）", "自定义"),
-        skill("firearms_handgun", "射击（手枪）", "手枪"),
-        skill("firearms_1", "射击（步枪/霰弹枪）", "步枪/霰弹枪"),
+        skill("fighting_brawl", "格斗", "斗殴"),
+        skill("fighting_1", "格斗", "自定义"),
+        skill("firearms_handgun", "射击", "手枪"),
+        skill("firearms_1", "射击", "步枪/霰弹枪"),
       ]),
       predefinedGroup("occ-26-choice-2", "急救或自然", 1, [
         skill("first_aid", "急救"),
@@ -1112,10 +1118,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         SOCIAL_OPTIONS,
       ),
       predefinedGroup("occ-33-choice-3", "格斗或射击", 1, [
-        skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
-        skill("fighting_1", "格斗（自定义）", "自定义"),
-        skill("firearms_handgun", "射击（手枪）", "手枪"),
-        skill("firearms_1", "射击（步枪/霰弹枪）", "步枪/霰弹枪"),
+        skill("fighting_brawl", "格斗", "斗殴"),
+        skill("fighting_1", "格斗", "自定义"),
+        skill("firearms_handgun", "射击", "手枪"),
+        skill("firearms_1", "射击", "步枪/霰弹枪"),
       ]),
       predefinedGroup("occ-33-choice-4", "锁匠或机械维修", 1, [
         skill("locksmith", "锁匠"),
@@ -1128,7 +1134,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：技艺（任意），两项社交技能（取悦、话术、恐吓、说服），格斗（斗殴）或射击（手枪），汽车驾驶，聆听，潜行，任意一项其他个人或时代特长。
+  // TODO: 本职技能：技艺（任意），两项社交技能（取悦、话术、恐吓、说服），格斗或射击（手枪），汽车驾驶，聆听，潜行，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋外貌×2 (=EDU*2+APP*2)
   occupation(
     34,
@@ -1154,9 +1160,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         2,
         SOCIAL_OPTIONS,
       ),
-      predefinedGroup("occ-34-choice-3", "格斗（斗殴）或射击（手枪）", 1, [
-        skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
-        skill("firearms_handgun", "射击（手枪）", "手枪"),
+      predefinedGroup("occ-34-choice-3", "格斗或射击（手枪）", 1, [
+        skill("fighting_brawl", "格斗", "斗殴"),
+        skill("firearms_handgun", "射击", "手枪"),
       ]),
       anySkillGroup(
         "occ-34-any-4",
@@ -1255,7 +1261,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
       predefinedGroup("occ-37-choice-3", "汽车驾驶或驾驶（飞行器或船）", 1, [
         skill("drive_auto", "汽车驾驶"),
-        skill("pilot", "驾驶（飞行器或船）", "飞行器或船"),
+        skill("pilot_1", "驾驶", "飞行器"),
+        skill("pilot_1", "驾驶", "船"),
       ]),
     ],
     [
@@ -1329,7 +1336,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：两项社交技能（取悦、话术、恐吓、说服），汽车驾驶，格斗（斗殴）或射击，历史，神秘学，心理学，潜行。※经KP允许 可用催眠替换其中一项。
+  // TODO: 本职技能：两项社交技能（取悦、话术、恐吓、说服），汽车驾驶，格斗或射击，历史，神秘学，心理学，潜行。※经KP允许 可用催眠替换其中一项。
   // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     40,
@@ -1353,10 +1360,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         2,
         SOCIAL_OPTIONS,
       ),
-      predefinedGroup("occ-40-choice-2", "格斗（斗殴）或射击", 1, [
-        skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
-        skill("firearms_handgun", "射击（手枪）", "手枪"),
-        skill("firearms_1", "射击（步枪/霰弹枪）", "步枪/霰弹枪"),
+      predefinedGroup("occ-40-choice-2", "格斗或射击", 1, [
+        skill("fighting_brawl", "格斗", "斗殴"),
+        skill("firearms_handgun", "射击", "手枪"),
+        skill("firearms_1", "射击", "步枪/霰弹枪"),
       ]),
     ],
   ),
@@ -1443,8 +1450,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("diving", "潜水"),
       skill("first_aid", "急救"),
       skill("mech_repair", "机械维修"),
-      skill("pilot", "驾驶（船）", "船"),
-      skill("science_1", "科学（生物）", "生物"),
+      skill("pilot_1", "驾驶", "船"),
+      skill("science_1", "科学", "生物"),
       skill("spot_hidden", "侦查"),
       skill("swim", "游泳"),
     ],
@@ -1473,16 +1480,14 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("lang_other_1", "外语", "拉丁文"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "制药"),
     ],
     [
-      predefinedGroup("occ-44-science-1", "科学（生物学，制药）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（制药）", "制药"),
-      ]),
       anySkillGroup(
         "occ-44-any-2",
         "任两种其他学术或个人特长",
-        1,
+        2,
         ANY_SKILL_OPTIONS,
       ),
     ],
@@ -1707,12 +1712,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("library_use", "图书馆使用"),
       skill("mech_repair", "机械维修"),
       skill("heavy_machinery", "操作重型机械"),
+      skill("science_1", "科学", "工程学"),
+      skill("science_2", "科学", "物理"),
     ],
     [
-      predefinedGroup("occ-51-science-1", "科学（工程学，物理）", 1, [
-        skill("science_1", "科学（工程学）", "工程学"),
-        skill("science_2", "科学（物理）", "物理"),
-      ]),
       anySkillGroup(
         "occ-51-any-2",
         "任意一项其他个人或时代特长",
@@ -1836,7 +1839,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：汽车驾驶，格斗（斗殴），射击，法律，说服，潜行，侦查，任意一项其他个人或时代特长。
+  // TODO: 本职技能：汽车驾驶，格斗，射击，法律，说服，潜行，侦查，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     55,
@@ -1848,7 +1851,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "联邦司法机构，执法机构，犯罪组织。",
     [
       skill("drive_auto", "汽车驾驶"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("law", "法律"),
       skill("persuade", "说服"),
       skill("stealth", "潜行"),
@@ -1941,13 +1944,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("persuade", "说服"),
       skill("spot_hidden", "侦查"),
-    ],
-    [
-      predefinedGroup("occ-58-science-1", "科学（生物学，鉴证，制药）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（鉴证）", "鉴证"),
-        skill("science_3", "科学（制药）", "制药"),
-      ]),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "鉴证"),
+      skill("science_3", "科学", "制药"),
     ],
   ),
 
@@ -2061,7 +2060,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "绅士淑女指的是有良好的教养品行、举止彬彬有礼的人。通常用来称呼上流社会(通过继承 或津贴)拥有相当财富的人。\n在上世纪 20 年代,这样的人至少要有一个仆 人(管家、男仆、女仆、私人司机),还要有城 市或乡村的宅第。家庭的富有并不重要,因为家庭的社会地位往往比财产更被上流社会所看重。",
     "上流社会和乡绅，政治家，仆人和农民。",
     [
-      skill("firearms_1", "射击（步枪/霰弹枪）", "步枪/霰弹枪"),
+      skill("firearms_1", "射击", "步枪/霰弹枪"),
       skill("history", "历史"),
       skill("navigate", "导航"),
       skill("ride", "骑术"),
@@ -2114,7 +2113,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：电气维修，一项社交技能（取悦、话术、恐吓、说服），格斗（斗殴），急救，聆听，机械维修，心理学，潜行。
+  // TODO: 本职技能：电气维修，一项社交技能（取悦、话术、恐吓、说服），格斗，急救，聆听，机械维修，心理学，潜行。
   // TODO: 职业属性：教育×2＋力量×2 (=EDU*2+STR*2)
   occupation(
     64,
@@ -2129,7 +2128,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "其他医疗人员，病人。允许接触医疗记录、药品等等。",
     [
       skill("elec_repair", "电气维修"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("first_aid", "急救"),
       skill("listen", "聆听"),
       skill("mech_repair", "机械维修"),
@@ -2243,7 +2242,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "大学，科学家，图书馆。",
     [
       skill("elec_repair", "电气维修"),
-      skill("science_1", "科学（化学）", "化学"),
+      skill("science_1", "科学", "化学"),
+      skill("science_2", "科学"),
+      skill("science_3", "科学"),
       skill("spot_hidden", "侦查"),
     ],
     [
@@ -2252,12 +2253,6 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         skill("library_use", "图书馆使用"),
       ]),
       predefinedGroup("occ-68-lang-2", "外语", 1, LANGUAGE_OPTIONS),
-      predefinedGroup(
-        "occ-68-science-3",
-        "科学（化学和任意两项）",
-        2,
-        SCIENCE_OPTIONS,
-      ),
       anySkillGroup(
         "occ-68-any-4",
         "任意一项其他个人特长",
@@ -2313,7 +2308,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("climb", "攀爬"),
       skill("dodge", "闪避"),
-      skill("fighting_1", "格斗（电锯）", "电锯"),
+      skill("fighting_1", "格斗", "电锯"),
       skill("first_aid", "急救"),
       skill("jump", "跳跃"),
       skill("mech_repair", "机械维修"),
@@ -2322,7 +2317,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       predefinedGroup("occ-70-choice-1", "自然或科学（生物学或植物学）", 1, [
         skill("natural_world", "博物学"),
-        skill("science_1", "科学（生物学或植物学）", "生物学或植物学"),
+        skill("science_1", "科学", "生物学"),
+        skill("science_1", "科学", "植物学"),
       ]),
     ],
     [
@@ -2343,7 +2339,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "工会干部，政治团体。",
     [
       skill("climb", "攀爬"),
-      skill("science_1", "科学（地质）", "地质"),
+      skill("science_1", "科学", "地质"),
       skill("jump", "跳跃"),
       skill("mech_repair", "机械维修"),
       skill("heavy_machinery", "操作重型机械"),
@@ -2616,6 +2612,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("psychology", "心理学"),
       skill("spot_hidden", "侦查"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "化学"),
     ],
     [
       predefinedGroup(
@@ -2624,10 +2622,6 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         1,
         SOCIAL_OPTIONS,
       ),
-      predefinedGroup("occ-80-science-2", "科学（生物学，化学）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（化学）", "化学"),
-      ]),
     ],
   ),
 
@@ -2646,7 +2640,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("history", "历史"),
       skill("library_use", "图书馆使用"),
       skill("occult", "神秘学"),
-      skill("science_1", "科学（天文）", "天文"),
+      skill("science_1", "科学", "天文"),
     ],
     [
       predefinedGroup(
@@ -2742,6 +2736,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("lang_other_1", "外语", "拉丁文"),
       skill("library_use", "图书馆使用"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "制药"),
+      skill("science_2", "科学", "化学"),
     ],
     [
       predefinedGroup(
@@ -2750,10 +2746,6 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         1,
         SOCIAL_OPTIONS,
       ),
-      predefinedGroup("occ-84-science-2", "科学（制药，化学）", 1, [
-        skill("science_1", "科学（制药）", "制药"),
-        skill("science_2", "科学（化学）", "化学"),
-      ]),
     ],
   ),
 
@@ -2768,9 +2760,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "摄影师大部分是自由工作者，可能制作广告电影或者在照相馆做肖像拍摄。其他一些摄像师则在报纸、电视和电影产业工作。\n摄影作为一种艺术形式已经产生相当长的时间了，精英的摄影师可以从艺术、新闻报道、野生动物保护等多种角度出发创作他们的作品。不管是哪种立意，他们都能获得名誉和报酬。\n摄影记者本质上就是拿照相机，为拍摄的照片写配文的记者。在1920 年代，新闻短片走上历史舞台。笨重的35mm 摄像装备走遍全球各地，搜寻有价值的新闻轶事、体育赛事和泳装选美比赛。新闻片制作人员一般分为三类：一类是画面中的记者，另两个人则负责摄像和灯光等等。新闻中的声音则是在新闻稿完成以后在录音棚中录入完成的。",
     "广告业，本地客户(包括政治团体和报纸)。",
     [
-      skill("art_craft_1", "技艺（摄影）", "摄影"),
+      skill("art_craft_1", "技艺", "摄影"),
       skill("psychology", "心理学"),
-      skill("science_1", "科学（化学）", "化学"),
+      skill("science_1", "科学", "化学"),
       skill("stealth", "潜行"),
       skill("spot_hidden", "侦查"),
     ],
@@ -2801,10 +2793,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "摄影师大部分是自由工作者，可能制作广告电影或者在照相馆做肖像拍摄。其他一些摄像师则在报纸、电视和电影产业工作。\n摄影作为一种艺术形式已经产生相当长的时间了，精英的摄影师可以从艺术、新闻报道、野生动物保护等多种角度出发创作他们的作品。不管是哪种立意，他们都能获得名誉和报酬。\n摄影记者本质上就是拿照相机，为拍摄的照片写配文的记者。在1920 年代，新闻短片走上历史舞台。笨重的35mm 摄像装备走遍全球各地，搜寻有价值的新闻轶事、体育赛事和泳装选美比赛。新闻片制作人员一般分为三类：一类是画面中的记者，另两个人则负责摄像和灯光等等。新闻中的声音则是在新闻稿完成以后在录音棚中录入完成的。",
     "新闻业，电影工作室(1920 年代)，外国政府和官方。",
     [
-      skill("art_craft_1", "技艺（摄影）", "摄影"),
+      skill("art_craft_1", "技艺", "摄影"),
       skill("climb", "攀爬"),
       skill("psychology", "心理学"),
-      skill("science_1", "科学（化学）", "化学"),
+      skill("science_1", "科学", "化学"),
     ],
     [
       predefinedGroup(
@@ -2841,8 +2833,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("mech_repair", "机械维修"),
       skill("navigate", "导航"),
       skill("heavy_machinery", "操作重型机械"),
-      skill("pilot", "驾驶（飞行器）", "飞行器"),
-      skill("science_1", "科学（天文）", "天文"),
+      skill("pilot_1", "驾驶", "飞行器"),
+      skill("science_1", "科学", "天文"),
     ],
     [
       anySkillGroup(
@@ -2870,7 +2862,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("listen", "聆听"),
       skill("mech_repair", "机械维修"),
       skill("navigate", "导航"),
-      skill("pilot", "驾驶（飞行器）", "飞行器"),
+      skill("pilot_1", "驾驶", "飞行器"),
       skill("spot_hidden", "侦查"),
     ],
     [
@@ -2919,7 +2911,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：格斗（斗殴），射击，急救，一项社交技能（取悦、话术、恐吓、说服），法律，心理学，侦查和下面的一种个人特长：汽车驾驶或骑乘。
+  // TODO: 本职技能：格斗，射击，急救，一项社交技能（取悦、话术、恐吓、说服），法律，心理学，侦查和下面的一种个人特长：汽车驾驶或骑乘。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     90,
@@ -2930,7 +2922,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "巡警属于市、城镇、县治安部门或州、地区的警察机关。他们工作时可能步行、驾驶巡逻车，或者干脆坐办公室。",
     "执法机构，本地企业与居民，街头罪犯，犯罪组织。",
     [
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("first_aid", "急救"),
       skill("law", "法律"),
       skill("psychology", "心理学"),
@@ -3032,7 +3024,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("history", "历史"),
       skill("mech_repair", "机械维修"),
       skill("navigate", "导航"),
-      skill("science_1", "科学（地质）", "地质"),
+      skill("science_1", "科学", "地质"),
       skill("spot_hidden", "侦查"),
     ],
     [
@@ -3101,13 +3093,11 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("persuade", "说服"),
       skill("psychoanalysis", "精神分析"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "化学"),
     ],
     [
       predefinedGroup("occ-95-lang-1", "外语", 1, LANGUAGE_OPTIONS),
-      predefinedGroup("occ-95-science-2", "科学（生物学，化学）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（化学）", "化学"),
-      ]),
     ],
   ),
 
@@ -3180,7 +3170,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("first_aid", "急救"),
       skill("navigate", "导航"),
-      skill("pilot", "驾驶（船）", "船"),
+      skill("pilot_1", "驾驶", "船"),
       skill("survival", "生存", "海上"),
       skill("swim", "游泳"),
     ],
@@ -3209,7 +3199,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("mech_repair", "机械维修"),
       skill("natural_world", "博物学"),
       skill("navigate", "导航"),
-      skill("pilot", "驾驶（船）", "船"),
+      skill("pilot_1", "驾驶", "船"),
       skill("spot_hidden", "侦查"),
       skill("swim", "游泳"),
     ],
@@ -3478,7 +3468,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("jump", "跳跃"),
       skill("swim", "游泳"),
       skill("drive_auto", "汽车驾驶"),
-      skill("pilot", "驾驶（任一）", "任一"),
+      skill("pilot_1", "驾驶"),
       skill("ride", "骑术"),
     ],
     [
@@ -3517,8 +3507,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
     [
       predefinedGroup("occ-108-choice-1", "格斗或投掷", 1, [
-        skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
-        skill("fighting_1", "格斗（自定义）", "自定义"),
+        skill("fighting_brawl", "格斗", "斗殴"),
+        skill("fighting_1", "格斗", "自定义"),
         skill("throw", "投掷"),
       ]),
       predefinedGroup("occ-108-survival-2", "生存（任一）", 1, [
@@ -3549,6 +3539,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("history", "历史"),
       skill("occult", "神秘学"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "化学"),
     ],
     [
       predefinedGroup(
@@ -3557,14 +3549,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         1,
         SOCIAL_OPTIONS,
       ),
-      predefinedGroup("occ-109-science-2", "科学（生物学，化学）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（化学）", "化学"),
-      ]),
     ],
   ),
 
-  // TODO: 本职技能：会计，两项社交技能（取悦、话术、恐吓、说服），格斗（斗殴），法律，聆听，操作重型机械，心理学。
+  // TODO: 本职技能：会计，两项社交技能（取悦、话术、恐吓、说服），格斗，法律，聆听，操作重型机械，心理学。
   // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     110,
@@ -3576,7 +3564,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "其他劳动领袖,政治伙伴，可能有犯罪组织。在 1920 年代，还有社会主义者、 共产主义者、无政府主义者。",
     [
       skill("accounting", "会计"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("law", "法律"),
       skill("listen", "聆听"),
       skill("heavy_machinery", "操作重型机械"),
@@ -3752,12 +3740,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("first_aid", "急救"),
       skill("natural_world", "博物学"),
       skill("medicine", "医学"),
-    ],
-    [
-      predefinedGroup("occ-115-science-1", "科学（制药，动物学）", 1, [
-        skill("science_1", "科学（制药）", "制药"),
-        skill("science_2", "科学（动物学）", "动物学"),
-      ]),
+      skill("science_1", "科学", "制药"),
+      skill("science_2", "科学", "动物学"),
     ],
   ),
 
@@ -3787,7 +3771,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [],
   ),
 
-  // TODO: 本职技能：攀爬，跳跃，格斗（斗殴），外语，一项社交技能（取悦、话术、恐吓、说服），游泳，投掷，任意一项其他个人或时代特长。
+  // TODO: 本职技能：攀爬，跳跃，格斗，外语，一项社交技能（取悦、话术、恐吓、说服），游泳，投掷，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     117,
@@ -3800,7 +3784,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("climb", "攀爬"),
       skill("jump", "跳跃"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("swim", "游泳"),
       skill("throw", "投掷"),
     ],
@@ -3825,7 +3809,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：攀爬，跳跃，格斗（斗殴），骑术，一项社交技能（取悦、话术、恐吓、说服），游泳，投掷，任意一项其他个人或时代特长。
+  // TODO: 本职技能：攀爬，跳跃，格斗，骑术，一项社交技能（取悦、话术、恐吓、说服），游泳，投掷，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     118,
@@ -3838,7 +3822,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("climb", "攀爬"),
       skill("jump", "跳跃"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("ride", "骑术"),
       skill("swim", "游泳"),
       skill("throw", "投掷"),
@@ -3863,7 +3847,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：跳跃，格斗（斗殴），闪避，一项社交技能（取悦、话术、恐吓、说服），心理学，侦察，投掷，任意一项其他个人或时代特长。
+  // TODO: 本职技能：跳跃，格斗，闪避，一项社交技能（取悦、话术、恐吓、说服），心理学，侦察，投掷，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     119,
@@ -3875,7 +3859,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "其他网球选手，体育专栏作家，俱乐部同好。",
     [
       skill("jump", "跳跃"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("dodge", "闪避"),
       skill("psychology", "心理学"),
       skill("spot_hidden", "侦查"),
@@ -3901,7 +3885,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：攀爬，跳跃，格斗（斗殴），外语，一项社交技能（取悦、话术、恐吓、说服），闪避，投掷，任意一项其他个人或时代特长。
+  // TODO: 本职技能：攀爬，跳跃，格斗，外语，一项社交技能（取悦、话术、恐吓、说服），闪避，投掷，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     120,
@@ -3914,7 +3898,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("climb", "攀爬"),
       skill("jump", "跳跃"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("dodge", "闪避"),
       skill("throw", "投掷"),
     ],
@@ -4121,7 +4105,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：格斗（斗殴），两项社交技能（取悦、话术、恐吓、说服），射击（手枪），外语，心理学，任意两项其他个人或时代特长。
+  // TODO: 本职技能：格斗，两项社交技能（取悦、话术、恐吓、说服），射击（手枪），外语，心理学，任意两项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋外貌或意志×2 (=EDU*2+MAX(APP*2,POW*2))
   occupation(
     127,
@@ -4132,8 +4116,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "《克苏鲁的呼唤调查员伴侣》职业，使用前请征得KP同意。",
     "其他激进分子，艺术家和作家，工会。",
     [
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
-      skill("firearms_handgun", "射击（手枪）", "手枪"),
+      skill("fighting_brawl", "格斗", "斗殴"),
+      skill("firearms_handgun", "射击", "手枪"),
       skill("psychology", "心理学"),
     ],
     [
@@ -4364,16 +4348,14 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("lang_other_1", "外语", "拉丁文"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "制药"),
     ],
     [
-      predefinedGroup("occ-134-science-1", "科学（生物学，制药）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（制药）", "制药"),
-      ]),
       anySkillGroup(
         "occ-134-any-2",
         "任两种其他学术或个人特长",
-        1,
+        2,
         ANY_SKILL_OPTIONS,
       ),
     ],
@@ -4394,16 +4376,14 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("lang_other_1", "外语", "拉丁文"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "制药"),
     ],
     [
-      predefinedGroup("occ-135-science-1", "科学（生物学，制药）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（制药）", "制药"),
-      ]),
       anySkillGroup(
         "occ-135-any-2",
         "任两种其他学术或个人特长",
-        1,
+        2,
         ANY_SKILL_OPTIONS,
       ),
     ],
@@ -4424,16 +4404,14 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("lang_other_1", "外语", "拉丁文"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "制药"),
     ],
     [
-      predefinedGroup("occ-136-science-1", "科学（生物学，制药）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（制药）", "制药"),
-      ]),
       anySkillGroup(
         "occ-136-any-2",
         "任两种其他学术或个人特长",
-        1,
+        2,
         ANY_SKILL_OPTIONS,
       ),
     ],
@@ -4564,13 +4542,11 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("law", "法律"),
       skill("spot_hidden", "侦查"),
+      skill("science_1", "科学", "化学"),
+      skill("science_2", "科学", "司法科学"),
+      skill("science_3", "科学", "药学"),
     ],
     [
-      predefinedGroup("occ-140-science-1", "科学（化学，司法科学，药学）", 1, [
-        skill("science_1", "科学（化学）", "化学"),
-        skill("science_2", "科学（司法科学）", "司法科学"),
-        skill("science_3", "科学（药学）", "药学"),
-      ]),
       anySkillGroup(
         "occ-140-any-2",
         "任意一项其他个人或时代特长",
@@ -4580,7 +4556,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：会计，格斗（斗殴），闪避，两项社交技能（取悦、话术、恐吓、说服），急救，心理学，任意一项其他个人或时代特长。
+  // TODO: 本职技能：会计，格斗，闪避，两项社交技能（取悦、话术、恐吓、说服），急救，心理学，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     141,
@@ -4592,7 +4568,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "体育界，体育专栏作家，运动员时期的朋友。",
     [
       skill("accounting", "会计"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("dodge", "闪避"),
       skill("first_aid", "急救"),
       skill("psychology", "心理学"),
@@ -4701,7 +4677,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("drive_auto", "汽车驾驶"),
       skill("elec_repair", "电气维修"),
       skill("mech_repair", "机械维修"),
-      skill("pilot", "驾驶（船）", "船"),
+      skill("pilot_1", "驾驶", "船"),
       skill("psychology", "心理学"),
       skill("spot_hidden", "侦查"),
     ],
@@ -5016,13 +4992,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("library_use", "图书馆使用"),
       skill("mech_repair", "机械维修"),
       skill("medicine", "医学"),
-    ],
-    [
-      predefinedGroup("occ-154-science-1", "科学（生物，化学，药学）", 1, [
-        skill("science_1", "科学（生物）", "生物"),
-        skill("science_2", "科学（化学）", "化学"),
-        skill("science_3", "科学（药学）", "药学"),
-      ]),
+      skill("science_1", "科学", "生物"),
+      skill("science_2", "科学", "化学"),
+      skill("science_3", "科学", "药学"),
     ],
   ),
 
@@ -5039,7 +5011,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("first_aid", "急救"),
       skill("medicine", "医学"),
-      skill("science_1", "科学（药学）", "药学"),
+      skill("science_1", "科学", "药学"),
       skill("psychology", "心理学"),
       skill("spot_hidden", "侦查"),
     ],
@@ -5079,7 +5051,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       predefinedGroup("occ-156-choice-1", "汽车驾驶或驾驶（飞行器或船）", 1, [
         skill("drive_auto", "汽车驾驶"),
-        skill("pilot", "驾驶（飞行器或船）", "飞行器或船"),
+        skill("pilot_1", "驾驶", "飞行器"),
+        skill("pilot_1", "驾驶", "船"),
       ]),
       predefinedGroup("occ-156-choice-2", "电气维修或机械维修", 1, [
         skill("elec_repair", "电气维修"),
@@ -5110,8 +5083,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "地方官员，本地居民，本地罪犯。",
     [
       skill("drive_auto", "汽车驾驶"),
-      skill("firearms_1", "射击（任一）", "任一"),
-      skill("fighting_1", "格斗（斗殴，鞭）", "斗殴，鞭"),
+      skill("fighting_brawl", "格斗", "斗殴"),
+      skill("fighting_1", "格斗", "鞭"),
+      skill("firearms_1", "射击"),
       skill("law", "法律"),
       skill("ride", "骑术"),
       skill("track", "追踪"),
@@ -5128,7 +5102,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：格斗（斗殴），汽车驾驶，机械维修，话术，恐吓，任意三项其他个人或时代特长。
+  // TODO: 本职技能：格斗，汽车驾驶，机械维修，话术，恐吓，任意三项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     158,
@@ -5139,7 +5113,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "《日本秘史》职业，使用前请征得KP同意。",
     "黑帮，其他暴走族和警察。",
     [
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("drive_auto", "汽车驾驶"),
       skill("mech_repair", "机械维修"),
       skill("fast_talk", "话术"),
@@ -5247,6 +5221,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("library_use", "图书馆使用"),
       skill("occult", "神秘学"),
       skill("lore", "学问（道教）", "道教"),
+      skill("science_1", "科学", "天文"),
+      skill("science_2", "科学", "地质"),
     ],
     [
       predefinedGroup("occ-161-art-1", "技艺（任一）", 1, ART_OPTIONS),
@@ -5256,10 +5232,6 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         1,
         SOCIAL_OPTIONS,
       ),
-      predefinedGroup("occ-161-science-3", "科学（天文，地质）", 1, [
-        skill("science_1", "科学（天文）", "天文"),
-        skill("science_2", "科学（地质）", "地质"),
-      ]),
       anySkillGroup(
         "occ-161-any-4",
         "任意一项其他个人或时代特长",
@@ -5269,7 +5241,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：格斗（斗殴），博物学，神秘学，学问（佛教或神道教），心理学，潜行，任意两项其他个人或时代特长。
+  // TODO: 本职技能：格斗，博物学，神秘学，学问（佛教或神道教），心理学，潜行，任意两项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     162,
@@ -5280,7 +5252,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "《日本秘史》职业，使用前请征得KP同意。",
     "",
     [
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("natural_world", "博物学"),
       skill("occult", "神秘学"),
       skill("lore", "学问（佛教或神道教）", "佛教或神道教"),
@@ -5316,12 +5288,12 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("stealth", "潜行"),
       skill("jump", "跳跃"),
       skill("library_use", "图书馆使用"),
-      skill("fighting_1", "格斗（任一）", "任一"),
+      skill("fighting_1", "格斗"),
       skill("lang_own", "母语"),
     ],
     [
       predefinedGroup("occ-163-choice-1", "科学（任一）或历史", 1, [
-        skill("science_1", "科学（任一）", "任一"),
+        skill("science_1", "科学"),
         skill("history", "历史"),
       ]),
       predefinedGroup("occ-163-lang-2", "外语（英语或其他）", 1, [
@@ -5369,14 +5341,14 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "《日本秘史》职业，使用前请征得KP同意。",
     "",
     [
-      skill("art_craft_1", "技艺（书法）", "书法"),
+      skill("art_craft_1", "技艺", "书法"),
+      skill("art_craft_2", "技艺"),
       skill("lang_own", "母语"),
-      skill("lore", "学问（阴阳道）", "阴阳道"),
-      skill("science_1", "科学（天文）", "天文"),
+      skill("lore", "学问", "阴阳道"),
+      skill("science_1", "科学", "天文"),
       skill("occult", "神秘学"),
     ],
     [
-      predefinedGroup("occ-165-art-1", "技艺（书法，另任一）", 1, ART_OPTIONS),
       predefinedGroup("occ-165-choice-2", "历史或图书馆", 1, [
         skill("history", "历史"),
         skill("library_use", "图书馆使用"),
@@ -5404,9 +5376,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("library_use", "图书馆使用"),
       skill("medicine", "医学"),
       skill("occult", "神秘学"),
-      skill("science_1", "科学（化学）", "化学"),
+      skill("science_1", "科学", "化学"),
       skill("natural_world", "博物学"),
-      skill("lore", "学问（道教）", "道教"),
+      skill("lore", "学问", "道教"),
       skill("lang_other_1", "外语", "汉语"),
     ],
     [
@@ -5482,7 +5454,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：闪避，格斗（斗殴），恐吓，跳跃，心理学，侦察，任意两项其他个人或时代特长。
+  // TODO: 本职技能：闪避，格斗，恐吓，跳跃，心理学，侦察，任意两项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋力量×2 (=EDU*2+STR*2)
   occupation(
     169,
@@ -5497,7 +5469,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "",
     [
       skill("dodge", "闪避"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("intimidate", "恐吓"),
       skill("jump", "跳跃"),
       skill("psychology", "心理学"),
@@ -5527,8 +5499,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("mech_repair", "机械维修"),
       skill("heavy_machinery", "操作重型机械"),
       skill("swim", "游泳"),
-      skill("pilot", "驾驶（船）", "船"),
-      skill("science_1", "科学（天文）", "天文"),
+      skill("pilot_1", "驾驶", "船"),
+      skill("science_1", "科学", "天文"),
       skill("navigate", "导航"),
       skill("natural_world", "博物学"),
       skill("spot_hidden", "侦查"),
@@ -5598,8 +5570,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
       predefinedGroup("occ-172-art-2", "技艺（任一）", 1, ART_OPTIONS),
       predefinedGroup("occ-172-choice-3", "格斗（矛）或射击（弓）", 1, [
-        skill("fighting_1", "格斗（矛）", "矛"),
-        skill("firearms_1", "射击（弓）", "弓"),
+        skill("fighting_1", "格斗", "矛"),
+        skill("firearms_1", "射击", "弓"),
       ]),
       predefinedGroup("occ-172-lang-4", "外语（任一）", 1, LANGUAGE_OPTIONS),
     ],
@@ -5647,7 +5619,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("listen", "聆听"),
       skill("psychology", "心理学"),
       skill("psychoanalysis", "精神分析"),
-      skill("science_1", "科学（动物学）", "动物学"),
+      skill("science_1", "科学", "动物学"),
       skill("jump", "跳跃"),
       skill("track", "追踪"),
       skill("natural_world", "博物学"),
@@ -5687,7 +5659,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("medicine", "医学"),
       skill("first_aid", "急救"),
-      skill("science_1", "科学（化学）", "化学"),
+      skill("science_1", "科学", "化学"),
       skill("locksmith", "锁匠"),
       skill("mech_repair", "机械维修"),
       skill("elec_repair", "电气维修"),
@@ -5712,7 +5684,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("first_aid", "急救"),
       skill("accounting", "会计"),
       skill("law", "法律"),
-      skill("science_1", "科学（药学）", "药学"),
+      skill("science_1", "科学", "药学"),
     ],
     [
       predefinedGroup(
@@ -5746,13 +5718,11 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("medicine", "医学"),
       skill("law", "法律"),
       skill("spot_hidden", "侦查"),
+      skill("science_1", "科学", "化学"),
+      skill("science_2", "科学", "司法科学"),
+      skill("science_3", "科学", "药学"),
     ],
     [
-      predefinedGroup("occ-177-science-1", "科学（化学，司法科学，药学）", 1, [
-        skill("science_1", "科学（化学）", "化学"),
-        skill("science_2", "科学（司法科学）", "司法科学"),
-        skill("science_3", "科学（药学）", "药学"),
-      ]),
       anySkillGroup(
         "occ-177-any-2",
         "任意一项其他个人或时代特长",
@@ -5873,7 +5843,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("first_aid", "急救"),
       skill("navigate", "导航"),
-      skill("pilot", "驾驶（船）", "船"),
+      skill("pilot_1", "驾驶", "船"),
       skill("survival", "生存", "海上"),
       skill("swim", "游泳"),
     ],
@@ -5902,7 +5872,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("mech_repair", "机械维修"),
       skill("natural_world", "博物学"),
       skill("navigate", "导航"),
-      skill("pilot", "驾驶（船）", "船"),
+      skill("pilot_1", "驾驶", "船"),
       skill("spot_hidden", "侦查"),
       skill("swim", "游泳"),
     ],
@@ -6360,13 +6330,11 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("mech_repair", "机械维修"),
       skill("art_craft_1", "技艺（摄影）", "摄影"),
       skill("elec_repair", "电气维修"),
+      skill("science_1", "科学", "物理"),
+      skill("science_2", "科学", "化学"),
+      skill("science_3", "科学", "生物"),
     ],
     [
-      predefinedGroup("occ-196-science-1", "科学（物理，化学，生物）", 1, [
-        skill("science_1", "科学（物理）", "物理"),
-        skill("science_2", "科学（化学）", "化学"),
-        skill("science_3", "科学（生物）", "生物"),
-      ]),
       predefinedGroup(
         "occ-196-social-2",
         "一项社交技能（取悦，话术，恐吓，说服）",
@@ -6445,7 +6413,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：手艺（烹饪），科学（生物，化学），格斗（斗殴），博物学，侦察，外语，任意一项其他个人或时代特长。
+  // TODO: 本职技能：手艺（烹饪），科学（生物，化学），格斗，博物学，侦察，外语，任意一项其他个人或时代特长。
   // TODO: 职业属性：教育×2＋敏捷×2 (=EDU*2+DEX*2)
   occupation(
     199,
@@ -6459,16 +6427,14 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "日系特定规则《克苏鲁2015》职业，使用前请征得KP同意。",
     "",
     [
-      skill("art_craft_1", "技艺（烹饪）", "烹饪"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("art_craft_1", "技艺", "烹饪"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("natural_world", "博物学"),
       skill("spot_hidden", "侦查"),
+      skill("science_1", "科学", "生物"),
+      skill("science_2", "科学", "化学"),
     ],
     [
-      predefinedGroup("occ-199-science-1", "科学（生物，化学）", 1, [
-        skill("science_1", "科学（生物）", "生物"),
-        skill("science_2", "科学（化学）", "化学"),
-      ]),
       predefinedGroup("occ-199-lang-2", "外语", 1, LANGUAGE_OPTIONS),
       anySkillGroup(
         "occ-199-any-3",
@@ -6572,7 +6538,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：格斗（斗殴），射击，急救，一项社交技能（取悦、话术、恐吓、说服），法律，心理学，侦察和下面的一种个人特长：汽车驾驶或骑术。
+  // TODO: 本职技能：格斗，射击，急救，一项社交技能（取悦、话术、恐吓、说服），法律，心理学，侦察和下面的一种个人特长：汽车驾驶或骑术。
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     203,
@@ -6583,7 +6549,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "日系特定规则《克苏鲁2015》职业，使用前请征得KP同意。",
     "",
     [
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("first_aid", "急救"),
       skill("law", "法律"),
       skill("psychology", "心理学"),
@@ -6733,7 +6699,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("lang_other_1", "外语", "拉丁文"),
       skill("law", "法律"),
       skill("ride", "骑术"),
-      skill("firearms_1", "射击（霰弹枪）", "霰弹枪"),
+      skill("firearms_1", "射击", "霰弹枪"),
     ],
     [
       predefinedGroup("occ-207-lang-1", "外语（任一）", 1, LANGUAGE_OPTIONS),
@@ -6844,7 +6810,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("natural_world", "博物学"),
       skill("navigate", "导航"),
       skill("spot_hidden", "侦查"),
-      skill("fighting_1", "格斗（鞭）", "鞭"),
+      skill("fighting_1", "格斗", "鞭"),
     ],
     [
       predefinedGroup(
@@ -6911,7 +6877,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("anthropology", "人类学"),
       skill("appraise", "估价"),
-      skill("science_1", "科学（化学）", "化学"),
+      skill("science_1", "科学", "化学"),
       skill("first_aid", "急救"),
       skill("history", "历史"),
       skill("law", "法律"),
@@ -6984,6 +6950,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("disguise", "乔装"),
       skill("stealth", "潜行"),
       skill("locksmith", "锁匠"),
+      skill("fighting_1", "格斗"),
+      skill("fighting_2", "格斗"),
     ],
     [
       predefinedGroup(
@@ -6992,7 +6960,6 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         1,
         SOCIAL_OPTIONS,
       ),
-      anySkillGroup("occ-214-any-2", "格斗（任意两项）", 2, ANY_SKILL_OPTIONS),
       anySkillGroup(
         "occ-214-any-3",
         "任意一项其他个人或时代特长",
@@ -7082,15 +7049,16 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("stealth", "潜行"),
       skill("first_aid", "急救"),
-      skill("firearms_1", "射击（手枪，来复枪）", "手枪，来复枪"),
+      skill("firearms_handgun", "射击", "手枪"),
+      skill("firearms_1", "射击", "来复枪"),
       skill("navigate", "导航"),
       skill("psychology", "心理学"),
       skill("ride", "骑术"),
-      skill("fighting_1", "格斗（剑）", "剑"),
+      skill("fighting_1", "格斗", "剑"),
       skill("spot_hidden", "侦查"),
+      skill("lang_other_1", "外语"),
     ],
     [
-      anySkillGroup("occ-217-any-1", "其他外语（任意）", 1, LANGUAGE_OPTIONS),
       predefinedGroup(
         "occ-217-social-2",
         "一项社交技能（取悦，话术，恐吓，说服）",
@@ -7104,7 +7072,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：人类学，考古学，估价，科学（生物学），攀爬，急救，射击（手枪、来复枪），格斗（斗殴），博物学，导航，其他语言（任意），驾驶（小艇，船，热气球），骑术，潜行，侦查，游泳，追踪
+  // TODO: 本职技能：人类学，考古学，估价，科学（生物学），攀爬，急救，射击（手枪、来复枪），格斗，博物学，导航，其他语言（任意），驾驶（小艇，船，热气球），骑术，潜行，侦查，游泳，追踪
   // TODO: 职业属性：教育×2＋外貌或敏捷或力量×2 (=EDU*2+MAX(DEX*2,APP*2,STR*2))
   occupation(
     218,
@@ -7118,14 +7086,17 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("anthropology", "人类学"),
       skill("archaeology", "考古学"),
       skill("appraise", "估价"),
-      skill("science_1", "科学（生物学）", "生物学"),
+      skill("science_1", "科学", "生物学"),
       skill("climb", "攀爬"),
       skill("first_aid", "急救"),
-      skill("firearms_1", "射击（手枪，来复枪）", "手枪，来复枪"),
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("firearms_handgun", "射击", "手枪"),
+      skill("firearms_1", "射击", "来复枪"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("natural_world", "博物学"),
       skill("navigate", "导航"),
-      skill("pilot", "驾驶（小艇，船，热气球）", "小艇，船，热气球"),
+      skill("pilot_1", "驾驶", "小艇"),
+      skill("pilot_2", "驾驶", "船"),
+      skill("pilot_3", "驾驶", "热气球"),
       skill("ride", "骑术"),
       skill("stealth", "潜行"),
       skill("spot_hidden", "侦查"),
@@ -7308,12 +7279,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("library_use", "图书馆使用"),
       skill("medicine", "医学"),
       skill("psychology", "心理学"),
+      skill("science_1", "科学", "生物学"),
+      skill("science_2", "科学", "药剂学"),
     ],
     [
-      predefinedGroup("occ-223-science-1", "科学（生物学，药剂学）", 1, [
-        skill("science_1", "科学（生物学）", "生物学"),
-        skill("science_2", "科学（药剂学）", "药剂学"),
-      ]),
       anySkillGroup(
         "occ-223-any-2",
         "任意两项其他个人或时代特长",
@@ -7323,7 +7292,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
   ),
 
-  // TODO: 本职技能：格斗（斗殴），闪避，一项社交技能（取悦、话术、恐吓、说服），急救，射击（手枪），法律，聆听，心理学，潜行，侦查
+  // TODO: 本职技能：格斗，闪避，一项社交技能（取悦、话术、恐吓、说服），急救，射击（手枪），法律，聆听，心理学，潜行，侦查
   // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     224,
@@ -7334,10 +7303,10 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     "《克苏鲁煤气灯》1980s职业，使用前请征得KP同意。",
     "",
     [
-      skill("fighting_brawl", "格斗（斗殴）", "斗殴"),
+      skill("fighting_brawl", "格斗", "斗殴"),
       skill("dodge", "闪避"),
       skill("first_aid", "急救"),
-      skill("firearms_handgun", "射击（手枪）", "手枪"),
+      skill("firearms_handgun", "射击", "手枪"),
       skill("law", "法律"),
       skill("listen", "聆听"),
       skill("psychology", "心理学"),
@@ -7511,7 +7480,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("stealth", "潜行"),
       skill("listen", "聆听"),
       skill("mech_repair", "机械维修"),
-      skill("firearms_1", "射击（来复枪）", "来复枪"),
+      skill("firearms_1", "射击", "来复枪"),
       skill("stealth", "潜行"),
       skill("spot_hidden", "侦查"),
     ],
@@ -7549,6 +7518,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       skill("navigate", "导航"),
       skill("psychology", "心理学"),
       skill("spot_hidden", "侦查"),
+      skill("fighting_1", "格斗"),
     ],
     [
       predefinedGroup(
@@ -7558,7 +7528,6 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         SOCIAL_OPTIONS,
       ),
       predefinedGroup("occ-230-lang-2", "外语（任一）", 1, LANGUAGE_OPTIONS),
-      anySkillGroup("occ-230-any-3", "格斗（任意）", 1, ANY_SKILL_OPTIONS),
     ],
     [
       { attribute: "APP", multiplier: 2 },
