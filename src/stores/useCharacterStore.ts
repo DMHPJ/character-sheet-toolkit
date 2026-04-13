@@ -291,9 +291,35 @@ const DEFAULT_OCCUPATION_STATE: OccupationState = {
   selectedSkills: {},
 };
 
+function areCoreAttributesCompleted(attributes: Attributes): boolean {
+  return Object.values(attributes).every((value) => value > 0);
+}
+
+function syncCurrentStatusWithDerived(
+  currentStatus: CurrentStatus,
+  derived: DerivedStats,
+  options?: { initializeEmpty?: boolean },
+): CurrentStatus {
+  const nextStatus = {
+    ...currentStatus,
+    currentHP: Math.min(currentStatus.currentHP, derived.maxHP),
+    currentMP: Math.min(currentStatus.currentMP, derived.maxMP),
+    currentSAN: Math.min(currentStatus.currentSAN, derived.maxSAN),
+  };
+
+  if (options?.initializeEmpty) {
+    nextStatus.currentHP = derived.maxHP;
+    nextStatus.currentMP = derived.maxMP;
+    nextStatus.currentSAN = derived.maxSAN;
+  }
+
+  return nextStatus;
+}
+
 function recalcState(state: StoreState): StoreState {
   const skills = sanitizeSkills(state.skills, state.attributes, state.occupationState);
   const occupationSummary = buildOccupationSummary(state.attributes, skills, state.occupationState);
+  const derived = calcDerived(state.attributes, state.info, skills);
   const assets = {
     ...state.assets,
     creditRating: getSkillTotal(skills.find((skill) => skill.id === "credit_rating")),
@@ -304,7 +330,8 @@ function recalcState(state: StoreState): StoreState {
     skills,
     assets,
     occupationSummary,
-    derived: calcDerived(state.attributes, state.info, skills),
+    currentStatus: syncCurrentStatusWithDerived(state.currentStatus, derived),
+    derived,
   };
 }
 
@@ -375,12 +402,25 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
     ),
 
   setAttribute: (key, value) =>
-    set((state) =>
-      recalcState({
+    set((state) => {
+      const nextAttributes = { ...state.attributes, [key]: value };
+      const shouldInitializeCurrentStatus =
+        !areCoreAttributesCompleted(state.attributes) && areCoreAttributesCompleted(nextAttributes);
+
+      const nextState = recalcState({
         ...state,
-        attributes: { ...state.attributes, [key]: value },
-      }),
-    ),
+        attributes: nextAttributes,
+      });
+
+      return shouldInitializeCurrentStatus
+        ? {
+            ...nextState,
+            currentStatus: syncCurrentStatusWithDerived(nextState.currentStatus, nextState.derived, {
+              initializeEmpty: true,
+            }),
+          }
+        : nextState;
+    }),
 
   setOccupation: (occupationId) =>
     set((state) => {
@@ -572,7 +612,8 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
     try {
       const data = JSON.parse(json);
       set(
-        recalcState({
+        (() => {
+          const nextState = recalcState({
           readOnly: get().readOnly,
           info: data.info ?? DEFAULT_INFO,
           attributes: data.attributes ?? DEFAULT_ATTRIBUTES,
@@ -588,7 +629,20 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
           occupationState: data.occupationState ?? DEFAULT_OCCUPATION_STATE,
           occupationSummary: get().occupationSummary,
           derived: get().derived,
-        }),
+          });
+
+          const shouldInitializeCurrentStatus =
+            !data.currentStatus && areCoreAttributesCompleted(nextState.attributes);
+
+          return shouldInitializeCurrentStatus
+            ? {
+                ...nextState,
+                currentStatus: syncCurrentStatusWithDerived(nextState.currentStatus, nextState.derived, {
+                  initializeEmpty: true,
+                }),
+              }
+            : nextState;
+        })(),
       );
     } catch (error) {
       console.error("导入 JSON 失败:", error);
