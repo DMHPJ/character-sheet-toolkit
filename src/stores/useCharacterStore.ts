@@ -6,9 +6,13 @@ import {
   getOccupationById,
   getOccupationFormulaLabel,
   getOccupationPoints,
-  getResolvedOccupationSkills,
 } from "@/data/occupations";
-import { DEFAULT_SKILLS, getComputedBaseValue } from "@/data/skills";
+import {
+  createDynamicSkillVariant,
+  DEFAULT_SKILLS,
+  getComputedBaseValue,
+  getExpandableSkillGroupIdFromSkillId,
+} from "@/data/skills";
 import type {
   Assets,
   AttributeKey,
@@ -22,6 +26,8 @@ import type {
   MythosEncounter,
   OccupationState,
   OccupationSummary,
+  OccupationDefinition,
+  OccupationSkillOption,
   Skill,
   Spell,
   Weapon,
@@ -72,6 +78,10 @@ function getSkillTotal(skill?: Skill): number {
   return skill.baseValue + skill.growth + skill.occupationPoints + skill.interestPoints;
 }
 
+function shouldRevealSkill(): boolean {
+  return true;
+}
+
 function calcDerived(attrs: Attributes, info: InvestigatorInfo, skills: Skill[]): DerivedStats {
   const mythos = skills.find((skill) => skill.id === "cthulhu_mythos");
   const { damageBonus, build } = calcDBAndBuild(attrs.STR, attrs.SIZ);
@@ -88,13 +98,118 @@ function calcDerived(attrs: Attributes, info: InvestigatorInfo, skills: Skill[])
   };
 }
 
+function isSkillEmptyForOccupation(skill: Skill): boolean {
+  return !skill.subName?.trim() && skill.growth === 0 && skill.occupationPoints === 0 && skill.interestPoints === 0;
+}
+
+function insertSkillAfterGroup(skills: Skill[], groupId: string, nextSkill: Skill): Skill[] {
+  const insertAfterIndex = skills.reduce((lastIndex, skill, index) => {
+    return skill.variantGroup === groupId ? index : lastIndex;
+  }, -1);
+
+  if (insertAfterIndex === -1) {
+    return [...skills, nextSkill];
+  }
+
+  return [
+    ...skills.slice(0, insertAfterIndex + 1),
+    nextSkill,
+    ...skills.slice(insertAfterIndex + 1),
+  ];
+}
+
+function resolveOccupationOptionSkill(
+  skills: Skill[],
+  option: OccupationSkillOption,
+  claimedSkillIds: Set<string>,
+): { skills: Skill[]; skillId: string } {
+  const exactSkill = skills.find((skill) => skill.id === option.skillId);
+  const groupId = exactSkill?.variantGroup ?? getExpandableSkillGroupIdFromSkillId(option.skillId);
+  if (!groupId) {
+    return { skills, skillId: option.skillId };
+  }
+
+  const groupSkills = skills.filter((skill) => skill.variantGroup === groupId);
+  const preferredSkill =
+    groupSkills.find(
+      (skill) =>
+        skill.id === option.skillId &&
+        !claimedSkillIds.has(skill.id) &&
+        option.subName !== undefined &&
+        skill.subName === option.subName,
+    ) ??
+    groupSkills.find(
+      (skill) =>
+        !claimedSkillIds.has(skill.id) &&
+        option.subName !== undefined &&
+        skill.subName === option.subName,
+    ) ??
+    groupSkills.find((skill) => skill.id === option.skillId && !claimedSkillIds.has(skill.id) && isSkillEmptyForOccupation(skill)) ??
+    groupSkills.find((skill) => !claimedSkillIds.has(skill.id) && isSkillEmptyForOccupation(skill));
+
+  if (preferredSkill) {
+    return { skills, skillId: preferredSkill.id };
+  }
+
+  const nextSkill = createDynamicSkillVariant(groupId, groupSkills.length + 1);
+  return {
+    skills: insertSkillAfterGroup(skills, groupId, nextSkill),
+    skillId: nextSkill.id,
+  };
+}
+
+function normalizeOccupationSkills(
+  definition: OccupationDefinition | undefined,
+  occupationState: OccupationState,
+  skills: Skill[],
+): { skills: Skill[]; allowedSkillIds: string[]; skillSubNames: Record<string, string> } {
+  if (!definition) {
+    return { skills, allowedSkillIds: [], skillSubNames: {} };
+  }
+
+  let nextSkills = skills;
+  const allowed = new Set<string>(["credit_rating"]);
+  const skillSubNames: Record<string, string> = {};
+  const claimedSkillIds = new Set<string>(["credit_rating"]);
+
+  const applyOption = (option: OccupationSkillOption) => {
+    const resolved = resolveOccupationOptionSkill(nextSkills, option, claimedSkillIds);
+    nextSkills = resolved.skills;
+    allowed.add(resolved.skillId);
+    claimedSkillIds.add(resolved.skillId);
+    if (option.subName) {
+      skillSubNames[resolved.skillId] = option.subName;
+    }
+  };
+
+  for (const item of definition.fixedSkills) {
+    applyOption(item);
+  }
+
+  for (const group of definition.choiceGroups) {
+    const selected = occupationState.selectedSkills[group.id] ?? [];
+    for (const optionId of selected) {
+      const option = group.options.find((item) => item.id === optionId);
+      if (option) {
+        applyOption(option);
+      }
+    }
+  }
+
+  return {
+    skills: nextSkills,
+    allowedSkillIds: [...allowed],
+    skillSubNames,
+  };
+}
+
 function buildOccupationSummary(
   attrs: Attributes,
   skills: Skill[],
   occupationState: OccupationState,
 ): OccupationSummary {
   const occupation = getOccupationById(occupationState.occupationId);
-  const { allowedSkillIds, skillSubNames } = getResolvedOccupationSkills(occupation, occupationState);
+  const { allowedSkillIds, skillSubNames } = normalizeOccupationSkills(occupation, occupationState, skills);
   const creditRatingValue = getSkillTotal(skills.find((skill) => skill.id === "credit_rating"));
   const occupationPointsTotal = getOccupationPoints(occupation, attrs);
   const occupationPointsSpent = skills.reduce((sum, skill) => sum + skill.occupationPoints, 0);
@@ -124,17 +239,20 @@ function buildOccupationSummary(
 }
 
 function sanitizeSkills(skills: Skill[], attrs: Attributes, occupationState: OccupationState): Skill[] {
-  const summary = buildOccupationSummary(attrs, skills, occupationState);
+  const occupation = getOccupationById(occupationState.occupationId);
+  const normalized = normalizeOccupationSkills(occupation, occupationState, skills);
+  const { allowedSkillIds, skillSubNames } = normalized;
 
-  return skills.map((skill) => {
+  return normalized.skills.map((skill) => {
     const computedBaseValue = getComputedBaseValue(skill.id, { DEX: attrs.DEX, EDU: attrs.EDU });
-    const forcedSubName = summary.skillSubNames[skill.id];
-    const isOccupationAllowed = summary.allowedSkillIds.includes(skill.id);
+    const forcedSubName = skillSubNames[skill.id];
+    const isOccupationAllowed = allowedSkillIds.includes(skill.id);
 
     return {
       ...skill,
       baseValue: computedBaseValue ?? skill.baseValue,
       subName: forcedSubName ?? skill.subName,
+      isVisible: shouldRevealSkill(),
       occupationPoints:
         skill.cannotAssignOccupation || !isOccupationAllowed ? 0 : Math.max(0, Math.min(100, skill.occupationPoints)),
       interestPoints: skill.cannotAssignInterest ? 0 : Math.max(0, Math.min(100, skill.interestPoints)),
@@ -174,6 +292,7 @@ interface CharacterStore {
     value: number | string,
   ) => void;
   toggleSkillCheck: (skillId: string) => void;
+  addSkillVariant: (groupId: string) => void;
   addWeapon: () => void;
   updateWeapon: (id: string, field: keyof Weapon, value: string | number | boolean) => void;
   removeWeapon: (id: string) => void;
@@ -199,6 +318,7 @@ type StoreState = Omit<
   | "setCondition"
   | "setSkillField"
   | "toggleSkillCheck"
+  | "addSkillVariant"
   | "addWeapon"
   | "updateWeapon"
   | "removeWeapon"
@@ -524,6 +644,22 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
         skill.id === skillId ? { ...skill, checked: !skill.checked } : skill,
       ),
     })),
+
+  addSkillVariant: (groupId) =>
+    set((state) => {
+      const matchingSkills = state.skills.filter((skill) => skill.variantGroup === groupId);
+      if (matchingSkills.length === 0) {
+        return state;
+      }
+
+      const nextIndex = matchingSkills.length + 1;
+      const nextSkill = createDynamicSkillVariant(groupId, nextIndex);
+
+      return recalcState({
+        ...state,
+        skills: insertSkillAfterGroup(state.skills, groupId, nextSkill),
+      });
+    }),
 
   addWeapon: () =>
     set((state) => ({

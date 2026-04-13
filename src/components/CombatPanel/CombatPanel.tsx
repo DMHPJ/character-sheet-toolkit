@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
+import { formatSkillDisplayName } from "@/data/skills";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 import type { Skill, Weapon } from "@/types/character";
 
@@ -272,9 +273,5 @@ function getSkillTotal(skill?: Skill): number {
 }
 
 function formatSkillLabel(skill: Skill): string {
-  const subName = skill.subName?.trim();
-  if (!subName) {
-    return skill.name;
-  }
-  return `${skill.name}：${subName}`;
+  return formatSkillDisplayName(skill);
 }

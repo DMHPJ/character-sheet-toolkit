@@ -1,10 +1,12 @@
 ﻿"use client";
 
 import { useMemo, useState } from "react";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
 	Box,
+	Button,
 	Checkbox,
 	Chip,
 	InputAdornment,
@@ -20,6 +22,11 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
+import {
+	EXPANDABLE_SKILL_GROUPS,
+	formatSkillDisplayName,
+	hasAllocatedSkillValue,
+} from "@/data/skills";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 import type { Skill } from "@/types/character";
 
@@ -29,21 +36,20 @@ export default function SkillTable() {
 	const occupationSummary = useCharacterStore((state) => state.occupationSummary);
 	const setSkillField = useCharacterStore((state) => state.setSkillField);
 	const toggleSkillCheck = useCharacterStore((state) => state.toggleSkillCheck);
+	const addSkillVariant = useCharacterStore((state) => state.addSkillVariant);
 	const [search, setSearch] = useState("");
 
 	const filtered = useMemo(() => {
-		const baseSkills = readOnly
-			? skills.filter(
-					(skill) => skill.growth > 0 || skill.occupationPoints > 0 || skill.interestPoints > 0,
-				)
-			: skills;
+		const baseSkills = skills.filter((skill) => (readOnly ? hasAllocatedSkillValue(skill) : true));
 
 		if (!search.trim()) {
 			return baseSkills;
 		}
 
 		const query = search.trim().toLowerCase();
-		return baseSkills.filter((skill) => formatSkillLabel(skill).toLowerCase().includes(query));
+		return baseSkills.filter((skill) =>
+			formatSkillDisplayName(skill).toLowerCase().includes(query),
+		);
 	}, [readOnly, search, skills]);
 
 	const splitIndex = Math.ceil(filtered.length / 2);
@@ -91,6 +97,20 @@ export default function SkillTable() {
 								/>
 							)}
 						</Box>
+						{!readOnly && (
+							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+								{EXPANDABLE_SKILL_GROUPS.map((group) => (
+									<Button
+										key={group.id}
+										variant="outlined"
+										size="small"
+										startIcon={<AddRoundedIcon />}
+										onClick={() => addSkillVariant(group.id)}>
+										新增{group.label}
+									</Button>
+								))}
+							</Box>
+						)}
 					</Box>
 
 					{readOnly ? (
@@ -227,7 +247,9 @@ function SkillRow({
 	const extreme = Math.floor(total / 5);
 	const isSpecial = skill.id === "cthulhu_mythos" || skill.id === "credit_rating";
 	const hiddenSubName = skill.id === "fighting_brawl" || skill.id === "firearms_handgun";
-	const hasSubName = /（.*）|\(|[①②③：]/.test(skill.name) || skill.isCustom;
+	const hasSubName = Boolean(
+		skill.variantGroup || /（.*）|\(|[①②③：]/.test(skill.name) || skill.isCustom,
+	);
 	const occupationDisabled = skill.cannotAssignOccupation || !isOccupationSkill;
 
 	return (
@@ -252,7 +274,7 @@ function SkillRow({
 				<Box sx={{ display: "grid", gap: 0.25 }}>
 					<Box sx={{ display: "flex", gap: 1, alignItems: "center", flexWrap: "wrap" }}>
 						<Typography variant="body2" sx={{ fontWeight: 700 }}>
-							{formatSkillLabel(skill)}
+							{formatSkillDisplayName(skill)}
 						</Typography>
 						{isOccupationSkill && (
 							<Chip label="本职" size="small" color="secondary" variant="outlined" />
@@ -325,12 +347,4 @@ function EditableNumberCell({
 			)}
 		</TableCell>
 	);
-}
-
-function formatSkillLabel(skill: Skill): string {
-	const subName = skill.subName?.trim();
-	if (!subName) {
-		return skill.name;
-	}
-	return `${skill.name}：${subName}`;
 }

@@ -1,4 +1,4 @@
-export interface Attributes {
+﻿export interface Attributes {
   STR: number;
   DEX: number;
   POW: number;
@@ -71,6 +71,9 @@ export interface Skill {
   growth: number;
   occupationPoints: number;
   interestPoints: number;
+  isVisible?: boolean;
+  variantGroup?: string;
+  variantBaseName?: string;
   isCustom?: boolean;
   cannotAssignOccupation?: boolean;
   cannotAssignInterest?: boolean;
