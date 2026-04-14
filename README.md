@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### 中文说明
 
-## Getting Started
+本项目采用 `PolyForm Noncommercial 1.0.0` 许可发布。
 
-First, run the development server:
+正式法律文本请参阅 [LICENSE](./LICENSE)，中文参考译文请参阅 [LICENSE.zh-CN.md](./LICENSE.zh-CN.md)。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+你可以在非商业前提下使用、学习、修改和分发本项目源码，例如：
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 个人玩家自用
+- 跑团社群内部使用
+- 非营利组织、教育用途、研究用途
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+你不可以在未获得作者额外书面授权的情况下，将本项目或基于本项目的衍生版本用于商业用途，例如：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 直接售卖本项目
+- 将本项目作为付费 SaaS 或商业服务的一部分提供
+- 为商业客户基于本项目进行收费部署、定制开发或二次分发
 
-## Learn More
+### English Summary
 
-To learn more about Next.js, take a look at the following resources:
+This project is released under `PolyForm Noncommercial 1.0.0`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+For the legally operative text, see [LICENSE](./LICENSE). A Chinese reference translation is available in [LICENSE.zh-CN.md](./LICENSE.zh-CN.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+You may use, study, modify, and share this software for noncommercial purposes, including:
 
-## Deploy on Vercel
+- personal use by individual players
+- use within tabletop RPG groups or fan communities
+- nonprofit, educational, and research use
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+You may not use this project, or derivatives of it, for commercial purposes without prior written permission from the author, including:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- selling the software
+- offering it as part of a paid SaaS or commercial service
+- paid deployment, customization, or redistribution for commercial clients
