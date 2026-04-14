@@ -32,18 +32,19 @@ import {
 import { useCharacterStore } from "@/stores/useCharacterStore";
 import type { Skill } from "@/types/character";
 
-export default function SkillTable() {
-	const readOnly = useCharacterStore((state) => state.readOnly);
+export default function SkillTable({ readOnly }: { readOnly?: boolean }) {
+	const storeReadOnly = useCharacterStore((state) => state.readOnly);
 	const skills = useCharacterStore((state) => state.skills);
 	const occupationSummary = useCharacterStore((state) => state.occupationSummary);
 	const setSkillField = useCharacterStore((state) => state.setSkillField);
 	const toggleSkillCheck = useCharacterStore((state) => state.toggleSkillCheck);
 	const addSkillVariant = useCharacterStore((state) => state.addSkillVariant);
 	const [search, setSearch] = useState("");
+	const isReadOnly = readOnly ?? storeReadOnly;
 
 	const baseSkills = useMemo(() => {
-		return skills.filter((skill) => (readOnly ? hasAllocatedSkillValue(skill) : true));
-	}, [readOnly, skills]);
+		return skills.filter((skill) => (isReadOnly ? hasAllocatedSkillValue(skill) : true));
+	}, [isReadOnly, skills]);
 
 	const highlightedSkillIds = useMemo(() => {
 		if (!search.trim()) {
@@ -107,7 +108,7 @@ export default function SkillTable() {
 								/>
 							)}
 						</Box>
-						{!readOnly && (
+						{!isReadOnly && (
 							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
 								{EXPANDABLE_SKILL_GROUPS.map((group) => (
 									<Button
@@ -123,7 +124,7 @@ export default function SkillTable() {
 						)}
 					</Box>
 
-					{readOnly ? (
+					{isReadOnly ? (
 						<ReadOnlyField
 							label="显示范围"
 							value="仅展示已投入成长、职业或兴趣点的技能"
@@ -172,7 +173,7 @@ export default function SkillTable() {
 						skills={leftSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
 						highlightedSkillIds={highlightedSkillIds}
-						readOnly={readOnly}
+						readOnly={isReadOnly}
 						onFieldChange={setSkillField}
 						onToggleCheck={toggleSkillCheck}
 					/>
@@ -180,7 +181,7 @@ export default function SkillTable() {
 						skills={rightSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
 						highlightedSkillIds={highlightedSkillIds}
-						readOnly={readOnly}
+						readOnly={isReadOnly}
 						onFieldChange={setSkillField}
 						onToggleCheck={toggleSkillCheck}
 					/>

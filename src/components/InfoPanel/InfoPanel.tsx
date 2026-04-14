@@ -18,10 +18,17 @@ const INFO_FIELDS = [
   { key: "portrait" as const, label: "头像 URL", placeholder: "https://example.com/portrait.png" },
 ] as const;
 
-export default function InfoPanel({ inDialog = false }: { inDialog?: boolean }) {
-  const readOnly = useCharacterStore((state) => state.readOnly);
+export default function InfoPanel({
+  inDialog = false,
+  readOnly,
+}: {
+  inDialog?: boolean;
+  readOnly?: boolean;
+}) {
+  const storeReadOnly = useCharacterStore((state) => state.readOnly);
   const info = useCharacterStore((state) => state.info);
   const setInfo = useCharacterStore((state) => state.setInfo);
+  const isReadOnly = readOnly ?? storeReadOnly;
 
   const content = (
     <Box sx={{ display: "grid", gap: 2.5 }}>
@@ -49,7 +56,7 @@ export default function InfoPanel({ inDialog = false }: { inDialog?: boolean }) 
         }}
       >
         {INFO_FIELDS.map(({ key, label, placeholder, ...rest }) =>
-          readOnly ? (
+          isReadOnly ? (
             <ReadOnlyField key={key} label={label} value={info[key] ?? ""} placeholder={placeholder} />
           ) : (
             <TextField

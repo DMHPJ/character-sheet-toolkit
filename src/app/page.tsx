@@ -1,5 +1,5 @@
 import CharacterSheet from "@/components/CharacterSheet/CharacterSheet";
 
 export default function Home() {
-  return <CharacterSheet />;
+  return <CharacterSheet readOnly={false} />;
 }

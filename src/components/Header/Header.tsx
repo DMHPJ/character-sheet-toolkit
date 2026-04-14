@@ -10,10 +10,8 @@ import {
   Button,
   Chip,
   CircularProgress,
-  FormControlLabel,
   Paper,
   Snackbar,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -23,16 +21,22 @@ import { useCharacterStore } from "@/stores/useCharacterStore";
 import { convertCharacterJsonToSt } from "@/utils/jsonToSt";
 import { useState } from "react";
 
-export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
+export default function Header({
+  onOpenInfo,
+  readOnly,
+}: {
+  onOpenInfo: () => void;
+  readOnly?: boolean;
+}) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const readOnly = useCharacterStore((state) => state.readOnly);
-  const setReadOnly = useCharacterStore((state) => state.setReadOnly);
+  const storeReadOnly = useCharacterStore((state) => state.readOnly);
   const info = useCharacterStore((state) => state.info);
   const attrs = useCharacterStore((state) => state.attributes);
   const derived = useCharacterStore((state) => state.derived);
   const status = useCharacterStore((state) => state.currentStatus);
   const exportJSON = useCharacterStore((state) => state.exportJSON);
   const importJSON = useCharacterStore((state) => state.importJSON);
+  const isReadOnly = readOnly ?? storeReadOnly;
 
   const conditions = [
     status.conditions.majorWound ? "重伤" : null,
@@ -138,7 +142,7 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
           </Avatar>
 
           <Box sx={{ minWidth: 0, flex: 1 }}>
-            {readOnly ? (
+            {isReadOnly ? (
               <ReadOnlyField
                 label="调查员"
                 value={info.name}
@@ -182,20 +186,6 @@ export default function Header({ onOpenInfo }: { onOpenInfo: () => void }) {
               <Button variant="outlined" startIcon={<UploadRounded />} onClick={handleJsonToSt}>
                 导出为骰娘可用格式
               </Button>
-              <FormControlLabel
-                control={
-                  <Switch checked={readOnly} onChange={(_, checked) => setReadOnly(checked)} color="secondary" />
-                }
-                label={readOnly ? "只读模式" : "编辑模式"}
-                sx={{
-                  ml: { xs: 0, sm: 0.5 },
-                  mr: 0,
-                  "& .MuiFormControlLabel-label": {
-                    fontSize: "0.875rem",
-                    color: "text.secondary",
-                  },
-                }}
-              />
             </Box>
           </Box>
         </Box>

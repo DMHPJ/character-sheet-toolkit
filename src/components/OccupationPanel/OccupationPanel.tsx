@@ -15,13 +15,20 @@ import { alpha } from "@mui/material/styles";
 import { OCCUPATIONS, getOccupationById } from "@/data/occupations";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 
-export default function OccupationPanel({ inDialog = false }: { inDialog?: boolean }) {
-  const readOnly = useCharacterStore((state) => state.readOnly);
+export default function OccupationPanel({
+  inDialog = false,
+  readOnly,
+}: {
+  inDialog?: boolean;
+  readOnly?: boolean;
+}) {
+  const storeReadOnly = useCharacterStore((state) => state.readOnly);
   const info = useCharacterStore((state) => state.info);
   const occupationState = useCharacterStore((state) => state.occupationState);
   const occupationSummary = useCharacterStore((state) => state.occupationSummary);
   const setOccupation = useCharacterStore((state) => state.setOccupation);
   const setOccupationSelection = useCharacterStore((state) => state.setOccupationSelection);
+  const isReadOnly = readOnly ?? storeReadOnly;
 
   const occupation = getOccupationById(occupationState.occupationId);
 
@@ -37,7 +44,7 @@ export default function OccupationPanel({ inDialog = false }: { inDialog?: boole
           labelId="occupation-select-label"
           label="职业"
           value={occupationState.occupationId ?? ""}
-          disabled={readOnly}
+          disabled={isReadOnly}
           onChange={(event) => {
             const value = event.target.value as number | string;
             setOccupation(value === "" ? null : Number(value));
@@ -78,7 +85,7 @@ export default function OccupationPanel({ inDialog = false }: { inDialog?: boole
                 labelId={`${group.id}-label`}
                 multiple={group.count > 1}
                 label={group.label}
-                disabled={readOnly}
+                disabled={isReadOnly}
                 value={occupationState.selectedSkills[group.id] ?? []}
                 onChange={(event) => {
                   const rawValue = event.target.value;

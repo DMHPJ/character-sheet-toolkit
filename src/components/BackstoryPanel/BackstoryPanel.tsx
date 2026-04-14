@@ -17,9 +17,10 @@ const STORY_FIELDS = [
   { key: "overviews" as const, label: "概述", rows: 8 },
 ] as const;
 
-export default function BackstoryPanel() {
-  const readOnly = useCharacterStore((state) => state.readOnly);
+export default function BackstoryPanel({ readOnly }: { readOnly?: boolean }) {
+  const storeReadOnly = useCharacterStore((state) => state.readOnly);
   const backstory = useCharacterStore((state) => state.backstory);
+  const isReadOnly = readOnly ?? storeReadOnly;
 
   return (
     <Box sx={{ display: "grid", gap: 2.5 }}>
@@ -37,7 +38,7 @@ export default function BackstoryPanel() {
 
       <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr" } }}>
         {STORY_FIELDS.map(({ key, label, rows }) =>
-          readOnly ? (
+          isReadOnly ? (
             <ReadOnlyField key={key} label={label} value={backstory[key]} multiline minHeight={rows * 24 + 20} />
           ) : (
             <TextField
