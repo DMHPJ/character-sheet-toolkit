@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from "react";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
+	Autocomplete,
 	Box,
 	Button,
 	Checkbox,
@@ -39,22 +41,30 @@ export default function SkillTable() {
 	const addSkillVariant = useCharacterStore((state) => state.addSkillVariant);
 	const [search, setSearch] = useState("");
 
-	const filtered = useMemo(() => {
-		const baseSkills = skills.filter((skill) => (readOnly ? hasAllocatedSkillValue(skill) : true));
+	const baseSkills = useMemo(() => {
+		return skills.filter((skill) => (readOnly ? hasAllocatedSkillValue(skill) : true));
+	}, [readOnly, skills]);
 
+	const highlightedSkillIds = useMemo(() => {
 		if (!search.trim()) {
-			return baseSkills;
+			return new Set<string>();
 		}
 
 		const query = search.trim().toLowerCase();
-		return baseSkills.filter((skill) =>
-			formatSkillDisplayName(skill).toLowerCase().includes(query),
+		return new Set(
+			baseSkills
+				.filter((skill) => formatSkillDisplayName(skill).toLowerCase().includes(query))
+				.map((skill) => skill.id),
 		);
-	}, [readOnly, search, skills]);
+	}, [baseSkills, search]);
 
-	const splitIndex = Math.ceil(filtered.length / 2);
-	const leftSkills = filtered.slice(0, splitIndex);
-	const rightSkills = filtered.slice(splitIndex);
+	const searchOptions = useMemo(() => {
+		return Array.from(new Set(baseSkills.map((skill) => formatSkillDisplayName(skill))));
+	}, [baseSkills]);
+
+	const splitIndex = Math.ceil(baseSkills.length / 2);
+	const leftSkills = baseSkills.slice(0, splitIndex);
+	const rightSkills = baseSkills.slice(splitIndex);
 
 	return (
 		<Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) }}>
@@ -120,21 +130,33 @@ export default function SkillTable() {
 							minHeight={56}
 						/>
 					) : (
-						<TextField
-							value={search}
-							onChange={(event) => setSearch(event.target.value)}
-							placeholder="搜索技能或子类"
-							size="small"
+						<Autocomplete
+							freeSolo
+							options={searchOptions}
+							inputValue={search}
+							onInputChange={(_, value) => setSearch(value)}
 							sx={{ minWidth: { xs: "100%", md: 280 } }}
-							slotProps={{
-								input: {
-									startAdornment: (
-										<InputAdornment position="start">
-											<SearchRoundedIcon fontSize="small" />
-										</InputAdornment>
-									),
-								},
-							}}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									placeholder="搜索技能或子类"
+									size="small"
+									slotProps={{
+										...params.slotProps,
+										input: {
+											...params.slotProps?.input,
+											startAdornment: (
+												<>
+													<InputAdornment position="start">
+														<SearchRoundedIcon fontSize="small" />
+													</InputAdornment>
+													{params.slotProps?.input?.startAdornment}
+												</>
+											),
+										},
+									}}
+								/>
+							)}
 						/>
 					)}
 				</Box>
@@ -149,6 +171,7 @@ export default function SkillTable() {
 					<SkillTableSection
 						skills={leftSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
+						highlightedSkillIds={highlightedSkillIds}
 						readOnly={readOnly}
 						onFieldChange={setSkillField}
 						onToggleCheck={toggleSkillCheck}
@@ -156,6 +179,7 @@ export default function SkillTable() {
 					<SkillTableSection
 						skills={rightSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
+						highlightedSkillIds={highlightedSkillIds}
 						readOnly={readOnly}
 						onFieldChange={setSkillField}
 						onToggleCheck={toggleSkillCheck}
@@ -169,12 +193,14 @@ export default function SkillTable() {
 function SkillTableSection({
 	skills,
 	occupationSkillIds,
+	highlightedSkillIds,
 	readOnly,
 	onFieldChange,
 	onToggleCheck,
 }: {
 	skills: Skill[];
 	occupationSkillIds: string[];
+	highlightedSkillIds: Set<string>;
 	readOnly: boolean;
 	onFieldChange: (
 		id: string,
@@ -189,7 +215,7 @@ function SkillTableSection({
 			<Table stickyHeader size="small">
 				<TableHead>
 					<TableRow>
-						<TableCell padding="checkbox">成长</TableCell>
+						<TableCell padding="checkbox">成功</TableCell>
 						<TableCell sx={{ p: "2px" }}>技能</TableCell>
 						<TableCell sx={{ p: "2px" }} align="center">
 							初始
@@ -214,6 +240,7 @@ function SkillTableSection({
 							key={skill.id}
 							skill={skill}
 							isOccupationSkill={occupationSkillIds.includes(skill.id)}
+							isHighlighted={highlightedSkillIds.has(skill.id)}
 							readOnly={readOnly}
 							onFieldChange={onFieldChange}
 							onToggleCheck={onToggleCheck}
@@ -228,12 +255,14 @@ function SkillTableSection({
 function SkillRow({
 	skill,
 	isOccupationSkill,
+	isHighlighted,
 	readOnly,
 	onFieldChange,
 	onToggleCheck,
 }: {
 	skill: Skill;
 	isOccupationSkill: boolean;
+	isHighlighted: boolean;
 	readOnly: boolean;
 	onFieldChange: (
 		id: string,
@@ -251,16 +280,36 @@ function SkillRow({
 		skill.variantGroup || /（.*）|\(|[①②③：]/.test(skill.name) || skill.isCustom,
 	);
 	const occupationDisabled = skill.cannotAssignOccupation || !isOccupationSkill;
+	const occupationDisabledReason = skill.cannotAssignOccupation
+		? "特殊禁用"
+		: !isOccupationSkill
+			? "非本职"
+			: undefined;
+	const interestDisabledReason = skill.cannotAssignInterest ? "特殊禁用" : undefined;
 
 	return (
 		<TableRow
 			hover
 			sx={{
-				backgroundColor: skill.checked
-					? (theme) => alpha(theme.palette.primary.main, 0.08)
-					: isOccupationSkill
-						? (theme) => alpha(theme.palette.secondary.main, 0.06)
-						: undefined,
+				backgroundColor: (theme) => {
+					if (isHighlighted) {
+						return alpha(theme.palette.warning.main, 0.2);
+					}
+
+					if (skill.checked) {
+						return alpha(theme.palette.primary.main, 0.08);
+					}
+
+					if (isOccupationSkill) {
+						return alpha(theme.palette.secondary.main, 0.06);
+					}
+
+					return undefined;
+				},
+				transition: (theme) =>
+					theme.transitions.create("background-color", {
+						duration: theme.transitions.duration.shorter,
+					}),
 			}}>
 			<TableCell sx={{ minWidth: 60 }} padding="checkbox">
 				<Checkbox
@@ -305,12 +354,14 @@ function SkillRow({
 				value={skill.occupationPoints}
 				onChange={(value) => onFieldChange(skill.id, "occupationPoints", value)}
 				disabled={occupationDisabled}
+				disabledReason={occupationDisabledReason}
 				readOnly={readOnly}
 			/>
 			<EditableNumberCell
 				value={skill.interestPoints}
 				onChange={(value) => onFieldChange(skill.id, "interestPoints", value)}
 				disabled={skill.cannotAssignInterest}
+				disabledReason={interestDisabledReason}
 				readOnly={readOnly}
 			/>
 			<TableCell align="center" sx={{ minWidth: 128, p: "6px 2px" }}>
@@ -324,17 +375,55 @@ function EditableNumberCell({
 	value,
 	onChange,
 	disabled = false,
+	disabledReason,
 	readOnly = false,
 }: {
 	value: number;
 	onChange: (value: number) => void;
 	disabled?: boolean;
+	disabledReason?: string;
 	readOnly?: boolean;
 }) {
 	return (
 		<TableCell align="center" sx={{ minWidth: 80, p: "6px 2px" }}>
 			{readOnly ? (
 				<Typography variant="body2">{value || "—"}</Typography>
+			) : disabled ? (
+				<Box
+					sx={{
+						width: "100%",
+						minHeight: 40,
+						px: 1,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						borderRadius: 1,
+						color: "text.disabled",
+					}}>
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "end",
+							justifyContent: "center",
+							gap: 0.5,
+							textAlign: "center",
+						}}>
+						<ClearRoundedIcon sx={{ fontSize: 18, flexShrink: 0 }} />
+						{disabledReason && (
+							<Typography
+								variant="caption"
+								color="text.disabled"
+								sx={{
+									fontSize: 14,
+									lineHeight: "18px",
+									display: { xs: "none", xl: "inline" },
+									whiteSpace: "nowrap",
+								}}>
+								{disabledReason}
+							</Typography>
+						)}
+					</Box>
+				</Box>
 			) : (
 				<TextField
 					type="number"
