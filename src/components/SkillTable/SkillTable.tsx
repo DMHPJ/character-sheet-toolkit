@@ -68,47 +68,90 @@ export default function SkillTable({ readOnly }: { readOnly?: boolean }) {
 	const rightSkills = baseSkills.slice(splitIndex);
 
 	return (
-		<Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) }}>
+		<Paper sx={{ p: { xs: 2, md: 2 }, backgroundColor: alpha("#171d1b", 0.84) }}>
 			<Box sx={{ display: "grid", gap: 2.5 }}>
-				<Box
-					sx={{
-						display: "flex",
-						gap: 1.5,
-						justifyContent: "space-between",
-						flexDirection: { xs: "column", md: "row" },
-					}}>
-					<Box sx={{ display: "grid", gap: 1 }}>
-						<Box>
-							<Typography variant="h2" sx={{ fontSize: "1.15rem" }}>
-								技能表
-							</Typography>
-							<Typography variant="body2" color="text.secondary">
-								职业点只允许分配到当前职业模板覆盖的技能，兴趣点按 `INT×2` 计算
-							</Typography>
+				{isReadOnly ? (
+					<Box
+						sx={{
+							display: "flex",
+							gap: 1.5,
+							justifyContent: "space-between",
+							flexDirection: { xs: "column", md: "row" },
+						}}>
+						<Box sx={{ display: "grid", gap: 1 }}>
+							<Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+								<Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+									技能表
+								</Typography>
+								<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+									<Chip
+										label={`职业点 ${occupationSummary.occupationPointsSpent}/${occupationSummary.occupationPointsTotal}`}
+										color={occupationSummary.occupationPointsRemaining < 0 ? "error" : "secondary"}
+										variant="outlined"
+									/>
+									<Chip
+										label={`兴趣点 ${occupationSummary.interestPointsSpent}/${occupationSummary.interestPointsTotal}`}
+										color={occupationSummary.interestPointsRemaining < 0 ? "error" : "primary"}
+										variant="outlined"
+									/>
+									{occupationSummary.creditRatingMin !== null && (
+										<Chip
+											icon={
+												!occupationSummary.creditRatingInRange ? (
+													<WarningAmberRoundedIcon />
+												) : undefined
+											}
+											label={`信用评级 ${occupationSummary.creditRatingValue}（应为 ${occupationSummary.creditRatingMin}-${occupationSummary.creditRatingMax}）`}
+											color={occupationSummary.creditRatingInRange ? "success" : "warning"}
+											variant="outlined"
+										/>
+									)}
+								</Box>
+							</Box>
 						</Box>
-						<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-							<Chip
-								label={`职业点 ${occupationSummary.occupationPointsSpent}/${occupationSummary.occupationPointsTotal}`}
-								color={occupationSummary.occupationPointsRemaining < 0 ? "error" : "secondary"}
-								variant="outlined"
-							/>
-							<Chip
-								label={`兴趣点 ${occupationSummary.interestPointsSpent}/${occupationSummary.interestPointsTotal}`}
-								color={occupationSummary.interestPointsRemaining < 0 ? "error" : "primary"}
-								variant="outlined"
-							/>
-							{occupationSummary.creditRatingMin !== null && (
+					</Box>
+				) : (
+					<Box
+						sx={{
+							display: "flex",
+							gap: 1.5,
+							justifyContent: "space-between",
+							flexDirection: { xs: "column", md: "row" },
+						}}>
+						<Box sx={{ display: "grid", gap: 1 }}>
+							<Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+								<Typography variant="h2" sx={{ fontSize: "1.15rem" }}>
+									技能表
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									职业点只允许分配到当前职业模板覆盖的技能，兴趣点按 `INT×2` 计算
+								</Typography>
+							</Box>
+							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
 								<Chip
-									icon={
-										!occupationSummary.creditRatingInRange ? <WarningAmberRoundedIcon /> : undefined
-									}
-									label={`信用评级 ${occupationSummary.creditRatingValue}（应为 ${occupationSummary.creditRatingMin}-${occupationSummary.creditRatingMax}）`}
-									color={occupationSummary.creditRatingInRange ? "success" : "warning"}
+									label={`职业点 ${occupationSummary.occupationPointsSpent}/${occupationSummary.occupationPointsTotal}`}
+									color={occupationSummary.occupationPointsRemaining < 0 ? "error" : "secondary"}
 									variant="outlined"
 								/>
-							)}
-						</Box>
-						{!isReadOnly && (
+								<Chip
+									label={`兴趣点 ${occupationSummary.interestPointsSpent}/${occupationSummary.interestPointsTotal}`}
+									color={occupationSummary.interestPointsRemaining < 0 ? "error" : "primary"}
+									variant="outlined"
+								/>
+								{occupationSummary.creditRatingMin !== null && (
+									<Chip
+										icon={
+											!occupationSummary.creditRatingInRange ? (
+												<WarningAmberRoundedIcon />
+											) : undefined
+										}
+										label={`信用评级 ${occupationSummary.creditRatingValue}（应为 ${occupationSummary.creditRatingMin}-${occupationSummary.creditRatingMax}）`}
+										color={occupationSummary.creditRatingInRange ? "success" : "warning"}
+										variant="outlined"
+									/>
+								)}
+							</Box>
+
 							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
 								{EXPANDABLE_SKILL_GROUPS.map((group) => (
 									<Button
@@ -121,16 +164,8 @@ export default function SkillTable({ readOnly }: { readOnly?: boolean }) {
 									</Button>
 								))}
 							</Box>
-						)}
-					</Box>
+						</Box>
 
-					{isReadOnly ? (
-						<ReadOnlyField
-							label="显示范围"
-							value="仅展示已投入成长、职业或兴趣点的技能"
-							minHeight={56}
-						/>
-					) : (
 						<Autocomplete
 							freeSolo
 							options={searchOptions}
@@ -159,8 +194,8 @@ export default function SkillTable({ readOnly }: { readOnly?: boolean }) {
 								/>
 							)}
 						/>
-					)}
-				</Box>
+					</Box>
+				)}
 
 				<Box
 					sx={{
