@@ -52,8 +52,6 @@ npm run dev
 - 将本项目作为付费 SaaS 或商业服务的一部分提供
 - 为商业客户基于本项目进行收费部署、定制开发或二次分发
 
-如需商业授权，请联系项目维护者。
-
 ### English Summary
 
 This project is released under `PolyForm Noncommercial 1.0.0`.
@@ -71,5 +69,3 @@ You may not use this project, or derivatives of it, for commercial purposes with
 - selling the software
 - offering it as part of a paid SaaS or commercial service
 - paid deployment, customization, or redistribution for commercial clients
-
-For commercial licensing, please contact the project maintainer.
