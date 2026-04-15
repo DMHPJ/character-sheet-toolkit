@@ -1,5 +1,5 @@
 import CharacterSheet from "@/components/CharacterSheet/CharacterSheet";
 
-export default function TestPage() {
+export default function SimplifyPage() {
   return <CharacterSheet readOnly />;
 }

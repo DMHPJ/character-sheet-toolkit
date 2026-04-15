@@ -2888,6 +2888,7 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     [
       skill("law", "法律"),
       skill("listen", "聆听"),
+      skill("firearms_handgun", "射击", "手枪"),
       skill("psychology", "心理学"),
       skill("spot_hidden", "侦查"),
     ],

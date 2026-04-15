@@ -4,6 +4,7 @@ import { Alert, Box, Chip, Paper, TextField, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { Assets } from "@/types/character";
 
 const MAIN_FIELDS: {
@@ -54,10 +55,19 @@ const DETAIL_FIELDS: {
 	{ textKey: "other", valueKey: "otherValue", label: "其他", placeholder: "无法归类的额外资产" },
 ];
 
-export default function AssetsPanel({ readOnly }: { readOnly?: boolean }) {
-	const storeReadOnly = useCharacterStore((state) => state.readOnly);
-	const assets = useCharacterStore((state) => state.assets);
-	const updateAsset = useCharacterStore((state) => state.updateAsset);
+export default function AssetsPanel({
+	readOnly,
+	store,
+}: {
+	readOnly?: boolean;
+	store?: CharacterStoreSnapshot;
+}) {
+	const globalReadOnly = useCharacterStore((state) => state.readOnly);
+	const globalAssets = useCharacterStore((state) => state.assets);
+	const globalUpdateAsset = useCharacterStore((state) => state.updateAsset);
+	const storeReadOnly = store?.readOnly ?? globalReadOnly;
+	const assets = store?.assets ?? globalAssets;
+	const updateAsset = store?.updateAsset ?? globalUpdateAsset;
 	const isReadOnly = readOnly ?? storeReadOnly;
 
 	const totalAssetValue =

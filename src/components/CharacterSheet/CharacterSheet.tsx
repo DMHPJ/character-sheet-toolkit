@@ -18,6 +18,7 @@ import OccupationPanel from "@/components/OccupationPanel/OccupationPanel";
 import SkillTable from "@/components/SkillTable/SkillTable";
 import StatusPanel from "@/components/StatusPanel/StatusPanel";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import ReadOnlyCharacterSheet from "./ReadOnlyCharacterSheet";
 
 type TabId = "status" | "backstory" | "combat" | "property";
 
@@ -45,12 +46,7 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 			<Box sx={{ display: "grid", gap: 3 }}>
 				<Header onOpenInfo={() => setInfoDialogOpen(true)} readOnly={readOnly} />
 				{readOnly ? (
-          <Box>
-            <AttributePanel readOnly={true} />
-						<SkillTable readOnly={true} />
-            <CombatPanel readOnly={true} />
-            <AssetsPanel readOnly={true} />
-          </Box>
+					<ReadOnlyCharacterSheet />
         ) : (
 					<Box
 						sx={{

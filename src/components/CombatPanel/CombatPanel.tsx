@@ -23,24 +23,42 @@ import { alpha } from "@mui/material/styles";
 import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { formatSkillDisplayName } from "@/data/skills";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { InventoryItem, Skill, Weapon } from "@/types/character";
 
 const WEAPON_TYPES = ["格斗", "射击", "投掷", "特殊"];
 
 type WeaponFieldValue = string | number | boolean;
 
-export default function CombatPanel({ readOnly }: { readOnly?: boolean }) {
-	const storeReadOnly = useCharacterStore((state) => state.readOnly);
-	const derived = useCharacterStore((state) => state.derived);
-	const skills = useCharacterStore((state) => state.skills);
-	const weapons = useCharacterStore((state) => state.weapons);
-	const inventory = useCharacterStore((state) => state.inventory);
-	const addWeapon = useCharacterStore((state) => state.addWeapon);
-	const updateWeapon = useCharacterStore((state) => state.updateWeapon);
-	const removeWeapon = useCharacterStore((state) => state.removeWeapon);
-	const addInventoryItem = useCharacterStore((state) => state.addInventoryItem);
-	const updateInventoryItem = useCharacterStore((state) => state.updateInventoryItem);
-	const removeInventoryItem = useCharacterStore((state) => state.removeInventoryItem);
+export default function CombatPanel({
+	readOnly,
+	store,
+}: {
+	readOnly?: boolean;
+	store?: CharacterStoreSnapshot;
+}) {
+	const globalReadOnly = useCharacterStore((state) => state.readOnly);
+	const globalDerived = useCharacterStore((state) => state.derived);
+	const globalSkills = useCharacterStore((state) => state.skills);
+	const globalWeapons = useCharacterStore((state) => state.weapons);
+	const globalInventory = useCharacterStore((state) => state.inventory);
+	const globalAddWeapon = useCharacterStore((state) => state.addWeapon);
+	const globalUpdateWeapon = useCharacterStore((state) => state.updateWeapon);
+	const globalRemoveWeapon = useCharacterStore((state) => state.removeWeapon);
+	const globalAddInventoryItem = useCharacterStore((state) => state.addInventoryItem);
+	const globalUpdateInventoryItem = useCharacterStore((state) => state.updateInventoryItem);
+	const globalRemoveInventoryItem = useCharacterStore((state) => state.removeInventoryItem);
+	const storeReadOnly = store?.readOnly ?? globalReadOnly;
+	const derived = store?.derived ?? globalDerived;
+	const skills = store?.skills ?? globalSkills;
+	const weapons = store?.weapons ?? globalWeapons;
+	const inventory = store?.inventory ?? globalInventory;
+	const addWeapon = store?.addWeapon ?? globalAddWeapon;
+	const updateWeapon = store?.updateWeapon ?? globalUpdateWeapon;
+	const removeWeapon = store?.removeWeapon ?? globalRemoveWeapon;
+	const addInventoryItem = store?.addInventoryItem ?? globalAddInventoryItem;
+	const updateInventoryItem = store?.updateInventoryItem ?? globalUpdateInventoryItem;
+	const removeInventoryItem = store?.removeInventoryItem ?? globalRemoveInventoryItem;
 	const isReadOnly = readOnly ?? storeReadOnly;
 
 	const combatSkills = skills

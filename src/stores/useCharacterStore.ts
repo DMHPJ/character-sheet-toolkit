@@ -28,6 +28,7 @@ import type {
   OccupationSummary,
   OccupationDefinition,
   OccupationSkillOption,
+  CharacterData,
   Skill,
   Spell,
   Weapon,
@@ -260,7 +261,7 @@ function sanitizeSkills(skills: Skill[], attrs: Attributes, occupationState: Occ
   });
 }
 
-interface CharacterStore {
+export interface CharacterStore {
   readOnly: boolean;
   info: InvestigatorInfo;
   attributes: Attributes;
@@ -329,6 +330,8 @@ type StoreState = Omit<
   | "exportJSON"
   | "importJSON"
 >;
+
+export type CharacterStoreSnapshot = CharacterStore;
 
 const DEFAULT_INFO: InvestigatorInfo = {
   name: "",
@@ -411,6 +414,8 @@ const DEFAULT_OCCUPATION_STATE: OccupationState = {
   selectedSkills: {},
 };
 
+const NOOP = () => {};
+
 function areCoreAttributesCompleted(attributes: Attributes): boolean {
   return Object.values(attributes).every((value) => value > 0);
 }
@@ -468,6 +473,84 @@ function getMaxAssignablePoints(
 
   const spent = skills.reduce((sum, skill) => sum + skill[field], 0);
   return Math.max(0, total - spent + currentSkill[field]);
+}
+
+export function createCharacterStoreSnapshot(
+  data: Partial<CharacterData>,
+  options?: { readOnly?: boolean },
+): CharacterStoreSnapshot {
+  const info = data.info ?? DEFAULT_INFO;
+  const attributes = data.attributes ?? DEFAULT_ATTRIBUTES;
+  const skills = data.skills ?? [...DEFAULT_SKILLS];
+  const nextState = recalcState({
+    readOnly: options?.readOnly ?? true,
+    info,
+    attributes,
+    currentStatus: data.currentStatus ?? DEFAULT_STATUS,
+    skills,
+    weapons: data.weapons ?? [],
+    inventory: data.inventory ?? [],
+    assets: { ...DEFAULT_ASSETS, ...(data.assets ?? {}) },
+    backstory: data.backstory ?? DEFAULT_BACKSTORY,
+    spells: data.spells ?? [],
+    moduleExperiences: data.moduleExperiences ?? [],
+    mythosEncounters: data.mythosEncounters ?? [],
+    occupationState: data.occupationState ?? DEFAULT_OCCUPATION_STATE,
+    occupationSummary: {
+      occupationId: null,
+      occupationName: "",
+      formulaLabel: "",
+      contacts: "",
+      description: "",
+      occupationPointsTotal: 0,
+      occupationPointsSpent: 0,
+      occupationPointsRemaining: 0,
+      interestPointsTotal: 0,
+      interestPointsSpent: 0,
+      interestPointsRemaining: 0,
+      creditRatingMin: null,
+      creditRatingMax: null,
+      creditRatingValue: 0,
+      creditRatingInRange: true,
+      allowedSkillIds: [],
+      skillSubNames: {},
+    },
+    derived: calcDerived(attributes, info, skills),
+  });
+
+  const shouldInitializeCurrentStatus =
+    !data.currentStatus && areCoreAttributesCompleted(nextState.attributes);
+
+  return {
+    ...nextState,
+    currentStatus: shouldInitializeCurrentStatus
+      ? syncCurrentStatusWithDerived(nextState.currentStatus, nextState.derived, {
+          initializeEmpty: true,
+        })
+      : nextState.currentStatus,
+    setReadOnly: NOOP,
+    toggleReadOnly: NOOP,
+    setInfo: NOOP,
+    setAttribute: NOOP,
+    setOccupation: NOOP,
+    setOccupationSelection: NOOP,
+    setCurrentHP: NOOP,
+    setCurrentMP: NOOP,
+    setCurrentSAN: NOOP,
+    setCondition: NOOP,
+    setSkillField: NOOP,
+    toggleSkillCheck: NOOP,
+    addSkillVariant: NOOP,
+    addWeapon: NOOP,
+    updateWeapon: NOOP,
+    removeWeapon: NOOP,
+    addInventoryItem: NOOP,
+    updateInventoryItem: NOOP,
+    removeInventoryItem: NOOP,
+    updateAsset: NOOP,
+    exportJSON: () => JSON.stringify(data, null, 2),
+    importJSON: NOOP,
+  };
 }
 
 export const useCharacterStore = create<CharacterStore>((set, get) => ({

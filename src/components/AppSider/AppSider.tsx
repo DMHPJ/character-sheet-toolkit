@@ -27,6 +27,12 @@ const NAV_ITEMS = [
 		description: "调查员信息简化展示",
 		icon: <DescriptionRoundedIcon />,
 	},
+	{
+		href: "/kpChecking/",
+		label: "KP审卡",
+		description: "守秘人审核角色卡",
+		icon: <DescriptionRoundedIcon />,
+	},
 ];
 
 export default function AppSider() {

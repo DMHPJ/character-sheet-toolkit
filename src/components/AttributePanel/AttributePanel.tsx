@@ -4,6 +4,7 @@ import { Box, Chip, Paper, TextField, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { AttributeKey } from "@/types/character";
 
 const ATTR_META: { key: AttributeKey; label: string; en: string }[] = [
@@ -38,10 +39,19 @@ function getAttrDescription(key: AttributeKey, value: number): string {
 	return map[key][4];
 }
 
-export default function AttributePanel({ readOnly }: { readOnly?: boolean }) {
-	const storeReadOnly = useCharacterStore((state) => state.readOnly);
-	const attributes = useCharacterStore((state) => state.attributes);
-	const setAttribute = useCharacterStore((state) => state.setAttribute);
+export default function AttributePanel({
+	readOnly,
+	store,
+}: {
+	readOnly?: boolean;
+	store?: CharacterStoreSnapshot;
+}) {
+	const globalReadOnly = useCharacterStore((state) => state.readOnly);
+	const globalAttributes = useCharacterStore((state) => state.attributes);
+	const globalSetAttribute = useCharacterStore((state) => state.setAttribute);
+	const storeReadOnly = store?.readOnly ?? globalReadOnly;
+	const attributes = store?.attributes ?? globalAttributes;
+	const setAttribute = store?.setAttribute ?? globalSetAttribute;
 	const isReadOnly = readOnly ?? storeReadOnly;
 
 	const totalPoints = ATTR_META.filter((attribute) => attribute.key !== "Luck").reduce(
@@ -49,7 +59,7 @@ export default function AttributePanel({ readOnly }: { readOnly?: boolean }) {
 		0,
 	);
 
-	return readOnly ? (
+	return isReadOnly ? (
 		<Box>
 			<Box
 				sx={{

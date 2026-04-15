@@ -23,22 +23,34 @@ import {
 	Typography,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import {
 	EXPANDABLE_SKILL_GROUPS,
 	formatSkillDisplayName,
 	hasAllocatedSkillValue,
 } from "@/data/skills";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { Skill } from "@/types/character";
 
-export default function SkillTable({ readOnly }: { readOnly?: boolean }) {
-	const storeReadOnly = useCharacterStore((state) => state.readOnly);
-	const skills = useCharacterStore((state) => state.skills);
-	const occupationSummary = useCharacterStore((state) => state.occupationSummary);
-	const setSkillField = useCharacterStore((state) => state.setSkillField);
-	const toggleSkillCheck = useCharacterStore((state) => state.toggleSkillCheck);
-	const addSkillVariant = useCharacterStore((state) => state.addSkillVariant);
+export default function SkillTable({
+	readOnly,
+	store,
+}: {
+	readOnly?: boolean;
+	store?: CharacterStoreSnapshot;
+}) {
+	const globalReadOnly = useCharacterStore((state) => state.readOnly);
+	const globalSkills = useCharacterStore((state) => state.skills);
+	const globalOccupationSummary = useCharacterStore((state) => state.occupationSummary);
+	const globalSetSkillField = useCharacterStore((state) => state.setSkillField);
+	const globalToggleSkillCheck = useCharacterStore((state) => state.toggleSkillCheck);
+	const globalAddSkillVariant = useCharacterStore((state) => state.addSkillVariant);
+	const storeReadOnly = store?.readOnly ?? globalReadOnly;
+	const skills = store?.skills ?? globalSkills;
+	const occupationSummary = store?.occupationSummary ?? globalOccupationSummary;
+	const setSkillField = store?.setSkillField ?? globalSetSkillField;
+	const toggleSkillCheck = store?.toggleSkillCheck ?? globalToggleSkillCheck;
+	const addSkillVariant = store?.addSkillVariant ?? globalAddSkillVariant;
 	const [search, setSearch] = useState("");
 	const isReadOnly = readOnly ?? storeReadOnly;
 
