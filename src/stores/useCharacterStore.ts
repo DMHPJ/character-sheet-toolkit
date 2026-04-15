@@ -8,6 +8,7 @@ import {
   getOccupationPoints,
 } from "@/data/occupations";
 import {
+  createDynamicCustomSkill,
   createDynamicSkillVariant,
   DEFAULT_SKILLS,
   getComputedBaseValue,
@@ -117,6 +118,34 @@ function insertSkillAfterGroup(skills: Skill[], groupId: string, nextSkill: Skil
     nextSkill,
     ...skills.slice(insertAfterIndex + 1),
   ];
+}
+
+function insertSkillAfterCustomSkills(skills: Skill[], nextSkill: Skill): Skill[] {
+  const insertAfterIndex = skills.reduce((lastIndex, skill, index) => {
+    return skill.isCustom ? index : lastIndex;
+  }, -1);
+
+  if (insertAfterIndex === -1) {
+    return [...skills, nextSkill];
+  }
+
+  return [
+    ...skills.slice(0, insertAfterIndex + 1),
+    nextSkill,
+    ...skills.slice(insertAfterIndex + 1),
+  ];
+}
+
+function getNextCustomSkillIndex(skills: Skill[]): number {
+  return skills.reduce((nextIndex, skill) => {
+    if (!skill.isCustom) {
+      return nextIndex;
+    }
+
+    const match = /^custom_skill_(\d+)$/.exec(skill.id);
+    const index = match ? Number(match[1]) : 1;
+    return Math.max(nextIndex, index + 1);
+  }, 1);
 }
 
 function resolveOccupationOptionSkill(
@@ -298,6 +327,7 @@ export interface CharacterStore {
   ) => void;
   toggleSkillCheck: (skillId: string) => void;
   addSkillVariant: (groupId: string) => void;
+  addCustomSkill: () => void;
   addWeapon: () => void;
   updateWeapon: (id: string, field: keyof Weapon, value: string | number | boolean) => void;
   removeWeapon: (id: string) => void;
@@ -324,6 +354,7 @@ type StoreState = Omit<
   | "setSkillField"
   | "toggleSkillCheck"
   | "addSkillVariant"
+  | "addCustomSkill"
   | "addWeapon"
   | "updateWeapon"
   | "removeWeapon"
@@ -545,6 +576,7 @@ export function createCharacterStoreSnapshot(
     setSkillField: NOOP,
     toggleSkillCheck: NOOP,
     addSkillVariant: NOOP,
+    addCustomSkill: NOOP,
     addWeapon: NOOP,
     updateWeapon: NOOP,
     removeWeapon: NOOP,
@@ -745,6 +777,16 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
       return recalcState({
         ...state,
         skills: insertSkillAfterGroup(state.skills, groupId, nextSkill),
+      });
+    }),
+
+  addCustomSkill: () =>
+    set((state) => {
+      const nextSkill = createDynamicCustomSkill(getNextCustomSkillIndex(state.skills));
+
+      return recalcState({
+        ...state,
+        skills: insertSkillAfterCustomSkills(state.skills, nextSkill),
       });
     }),
 

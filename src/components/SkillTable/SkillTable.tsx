@@ -45,12 +45,14 @@ export default function SkillTable({
 	const globalSetSkillField = useCharacterStore((state) => state.setSkillField);
 	const globalToggleSkillCheck = useCharacterStore((state) => state.toggleSkillCheck);
 	const globalAddSkillVariant = useCharacterStore((state) => state.addSkillVariant);
+	const globalAddCustomSkill = useCharacterStore((state) => state.addCustomSkill);
 	const storeReadOnly = store?.readOnly ?? globalReadOnly;
 	const skills = store?.skills ?? globalSkills;
 	const occupationSummary = store?.occupationSummary ?? globalOccupationSummary;
 	const setSkillField = store?.setSkillField ?? globalSetSkillField;
 	const toggleSkillCheck = store?.toggleSkillCheck ?? globalToggleSkillCheck;
 	const addSkillVariant = store?.addSkillVariant ?? globalAddSkillVariant;
+	const addCustomSkill = store?.addCustomSkill ?? globalAddCustomSkill;
 	const [search, setSearch] = useState("");
 	const isReadOnly = readOnly ?? storeReadOnly;
 
@@ -175,6 +177,13 @@ export default function SkillTable({
 										新增{group.label}
 									</Button>
 								))}
+								<Button
+									variant="outlined"
+									size="small"
+									startIcon={<AddRoundedIcon />}
+									onClick={addCustomSkill}>
+									新增自定义技能
+								</Button>
 							</Box>
 						</Box>
 

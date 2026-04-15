@@ -64,6 +64,13 @@ export function createDynamicSkillVariant(groupId: string, index: number): Skill
   });
 }
 
+export function createDynamicCustomSkill(index: number): Skill {
+  return createSkill(`custom_skill_${index}`, "自定义技能", 0, "专业", {
+    subName: "",
+    isCustom: true,
+  });
+}
+
 export function isExpandableSkillGroup(groupId: string): boolean {
   return groupId in EXPANDABLE_GROUP_MAP;
 }
