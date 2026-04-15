@@ -2,6 +2,7 @@
 
 import {
   Alert,
+  Autocomplete,
   Box,
   Chip,
   FormControl,
@@ -9,6 +10,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
@@ -38,28 +40,28 @@ export default function OccupationPanel({
         职业模板
       </Typography>
 
-      <FormControl fullWidth size="small">
-        <InputLabel id="occupation-select-label">职业</InputLabel>
-        <Select
-          labelId="occupation-select-label"
-          label="职业"
-          value={occupationState.occupationId ?? ""}
-          disabled={isReadOnly}
-          onChange={(event) => {
-            const value = event.target.value as number | string;
-            setOccupation(value === "" ? null : Number(value));
-          }}
-        >
-          <MenuItem value="">
-            <em>未选择</em>
-          </MenuItem>
-          {OCCUPATIONS.map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.id}. {item.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Autocomplete
+        size="small"
+        options={OCCUPATIONS}
+        value={occupation}
+        disabled={isReadOnly}
+        getOptionLabel={(option) => `${option.id}. ${option.name}`}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        noOptionsText="没有匹配的职业"
+        clearText="清除"
+        openText="展开"
+        closeText="收起"
+        onChange={(_, value) => {
+          setOccupation(value?.id ?? null);
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="职业"
+            placeholder="搜索职业名称或编号"
+          />
+        )}
+      />
 
       {occupation ? (
         <>
