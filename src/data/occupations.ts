@@ -808,9 +808,9 @@ export const OCCUPATIONS: OccupationDefinition[] = [
         skill("appraise", "估价"),
       ]),
       predefinedGroup("servant-craft", "选择一项技艺", 1, [
-        skill("art_craft_1", "技艺（烹饪）", "烹饪"),
-        skill("art_craft_2", "技艺（裁缝）", "裁缝"),
-        skill("art_craft_3", "技艺（理发）", "理发"),
+        skill("art_craft_1", "技艺", "烹饪"),
+        skill("art_craft_2", "技艺", "裁缝"),
+        skill("art_craft_3", "技艺", "理发"),
       ]),
       anySkillGroup(
         "servant-any",
