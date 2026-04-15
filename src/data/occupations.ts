@@ -179,6 +179,8 @@ const occupation = (
 });
 
 export const OCCUPATIONS: OccupationDefinition[] = [
+  // TODO: 本职技能：会计，法律，图书馆，聆听，说服，侦查，任意其他两项个人或时代特长。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     2,
     "会计师",
@@ -204,6 +206,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：攀爬，闪避，跳跃，投掷，侦查，游泳，任意两项其他个人或时代特长。
+  // TODO: 职业属性：教育×2＋敏捷×2 (=EDU*2+DEX*2)
   occupation(
     3,
     "杂技演员",
@@ -230,6 +234,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
     [{ attribute: "DEX", multiplier: 2 }],
   ),
+  // TODO: 本职技能：技艺（表演），乔装，格斗，历史，两项社交技能（取悦、话术、恐吓、说服），心理学，任意一项其他个人或时代特长。
+  // TODO: 职业属性：教育×2＋外貌2 (=EDU*2+APP*2)
   occupation(
     4,
     "演员-戏剧演员",
@@ -258,6 +264,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：技艺（表演），乔装，汽车驾驶，两项社交技能（取悦、话术、恐吓、说服），心理学，任意两项其他个人或时代特长（如骑乘或格斗）。
+  // TODO: 职业属性：教育×2＋外貌2 (=EDU*2+APP*2)
   occupation(
     5,
     "演员-电影演员",
@@ -285,6 +293,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：一项社交技能（取悦、话术、恐吓、说服），格斗（斗殴），射击，法律，图书馆，心理学，潜行，追踪。
+  // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     6,
     "事务所侦探/保安",
@@ -325,6 +335,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       { attribute: "DEX", multiplier: 2 },
     ],
   ),
+  // TODO: 本职技能：法律，聆听，医学，外语，精神分析，心理学，科学（生物学，化学）。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     7,
     "精神病医生（古典）",
@@ -348,6 +360,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ]),
     ],
   ),
+  // TODO: 本职技能：跳跃，聆听，自然，心理学，科学（动物学），潜行，追踪，任意一项其他个人或时代特长。
+  // TODO: 职业属性：教育×2＋外貌或意志×2 (=EDU*2+MAX(APP*2,POW*2))
   occupation(
     8,
     "动物训练师",
@@ -378,6 +392,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       { attribute: "POW", multiplier: 2 },
     ],
   ),
+  // TODO: 本职技能：估价，技艺（任一），历史，图书馆，外语，一项社交技能（取悦、话术、恐吓、说服），侦查，任意一项其他个人或时代特长。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     9,
     "文物学家（原作向）",
@@ -409,6 +425,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：会计，估价，汽车驾驶，两项社交技能（取悦、话术、恐吓、说服），历史，图书馆，导航。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     10,
     "古董商",
@@ -427,6 +445,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
     ],
     [predefinedGroup("antique-social", "选择两项社交技能", 2, SOCIAL_OPTIONS)],
   ),
+  // TODO: 本职技能：估价，考古，历史，外语，图书馆，侦查，机械维修，导航或科学（任一：如化学、物理、地理等）。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     11,
     "考古学家（原作向）",
@@ -451,6 +471,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ]),
     ],
   ),
+  // TODO: 本职技能：会计，技艺（技术制图），法律，母语，计算机或图书馆，说服，心理学，科学（数学）。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     12,
     "建筑师",
@@ -475,6 +497,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ]),
     ],
   ),
+  // TODO: 本职技能：技艺（任一），历史或自然，一项社交技能（取悦、话术、恐吓、说服），外语，心理学，侦查，任意两项其他个人或时代特长。
+  // TODO: 职业属性：教育×2＋敏捷或意志×2 (=EDU*2+MAX(DEX*2,POW*2))
   occupation(
     13,
     "艺术家",
@@ -507,6 +531,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       { attribute: "POW", multiplier: 2 },
     ],
   ),
+  // TODO: 本职技能：闪避，格斗（斗殴），急救，两项社交技能（取悦、话术、恐吓、说服），聆听，心理学，潜行。
+  // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     14,
     "精神病院看护",
@@ -529,6 +555,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       { attribute: "DEX", multiplier: 2 },
     ],
   ),
+  // TODO: 本职技能：攀爬，跳跃，格斗（斗殴），骑乘，一项社交技能（取悦、话术、恐吓、说服），游泳，投掷，任意一项其他个人或时代特长。
+  // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     15,
     "运动员",
@@ -559,6 +587,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       { attribute: "DEX", multiplier: 2 },
     ],
   ),
+  // TODO: 本职技能：技艺（文学），历史，图书馆，自然或神秘学，外语，母语，心理学，任意一项其他个人或时代特长。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     16,
     "作家（原作向）",
@@ -588,6 +618,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：会计，两项社交技能（取悦、话术、恐吓、说服），格斗（斗殴），聆听，心理学，侦查，任意一项其他个人或时代特长。
+  // TODO: 职业属性：教育×2＋外貌×2 (=EDU*2+APP*2)
   occupation(
     17,
     "酒保",
@@ -621,6 +653,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：射击，聆听或侦查，自然，导航，外语或生存（任一），科学（生物学或植物学），潜行，追踪。
+  // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     18,
     "猎人",
@@ -660,6 +694,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       { attribute: "DEX", multiplier: 2 },
     ],
   ),
+  // TODO: 本职技能：会计，估价，汽车驾驶，历史，图书馆，母语，外语，一项社交技能（取悦、话术、恐吓、说服）。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     19,
     "书商",
@@ -686,6 +722,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：汽车驾驶，电子学或电气维修，格斗或射击，一项社交技能（取悦、话术、恐吓、说服），法律，心理学，追踪，潜行。
+  // TODO: 职业属性：教育×2＋力量或敏捷×2 (=EDU*2+MAX(STR*2,DEX*2))
   occupation(
     20,
     "赏金猎人",
@@ -717,6 +755,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       { attribute: "DEX", multiplier: 2 },
     ],
   ),
+  // TODO: 本职技能：闪避，格斗（斗殴），恐吓，跳跃，心理学，侦查，任意两项其他个人或时代特长。
+  // TODO: 职业属性：教育×2+力量×2 (=EDU*2+STR*2)
   occupation(
     21,
     "拳击手/摔跤手",
@@ -745,6 +785,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：会计或估价，技艺（任一：如烹饪、裁缝、理发），急救，聆听，外语，心理学，侦查，任意一项其他个人或时代特长。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     22,
     "管家/男仆/女仆",
@@ -778,6 +820,8 @@ export const OCCUPATIONS: OccupationDefinition[] = [
       ),
     ],
   ),
+  // TODO: 本职技能：计算机，电气维修，电子学、图书馆，科学（数学），侦查，任意两项其他个人或时代特长。
+  // TODO: 职业属性：教育×4 (=EDU*4)
   occupation(
     24,
     "程序员/电子工程师（现代）",
