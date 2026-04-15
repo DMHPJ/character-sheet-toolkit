@@ -131,22 +131,26 @@ function resolveOccupationOptionSkill(
   }
 
   const groupSkills = skills.filter((skill) => skill.variantGroup === groupId);
+  const candidateSkills =
+    exactSkill && !groupSkills.some((skill) => skill.id === exactSkill.id)
+      ? [exactSkill, ...groupSkills]
+      : groupSkills;
   const preferredSkill =
-    groupSkills.find(
+    candidateSkills.find(
       (skill) =>
         skill.id === option.skillId &&
         !claimedSkillIds.has(skill.id) &&
         option.subName !== undefined &&
         skill.subName === option.subName,
     ) ??
-    groupSkills.find(
+    candidateSkills.find(
       (skill) =>
         !claimedSkillIds.has(skill.id) &&
         option.subName !== undefined &&
         skill.subName === option.subName,
     ) ??
-    groupSkills.find((skill) => skill.id === option.skillId && !claimedSkillIds.has(skill.id) && isSkillEmptyForOccupation(skill)) ??
-    groupSkills.find((skill) => !claimedSkillIds.has(skill.id) && isSkillEmptyForOccupation(skill));
+    candidateSkills.find((skill) => skill.id === option.skillId && !claimedSkillIds.has(skill.id) && isSkillEmptyForOccupation(skill)) ??
+    candidateSkills.find((skill) => !claimedSkillIds.has(skill.id) && isSkillEmptyForOccupation(skill));
 
   if (preferredSkill) {
     return { skills, skillId: preferredSkill.id };
