@@ -13,6 +13,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import { ReactElement } from "react";
 
 const NAV_ITEMS = [
 	{
@@ -28,6 +29,12 @@ const NAV_ITEMS = [
 		icon: <DescriptionRoundedIcon />,
 	},
 	{
+		href: "/combatList/",
+		label: "武器列表",
+		description: "已有的武器内容列表",
+		icon: <DescriptionRoundedIcon />,
+	},
+	{
 		href: "/kpChecking/",
 		label: "KP审卡",
 		description: "守秘人审核角色卡",
@@ -37,6 +44,37 @@ const NAV_ITEMS = [
 
 export default function AppSider() {
 	const pathname = usePathname();
+	const reactNodeList: Array<ReactElement> = [];
+
+	NAV_ITEMS.map(item => {
+		const isActive = pathname === item.href;
+
+		if (item.label === "KP审卡") {
+			reactNodeList.push(<Box>KP功能</Box>)
+		} else if (item.label === "武器列表") {
+			reactNodeList.push(<Box>通用数据</Box>)
+		}
+		reactNodeList.push(
+			<ListItemButton
+				key={item.href}
+				component={Link}
+				href={item.href}
+				selected={isActive}
+				sx={{
+					borderRadius: 0.5,
+				}}>
+				<ListItemIcon
+					sx={{
+						minWidth: 40,
+						color: isActive ? "primary.main" : "text.secondary",
+						mt: 0.25,
+					}}>
+					{item.icon}
+				</ListItemIcon>
+				<ListItemText primary={item.label} secondary={item.description} />
+			</ListItemButton>
+		)
+	});
 
 	return (
 		<Paper
@@ -58,30 +96,7 @@ export default function AppSider() {
 			</Box>
 
 			<List sx={{ p: 0, display: "grid", gap: 1 }}>
-				{NAV_ITEMS.map((item) => {
-					const isActive = pathname === item.href;
-
-					return (
-						<ListItemButton
-							key={item.href}
-							component={Link}
-							href={item.href}
-							selected={isActive}
-							sx={{
-								borderRadius: 0.5,
-							}}>
-							<ListItemIcon
-								sx={{
-									minWidth: 40,
-									color: isActive ? "primary.main" : "text.secondary",
-									mt: 0.25,
-								}}>
-								{item.icon}
-							</ListItemIcon>
-							<ListItemText primary={item.label} secondary={item.description} />
-						</ListItemButton>
-					);
-				})}
+				{reactNodeList}
 			</List>
 		</Paper>
 	);

@@ -328,7 +328,7 @@ export interface CharacterStore {
   toggleSkillCheck: (skillId: string) => void;
   addSkillVariant: (groupId: string) => void;
   addCustomSkill: () => void;
-  addWeapon: () => void;
+  addWeapon: (weapon?: Omit<Weapon, "id">) => void;
   updateWeapon: (id: string, field: keyof Weapon, value: string | number | boolean) => void;
   removeWeapon: (id: string) => void;
   addInventoryItem: () => void;
@@ -790,22 +790,27 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
       });
     }),
 
-  addWeapon: () =>
+  addWeapon: (weapon) =>
     set((state) => ({
       weapons: [
         ...state.weapons,
-        {
-          id: `w_${Date.now()}`,
-          name: "",
-          type: "",
-          skill: "",
-          damage: "",
-          range: "",
-          penetration: false,
-          attacksPerRound: 1,
-          ammo: "",
-          malfunction: "",
-        },
+        weapon
+          ? {
+              id: `w_${Date.now()}`,
+              ...weapon,
+            }
+          : {
+              id: `w_${Date.now()}`,
+              name: "",
+              type: "",
+              skill: "",
+              damage: "",
+              range: "",
+              penetration: false,
+              attacksPerRound: "1",
+              ammo: "",
+              malfunction: "",
+            },
       ],
     })),
 

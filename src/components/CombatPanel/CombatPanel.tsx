@@ -3,9 +3,11 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
+	Autocomplete,
 	Box,
 	Button,
 	Chip,
+	createFilterOptions,
 	Divider,
 	IconButton,
 	MenuItem,
@@ -22,6 +24,8 @@ import {
 import { alpha } from "@mui/material/styles";
 import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
 import { formatSkillDisplayName } from "@/data/skills";
+import { createWeaponFromCatalog, WEAPON_CATALOG } from "@/data/weapons";
+import type { WeaponCatalogEntry } from "@/data/weapons";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { InventoryItem, Skill, Weapon } from "@/types/character";
@@ -29,6 +33,31 @@ import type { InventoryItem, Skill, Weapon } from "@/types/character";
 const WEAPON_TYPES = ["格斗", "射击", "投掷", "特殊"];
 
 type WeaponFieldValue = string | number | boolean;
+type SkillOption = { id: string; label: string; total: number };
+
+const weaponCatalogFilter = createFilterOptions<WeaponCatalogEntry>({
+	stringify: (option) =>
+		[
+			option.name,
+			option.skill,
+			option.category,
+			option.damage,
+			option.range,
+			option.eras,
+			option.price,
+			option.invention,
+			option.kind,
+		].join(" "),
+});
+
+const WEAPON_SKILL_ALIASES: Record<string, string[]> = {
+	斗殴: ["格斗：斗殴"],
+	手枪: ["射击：手枪"],
+	投掷: ["投掷"],
+	爆破: ["爆破"],
+	电气维修: ["电气维修"],
+	炮术: ["炮术"],
+};
 
 export default function CombatPanel({
 	readOnly,
@@ -61,8 +90,7 @@ export default function CombatPanel({
 	const removeInventoryItem = store?.removeInventoryItem ?? globalRemoveInventoryItem;
 	const isReadOnly = readOnly ?? storeReadOnly;
 
-	const combatSkills = skills
-		.filter((skill) => skill.category === "战斗")
+	const skillOptions = skills
 		.map((skill) => ({
 			id: skill.id,
 			label: formatSkillLabel(skill),
@@ -163,7 +191,7 @@ export default function CombatPanel({
 									<WeaponRow
 										key={weapon.id}
 										weapon={weapon}
-										skillOptions={combatSkills}></WeaponRow>
+										skillOptions={skillOptions}></WeaponRow>
 								))}
 							</TableBody>
 						</Table>
@@ -246,14 +274,15 @@ export default function CombatPanel({
 								武器表
 							</Typography>
 							<Typography variant="body2" color="text.secondary">
-								成功率会根据技能自动换算为常规 / 困难 / 极限
+								点击新增后，可在武器名称中搜索规则书武器或输入自定义名称
 							</Typography>
 						</Box>
 						<Button
 							variant="outlined"
 							startIcon={<AddRoundedIcon />}
-							onClick={addWeapon}
-							disabled={false}>
+							onClick={() => addWeapon()}
+							disabled={false}
+							sx={{ whiteSpace: "nowrap" }}>
 							新增武器
 						</Button>
 					</Box>
@@ -267,7 +296,7 @@ export default function CombatPanel({
 									key={weapon.id}
 									index={index}
 									weapon={weapon}
-									skillOptions={combatSkills}
+									skillOptions={skillOptions}
 									readOnly={false}
 									onChange={(field, value) => updateWeapon(weapon.id, field, value)}
 									onRemove={() => removeWeapon(weapon.id)}
@@ -368,7 +397,7 @@ function WeaponRow({
 	skillOptions,
 }: {
 	weapon: Weapon;
-	skillOptions: { id: string; label: string; total: number }[];
+	skillOptions: SkillOption[];
 }) {
 	const selectedSkill = skillOptions.find((option) => option.label === weapon.skill);
 	const success = selectedSkill?.total ?? 0;
@@ -398,7 +427,7 @@ function WeaponRow({
 			</TableCell>
 			<TableCell align="center" sx={{ minWidth: 40, p: "6px 2px" }}>
 				{success || "—"}/{success ? Math.floor(success / 2) : "—"}/
-				{success ? Math.floor(success / 4) : "—"}
+				{success ? Math.floor(success / 5) : "—"}
 			</TableCell>
 		</TableRow>
 	);
@@ -426,13 +455,14 @@ function WeaponEditor({
 }: {
 	index: number;
 	weapon: Weapon;
-	skillOptions: { id: string; label: string; total: number }[];
+	skillOptions: SkillOption[];
 	readOnly: boolean;
 	onChange: (field: keyof Weapon, value: WeaponFieldValue) => void;
 	onRemove: () => void;
 }) {
 	const selectedSkill = skillOptions.find((option) => option.label === weapon.skill);
 	const success = selectedSkill?.total ?? 0;
+	const effectiveSkillOptions = getWeaponSkillOptions(skillOptions, weapon);
 
 	return (
 		<Box
@@ -468,11 +498,30 @@ function WeaponEditor({
 					</>
 				) : (
 					<>
-						<TextField
-							label="武器名称"
-							value={weapon.name}
-							onChange={(event) => onChange("name", event.target.value)}
-							fullWidth
+						<Autocomplete
+							freeSolo
+							options={WEAPON_CATALOG}
+							filterOptions={weaponCatalogFilter}
+							getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
+							inputValue={weapon.name}
+							onInputChange={(_, value) => onChange("name", value)}
+							onChange={(_, value) => {
+								if (!value || typeof value === "string") {
+									return;
+								}
+								applyCatalogWeapon(value, skillOptions, onChange);
+							}}
+							renderOption={(props, option) => (
+								<Box component="li" {...props} sx={{ display: "grid !important", gap: 0.25 }}>
+									<Typography variant="body2">{option.name}</Typography>
+									<Typography variant="caption" color="text.secondary">
+										{option.skill} · {option.damage} · {option.eras || "时代不限"}
+									</Typography>
+								</Box>
+							)}
+							renderInput={(params) => (
+								<TextField {...params} label="武器名称" fullWidth size="small" />
+							)}
 							size="small"
 						/>
 						<TextField
@@ -495,7 +544,7 @@ function WeaponEditor({
 							onChange={(event) => onChange("skill", event.target.value)}
 							fullWidth
 							size="small">
-							{skillOptions.map((option) => (
+							{effectiveSkillOptions.map((option) => (
 								<MenuItem key={option.id} value={option.label}>
 									{option.label}
 								</MenuItem>
@@ -541,9 +590,8 @@ function WeaponEditor({
 						/>
 						<TextField
 							label="次数"
-							type="number"
 							value={weapon.attacksPerRound || ""}
-							onChange={(event) => onChange("attacksPerRound", Number(event.target.value) || 0)}
+							onChange={(event) => onChange("attacksPerRound", event.target.value)}
 							fullWidth
 							size="small"
 						/>
@@ -640,6 +688,67 @@ function EmptyHint({ text }: { text: string }) {
 			</Typography>
 		</Box>
 	);
+}
+
+function applyCatalogWeapon(
+	entry: WeaponCatalogEntry,
+	skillOptions: SkillOption[],
+	onChange: (field: keyof Weapon, value: WeaponFieldValue) => void,
+) {
+	const weapon = createWeaponFromCatalog(entry, resolveCatalogSkill(entry, skillOptions));
+
+	onChange("name", weapon.name);
+	onChange("type", weapon.type);
+	onChange("skill", weapon.skill);
+	onChange("damage", weapon.damage);
+	onChange("range", weapon.range);
+	onChange("penetration", weapon.penetration);
+	onChange("attacksPerRound", weapon.attacksPerRound);
+	onChange("ammo", weapon.ammo);
+	onChange("malfunction", weapon.malfunction);
+}
+
+function resolveCatalogSkill(entry: WeaponCatalogEntry, skillOptions: SkillOption[]): string {
+	const aliases = WEAPON_SKILL_ALIASES[entry.skill] ?? [];
+	const candidates = [
+		entry.skill,
+		...aliases,
+		`${entry.category}：${entry.skill}`,
+		entry.category === "射击" ? `射击：${entry.skill}` : "",
+		entry.category === "格斗" ? `格斗：${entry.skill}` : "",
+	].filter(Boolean);
+	const exact = skillOptions.find((option) => candidates.includes(option.label));
+	if (exact) {
+		return exact.label;
+	}
+
+	const emptyVariant = skillOptions.find((option) => option.label === entry.category);
+	if (emptyVariant) {
+		return emptyVariant.label;
+	}
+
+	const categoryFallback = skillOptions.find((option) => option.label.startsWith(`${entry.category}：`));
+	if (categoryFallback) {
+		return categoryFallback.label;
+	}
+
+	const namedFallback = skillOptions.find((option) => option.label === entry.skill);
+	return namedFallback?.label ?? entry.skill;
+}
+
+function getWeaponSkillOptions(skillOptions: SkillOption[], weapon: Weapon): SkillOption[] {
+	if (!weapon.skill || skillOptions.some((option) => option.label === weapon.skill)) {
+		return skillOptions;
+	}
+
+	return [
+		...skillOptions,
+		{
+			id: `${weapon.id}_imported_skill`,
+			label: weapon.skill,
+			total: 0,
+		},
+	];
 }
 
 function getSkillTotal(skill?: Skill): number {
