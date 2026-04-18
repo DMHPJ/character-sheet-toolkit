@@ -274,7 +274,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
     "price": "——",
     "invention": "1894年",
     "kind": "",
-    "notes": "但是匕首，小型棍等很难被缴械，\n\n精通这种格斗技巧的甚至无法被格挡"
+    "notes": "但是匕首，小型棍等很难被缴械，精通这种格斗技巧的甚至无法被格挡"
   },
   {
     "id": "weapon_016",
@@ -363,7 +363,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_021",
-    "name": "(罕见)掷矛",
+    "name": "掷矛",
     "category": "投掷",
     "skill": "投掷",
     "damage": "1D8+半DB",
@@ -465,7 +465,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_027",
-    "name": "(罕见)战斗回力镖",
+    "name": "战斗回力镖",
     "category": "投掷",
     "skill": "投掷",
     "damage": "1D8+半DB",
@@ -499,7 +499,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_029",
-    "name": "(罕见)遂发枪",
+    "name": "遂发枪",
     "category": "射击",
     "skill": "手枪",
     "damage": "1D6+1",
@@ -512,7 +512,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
     "price": "30/300",
     "invention": "1547年",
     "kind": "手枪",
-    "notes": "正常来说每回合只能击发一次，\n括号内是连发最大数。"
+    "notes": "正常来说每回合只能击发一次，括号内是连发最大数。"
   },
   {
     "id": "weapon_030_22_5_6mm",
@@ -686,7 +686,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_040_41_10_4mm",
-    "name": "(不合时代/罕见).41(10.4mm) 左轮手枪",
+    "name": ".41(10.4mm) 左轮手枪",
     "category": "射击",
     "skill": "手枪",
     "damage": "1D10",
@@ -771,7 +771,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_045_58_14_7mm_1855",
-    "name": "(罕见).58 (14.7mm)1855 年式春田步枪",
+    "name": ".58 (14.7mm)1855 年式春田步枪",
     "category": "射击",
     "skill": "步枪/霰弹枪",
     "damage": "1D10+4",
@@ -784,7 +784,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
     "price": "25/350",
     "invention": "1885年",
     "kind": "步枪",
-    "notes": "这种步枪是不可连发的\n通常一次只能发射一发\n\n威力极大"
+    "notes": "这种步枪是不可连发的，通常一次只能发射一发，威力极大"
   },
   {
     "id": "weapon_046_22_5_6mm",
@@ -971,7 +971,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
     "price": "400/1000",
     "invention": "1890年",
     "kind": "霰弹枪",
-    "notes": "霰弹枪的伤害分三个范围\n\nXD6的X代表弹丸数\n\n霰弹枪属于非贯穿武器"
+    "notes": "霰弹枪的伤害分三个范围，XD6的X代表弹丸数，霰弹枪属于非贯穿武器"
   },
   {
     "id": "weapon_057_20",
@@ -1077,7 +1077,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_063_10",
-    "name": "(不合时代/罕见)10 号霰弹枪(双管)",
+    "name": "10 号霰弹枪(双管)",
     "category": "射击",
     "skill": "步枪/霰弹枪",
     "damage": "4D6+2/2D6+1/1D4",
@@ -1086,7 +1086,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
     "attacksPerRound": "1 or 2",
     "ammo": "2",
     "malfunction": "100",
-    "eras": "1920s，罕见",
+    "eras": "1920s,罕见",
     "price": "稀有",
     "invention": "1790年",
     "kind": "",
@@ -1141,7 +1141,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
     "price": "——/200",
     "invention": "1951年",
     "kind": "突击步枪",
-    "notes": "单发射击以[步枪]技能判定，\n\n全自动射击以[冲锋枪]技能判定"
+    "notes": "单发射击以[步枪]技能判定，全自动射击以[冲锋枪]技能判定"
   },
   {
     "id": "weapon_067_ak_74",
@@ -1383,7 +1383,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_081_1882",
-    "name": "(不合时代/罕见)1882 年式加特林",
+    "name": "1882 年式加特林",
     "category": "射击",
     "skill": "机枪",
     "damage": "2D6+4",
@@ -1392,7 +1392,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
     "attacksPerRound": "全自动",
     "ammo": "200",
     "malfunction": "96",
-    "eras": "1920s，罕见",
+    "eras": "1920s,罕见",
     "price": "2000/14000",
     "invention": "1882年",
     "kind": "机枪",
@@ -1485,7 +1485,7 @@ export const WEAPON_CATALOG: WeaponCatalogEntry[] = [
   },
   {
     "id": "weapon_087_fn_5_56mm",
-    "name": "FN 米尼米(5.56mm)，弹夹/弹带",
+    "name": "FN 米尼米(5.56mm),弹夹/弹带",
     "category": "射击",
     "skill": "机枪",
     "damage": "2D6",
