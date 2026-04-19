@@ -458,7 +458,7 @@ function areCoreAttributesCompleted(attributes: Attributes): boolean {
 function syncCurrentStatusWithDerived(
   currentStatus: CurrentStatus,
   derived: DerivedStats,
-  options?: { initializeEmpty?: boolean },
+  options?: { initializeEmpty?: boolean; initialSAN?: number },
 ): CurrentStatus {
   const nextStatus = {
     ...currentStatus,
@@ -470,7 +470,7 @@ function syncCurrentStatusWithDerived(
   if (options?.initializeEmpty) {
     nextStatus.currentHP = derived.maxHP;
     nextStatus.currentMP = derived.maxMP;
-    nextStatus.currentSAN = derived.maxSAN;
+    nextStatus.currentSAN = Math.min(options.initialSAN ?? derived.maxSAN, derived.maxSAN);
   }
 
   return nextStatus;
@@ -561,6 +561,7 @@ export function createCharacterStoreSnapshot(
     currentStatus: shouldInitializeCurrentStatus
       ? syncCurrentStatusWithDerived(nextState.currentStatus, nextState.derived, {
           initializeEmpty: true,
+          initialSAN: nextState.attributes.POW,
         })
       : nextState.currentStatus,
     setReadOnly: NOOP,
@@ -656,6 +657,7 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
             ...nextState,
             currentStatus: syncCurrentStatusWithDerived(nextState.currentStatus, nextState.derived, {
               initializeEmpty: true,
+              initialSAN: nextState.attributes.POW,
             }),
           }
         : nextState;
@@ -909,6 +911,7 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
                 ...nextState,
                 currentStatus: syncCurrentStatusWithDerived(nextState.currentStatus, nextState.derived, {
                   initializeEmpty: true,
+                  initialSAN: nextState.attributes.POW,
                 }),
               }
             : nextState;
