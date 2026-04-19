@@ -1,6 +1,7 @@
 ﻿"use client";
 
-import { Box, Button, LinearProgress, Paper, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, Button, LinearProgress, Paper, TextField, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 
@@ -42,7 +43,20 @@ export default function StatusPanel({ readOnly }: { readOnly?: boolean }) {
 }
 
 function StatBlock({ label, current, max, extra, color, onChange, inGrid, readOnly }: { label: string; current: number; max: number; extra?: string; color: string; onChange: (value: number) => void; inGrid: boolean; readOnly: boolean }) {
+  const [draftCurrent, setDraftCurrent] = useState(String(current));
   const progress = max > 0 ? Math.min(100, Math.max(0, (current / max) * 100)) : 0;
+  const inputWidth = inGrid ? "4rem" : "12rem";
+
+  useEffect(() => {
+    setDraftCurrent(String(current));
+  }, [current]);
+
+  const commitCurrent = () => {
+    const parsedValue = Number(draftCurrent);
+    const nextValue = Number.isFinite(parsedValue) ? Math.min(max, Math.max(0, Math.floor(parsedValue))) : current;
+    setDraftCurrent(String(nextValue));
+    onChange(nextValue);
+  };
 
   return (
     <Paper sx={{ p: 2.5, backgroundColor: alpha("#0d1110", 0.26) }}>
@@ -67,9 +81,30 @@ function StatBlock({ label, current, max, extra, color, onChange, inGrid, readOn
 
         <Box sx={{ display: "flex", gap: 1, alignItems: "center", justifyContent: "center" }}>
           <Button sx={{ minWidth: inGrid ? "1rem" : "64px" }} variant="outlined" onClick={() => onChange(Math.max(0, current - 1))} disabled={readOnly}>-1</Button>
-          <Box sx={{ minWidth: inGrid ? "4rem" : "12rem", py: 1, borderRadius: 2.5, textAlign: "center", border: (theme) => `1px solid ${theme.palette.divider}`, backgroundColor: alpha("#0d1110", 0.45) }}>
-            <Typography variant="h6">{current}</Typography>
-          </Box>
+          <TextField
+            value={draftCurrent}
+            onChange={(event) => {
+              const nextValue = event.target.value;
+              if (/^\d*$/.test(nextValue)) {
+                setDraftCurrent(nextValue);
+              }
+            }}
+            onBlur={commitCurrent}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+            }}
+            disabled={readOnly}
+            size="small"
+            sx={{
+              width: inputWidth,
+              "& .MuiInputBase-input": {
+                py: 1,
+                textAlign: "center",
+              },
+            }}
+          />
           <Button sx={{ minWidth: inGrid ? "1rem" : "64px" }} variant="outlined" onClick={() => onChange(Math.min(max, current + 1))} disabled={readOnly}>+1</Button>
         </Box>
       </Box>
