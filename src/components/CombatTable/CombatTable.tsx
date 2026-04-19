@@ -13,17 +13,7 @@ import {
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import {
-	type CharacterStoreSnapshot,
-} from "@/stores/useCharacterStore";
 import { WEAPON_CATALOG, WeaponCatalogEntry } from "@/data/weapons";
-import { Weapon } from "@/types/character";
-
-interface ImportedCharacterRow {
-	id: string;
-	fileName: string;
-	store: CharacterStoreSnapshot;
-}
 
 export default function KpCheckingTable() {
 
