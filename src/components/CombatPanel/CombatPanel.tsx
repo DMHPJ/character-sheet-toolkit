@@ -438,7 +438,7 @@ function InventoryItemRow({ inventory }: { inventory: InventoryItem }) {
 		<TableRow hover>
 			<TableCell sx={{ minWidth: 40, p: "6px" }}>{inventory.name}</TableCell>
 			<TableCell sx={{ minWidth: 40, p: "6px 2px" }}>{inventory.status}</TableCell>
-			<TableCell align="center" sx={{ minWidth: 40, p: "6px 2px" }}>
+			<TableCell sx={{ minWidth: 40, p: "6px 2px" }}>
 				{inventory.location}
 			</TableCell>
 		</TableRow>
