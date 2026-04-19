@@ -46,7 +46,7 @@ export default function OccupationPanel({
       <Autocomplete
         size="small"
         options={OCCUPATIONS}
-        value={occupation}
+        value={occupation ?? null}
         disabled={isReadOnly}
         getOptionLabel={(option) => `${option.id}. ${option.name}`}
         isOptionEqualToValue={(option, value) => option.id === value.id}
