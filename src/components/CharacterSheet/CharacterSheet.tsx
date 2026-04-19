@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
 import GavelRoundedIcon from "@mui/icons-material/GavelRounded";
 import HistoryEduRoundedIcon from "@mui/icons-material/HistoryEduRounded";
@@ -29,10 +29,38 @@ const TABS: { id: TabId; label: string; icon: ReactElement }[] = [
 	{ id: "property", label: "资产", icon: <AccountBalanceWalletRoundedIcon fontSize="small" /> },
 ];
 
+const SHEET_GAP_PX = 24;
+const PAGE_PADDING_BLOCK = 36;
+
 export default function CharacterSheet({ readOnly = false }: { readOnly?: boolean }) {
 	const [activeTab, setActiveTab] = useState<TabId>("status");
 	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+	const [headerHeight, setHeaderHeight] = useState(0);
+	const headerRef = useRef<HTMLDivElement | null>(null);
 	const derived = useCharacterStore((state) => state.derived);
+
+	useEffect(() => {
+		const headerElement = headerRef.current;
+
+		if (!headerElement) {
+			return;
+		}
+
+		const updateHeaderHeight = () => {
+			setHeaderHeight(Math.ceil(headerElement.getBoundingClientRect().height));
+		};
+
+		updateHeaderHeight();
+
+		const resizeObserver = new ResizeObserver(updateHeaderHeight);
+		resizeObserver.observe(headerElement);
+		window.addEventListener("resize", updateHeaderHeight);
+
+		return () => {
+			resizeObserver.disconnect();
+			window.removeEventListener("resize", updateHeaderHeight);
+		};
+	}, []);
 
 	const tabContent = useMemo(() => {
 		if (activeTab === "status") return <StatusPanel readOnly={readOnly} />;
@@ -41,23 +69,30 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 		return <AssetsPanel readOnly={readOnly} />;
 	}, [activeTab, readOnly]);
 
+	const sheetContentHeight =
+		headerHeight > 0 ? `calc(100vh - ${headerHeight + SHEET_GAP_PX + PAGE_PADDING_BLOCK}px)` : "auto";
+
 	return (
 		<Box sx={{ mx: "1vw" }}>
 			<Box sx={{ display: "grid", gap: 3 }}>
-				<Header onOpenInfo={() => setInfoDialogOpen(true)} readOnly={readOnly} />
+				<Box ref={headerRef}>
+					<Header onOpenInfo={() => setInfoDialogOpen(true)} readOnly={readOnly} />
+				</Box>
 				{readOnly ? (
 					<ReadOnlyCharacterSheet />
-        ) : (
+				) : (
 					<Box
 						sx={{
 							display: "grid",
 							gap: 3,
 							gridTemplateColumns: { xs: "1fr", xl: "minmax(360px, 0.68fr) minmax(0, 1.55fr)" },
-							alignItems: "start",
+							alignItems: { xs: "start", xl: "stretch" },
+							height: { xl: sheetContentHeight },
+							minHeight: { xl: 0 },
 						}}>
-						<Box sx={{ display: "grid", gap: 3 }}>
+						<Box sx={{ height: { xl: "100%" }, minHeight: { xl: 0 }, overflow: { xl: "auto" } }}>
 							<AttributePanel readOnly={false} />
-							<OccupationPanel readOnly={false} />
+							<OccupationPanel sx={{marginBlock: 3}} readOnly={false} />
 
 							<Paper sx={{ overflow: "hidden", backgroundColor: alpha("#171d1b", 0.86) }}>
 								<Box
@@ -112,7 +147,7 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 							</Paper>
 						</Box>
 
-						<SkillTable readOnly={false} />
+						<SkillTable readOnly={false} sx={{ height: { xl: "100%" }, minHeight: { xl: 0 } }} />
 					</Box>
 				)}
 			</Box>

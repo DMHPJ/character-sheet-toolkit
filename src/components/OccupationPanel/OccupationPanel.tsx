@@ -13,16 +13,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import { alpha, SxProps } from "@mui/material/styles";
 import { OCCUPATIONS, getOccupationById } from "@/data/occupations";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import { Theme } from "@emotion/react";
 
 export default function OccupationPanel({
   inDialog = false,
   readOnly,
+  sx
 }: {
   inDialog?: boolean;
   readOnly?: boolean;
+  sx?: SxProps<Theme>;
 }) {
   const storeReadOnly = useCharacterStore((state) => state.readOnly);
   const info = useCharacterStore((state) => state.info);
@@ -131,7 +134,15 @@ export default function OccupationPanel({
     return content;
   }
 
-  return <Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) }}>{content}</Paper>;
+  return (
+    <Paper 
+      sx={[
+        { p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}>
+        {content}
+      </Paper>
+  );
 }
 
 function SummaryCard({ label, value }: { label: string; value: string }) {

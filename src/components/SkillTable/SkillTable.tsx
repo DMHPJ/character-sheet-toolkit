@@ -23,6 +23,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import type { SxProps, Theme } from "@mui/material/styles";
 import {
 	EXPANDABLE_SKILL_GROUPS,
 	formatSkillDisplayName,
@@ -35,9 +36,11 @@ import type { Skill } from "@/types/character";
 export default function SkillTable({
 	readOnly,
 	store,
+	sx,
 }: {
 	readOnly?: boolean;
 	store?: CharacterStoreSnapshot;
+	sx?: SxProps<Theme>;
 }) {
 	const globalReadOnly = useCharacterStore((state) => state.readOnly);
 	const globalSkills = useCharacterStore((state) => state.skills);
@@ -82,8 +85,18 @@ export default function SkillTable({
 	const rightSkills = baseSkills.slice(splitIndex);
 
 	return (
-		<Paper sx={{ p: { xs: 2, md: 2 }, backgroundColor: alpha("#171d1b", 0.84) }}>
-			<Box sx={{ display: "grid", gap: 2.5 }}>
+		<Paper
+			sx={[
+				{
+					p: { xs: 2, md: 2 },
+					backgroundColor: alpha("#171d1b", 0.84),
+					display: "flex",
+					flexDirection: "column",
+					overflow: "hidden",
+				},
+				...(Array.isArray(sx) ? sx : [sx]),
+			]}>
+			<Box sx={{ display: "flex", flex: 1, minHeight: 0, flexDirection: "column", gap: 2.5 }}>
 				{isReadOnly ? (
 					<Box
 						sx={{
@@ -221,9 +234,11 @@ export default function SkillTable({
 				<Box
 					sx={{
 						display: "grid",
+						flex: 1,
+						minHeight: 0,
 						gap: 2,
 						gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) minmax(0, 1fr)" },
-						alignItems: "start",
+						alignItems: "stretch",
 					}}>
 					<SkillTableSection
 						skills={leftSkills}
@@ -268,7 +283,13 @@ function SkillTableSection({
 }) {
 	return (
 		<TableContainer
-			sx={{ borderRadius: 0.5, border: (theme) => `1px solid ${theme.palette.divider}` }}>
+			sx={{
+				height: "100%",
+				minHeight: 0,
+				overflow: "auto",
+				borderRadius: 0.5,
+				border: (theme) => `1px solid ${theme.palette.divider}`,
+			}}>
 			<Table stickyHeader size="small">
 				<TableHead>
 					<TableRow>

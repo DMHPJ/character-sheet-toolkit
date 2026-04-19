@@ -176,7 +176,7 @@ export default function Header({
             <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1.25, alignItems: "center" }}>
               <Chip label={info.occupation || "未设置职业"} color="secondary" variant="outlined" />
               <Chip label={info.era || "未设置时代"} variant="outlined" />
-              <Chip label={info.player || "未填写玩家"} variant="outlined" />
+              {/* <Chip label={info.player || "未填写玩家"} variant="outlined" /> */}
               <Button variant="outlined" startIcon={<GetAppRoundedIcon />} onClick={handleImport}>
                 导入人物卡
               </Button>
