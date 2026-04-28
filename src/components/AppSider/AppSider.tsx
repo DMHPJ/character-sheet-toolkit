@@ -1,88 +1,73 @@
-"use client";
-
-import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { ClipboardCheck, FileText, IdCard, Plus } from "lucide-react";
 import {
-	Box,
-	List,
-	ListItemButton,
-	ListItemIcon,
-	ListItemText,
-	Paper,
-	Typography,
-} from "@mui/material";
-import { alpha } from "@mui/material/styles";
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuAction,
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
 const NAV_ITEMS = [
 	{
 		href: "/",
 		label: "角色卡",
 		description: "调查员创建与管理",
-		icon: <DescriptionRoundedIcon />,
+		icon: IdCard,
 	},
-  {
+	{
 		href: "/simplify/",
 		label: "简化卡",
 		description: "调查员信息简化展示",
-		icon: <DescriptionRoundedIcon />,
+		icon: FileText,
 	},
 	{
 		href: "/kpChecking/",
-		label: "KP审卡",
-		description: "守秘人审核角色卡",
-		icon: <DescriptionRoundedIcon />,
+		label: "KP 审卡",
+		description: "守秘人核查角色卡",
+		icon: ClipboardCheck,
 	},
 ];
 
-export default function AppSider() {
-	const pathname = usePathname();
-
+export function AppSidebar() {
 	return (
-		<Paper
-			component="aside"
-			sx={{
-				width: { xs: 0, lg: 320 },
-				px: { xs: 0, lg: 2 },
-        border: { xs: "none" },
-				backgroundColor: alpha("#171d1b", 0.9),
-        overflow: "hidden",
-			}}>
-			<Box sx={{ px: 1, pt: 1, pb: 2.5 }}>
-				<Typography variant="overline" color="secondary.main" sx={{ letterSpacing: "0.18em" }}>
-					Navigation
-				</Typography>
-				<Typography variant="h2" sx={{ fontSize: "1.2rem", mt: 0.5 }}>
-					功能导航
-				</Typography>
-			</Box>
-
-			<List sx={{ p: 0, display: "grid", gap: 1 }}>
-				{NAV_ITEMS.map((item) => {
-					const isActive = pathname === item.href;
-
-					return (
-						<ListItemButton
-							key={item.href}
-							component={Link}
-							href={item.href}
-							selected={isActive}
-							sx={{
-								borderRadius: 0.5,
-							}}>
-							<ListItemIcon
-								sx={{
-									minWidth: 40,
-									color: isActive ? "primary.main" : "text.secondary",
-									mt: 0.25,
-								}}>
-								{item.icon}
-							</ListItemIcon>
-							<ListItemText primary={item.label} secondary={item.description} />
-						</ListItemButton>
-					);
-				})}
-			</List>
-		</Paper>
+		<Sidebar>
+			<SidebarHeader>
+				<div className="grid gap-1 px-2 py-3">
+					<div className="text-sm font-semibold uppercase tracking-widest">CoC Toolkit</div>
+					<div className="text-xs text-muted-foreground">Keeper archive console</div>
+				</div>
+			</SidebarHeader>
+			<SidebarContent>
+				<SidebarGroup>
+					<SidebarGroupLabel>工作区</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{NAV_ITEMS.map((item) => (
+								<SidebarMenuItem key={item.href}>
+									<SidebarMenuButton render={<a href={item.href} />}>
+										<item.icon data-icon="inline-start" />
+										<span>{item.label}</span>
+									</SidebarMenuButton>
+									<SidebarMenuAction title={item.description}>
+										<Plus />
+									</SidebarMenuAction>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+			</SidebarContent>
+			<SidebarFooter>
+				<div className="px-2 py-3 text-xs leading-relaxed text-muted-foreground">
+					克苏鲁的呼唤第七版调查员档案工具
+				</div>
+			</SidebarFooter>
+		</Sidebar>
 	);
 }

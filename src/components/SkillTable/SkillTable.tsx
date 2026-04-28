@@ -1,28 +1,12 @@
-﻿"use client";
+"use client";
 
+import { Plus, Search, X, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
-import {
-	Autocomplete,
-	Box,
-	Button,
-	Checkbox,
-	Chip,
-	InputAdornment,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	TextField,
-	Typography,
-} from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Panel, StatusBadge } from "@/components/SheetPrimitives/SheetPrimitives";
 import {
 	EXPANDABLE_SKILL_GROUPS,
 	formatSkillDisplayName,
@@ -31,6 +15,7 @@ import {
 import { useCharacterStore } from "@/stores/useCharacterStore";
 import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { Skill } from "@/types/character";
+import { cn } from "@/lib/utils";
 
 export default function SkillTable({
 	readOnly,
@@ -73,158 +58,60 @@ export default function SkillTable({
 		);
 	}, [baseSkills, search]);
 
-	const searchOptions = useMemo(() => {
-		return Array.from(new Set(baseSkills.map((skill) => formatSkillDisplayName(skill))));
-	}, [baseSkills]);
-
 	const splitIndex = Math.ceil(baseSkills.length / 2);
 	const leftSkills = baseSkills.slice(0, splitIndex);
 	const rightSkills = baseSkills.slice(splitIndex);
 
 	return (
-		<Paper sx={{ p: { xs: 2, md: 2 }, backgroundColor: alpha("#171d1b", 0.84) }}>
-			<Box sx={{ display: "grid", gap: 2.5 }}>
-				{isReadOnly ? (
-					<Box
-						sx={{
-							display: "flex",
-							gap: 1.5,
-							justifyContent: "space-between",
-							flexDirection: { xs: "column", md: "row" },
-						}}>
-						<Box sx={{ display: "grid", gap: 1 }}>
-							<Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-								<Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-									技能表
-								</Typography>
-								<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-									<Chip
-										label={`职业点 ${occupationSummary.occupationPointsSpent}/${occupationSummary.occupationPointsTotal}`}
-										color={occupationSummary.occupationPointsRemaining < 0 ? "error" : "secondary"}
-										variant="outlined"
-									/>
-									<Chip
-										label={`兴趣点 ${occupationSummary.interestPointsSpent}/${occupationSummary.interestPointsTotal}`}
-										color={occupationSummary.interestPointsRemaining < 0 ? "error" : "primary"}
-										variant="outlined"
-									/>
-									{occupationSummary.creditRatingMin !== null && (
-										<Chip
-											icon={
-												!occupationSummary.creditRatingInRange ? (
-													<WarningAmberRoundedIcon />
-												) : undefined
-											}
-											label={`信用评级 ${occupationSummary.creditRatingValue}（应为 ${occupationSummary.creditRatingMin}-${occupationSummary.creditRatingMax}）`}
-											color={occupationSummary.creditRatingInRange ? "success" : "warning"}
-											variant="outlined"
-										/>
-									)}
-								</Box>
-							</Box>
-						</Box>
-					</Box>
-				) : (
-					<Box
-						sx={{
-							display: "flex",
-							gap: 1.5,
-							justifyContent: "space-between",
-							flexDirection: { xs: "column", md: "row" },
-						}}>
-						<Box sx={{ display: "grid", gap: 1 }}>
-							<Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-								<Typography variant="h2" sx={{ fontSize: "1.15rem" }}>
-									技能表
-								</Typography>
-								<Typography variant="body2" color="text.secondary">
-									职业点只允许分配到当前职业模板覆盖的技能，兴趣点按 `INT×2` 计算
-								</Typography>
-							</Box>
-							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-								<Chip
-									label={`职业点 ${occupationSummary.occupationPointsSpent}/${occupationSummary.occupationPointsTotal}`}
-									color={occupationSummary.occupationPointsRemaining < 0 ? "error" : "secondary"}
-									variant="outlined"
-								/>
-								<Chip
-									label={`兴趣点 ${occupationSummary.interestPointsSpent}/${occupationSummary.interestPointsTotal}`}
-									color={occupationSummary.interestPointsRemaining < 0 ? "error" : "primary"}
-									variant="outlined"
-								/>
-								{occupationSummary.creditRatingMin !== null && (
-									<Chip
-										icon={
-											!occupationSummary.creditRatingInRange ? (
-												<WarningAmberRoundedIcon />
-											) : undefined
-										}
-										label={`信用评级 ${occupationSummary.creditRatingValue}（应为 ${occupationSummary.creditRatingMin}-${occupationSummary.creditRatingMax}）`}
-										color={occupationSummary.creditRatingInRange ? "success" : "warning"}
-										variant="outlined"
-									/>
-								)}
-							</Box>
+		<Panel title="技能表" description={isReadOnly ? undefined : "职业点只允许分配到当前职业模板覆盖的技能，兴趣点按 INT×2 计算"}>
+			<div className="grid gap-5">
+				<div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+					<div className="grid gap-3">
+						<div className="flex flex-wrap gap-2">
+							<StatusBadge tone={occupationSummary.occupationPointsRemaining < 0 ? "danger" : "default"}>
+								职业点 {occupationSummary.occupationPointsSpent}/{occupationSummary.occupationPointsTotal}
+							</StatusBadge>
+							<StatusBadge tone={occupationSummary.interestPointsRemaining < 0 ? "danger" : "default"}>
+								兴趣点 {occupationSummary.interestPointsSpent}/{occupationSummary.interestPointsTotal}
+							</StatusBadge>
+							{occupationSummary.creditRatingMin !== null ? (
+								<StatusBadge tone={occupationSummary.creditRatingInRange ? "success" : "warning"}>
+									{!occupationSummary.creditRatingInRange ? <TriangleAlert data-icon="inline-start" /> : null}
+									信用评级 {occupationSummary.creditRatingValue}（应为 {occupationSummary.creditRatingMin}-{occupationSummary.creditRatingMax}）
+								</StatusBadge>
+							) : null}
+						</div>
 
-							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+						{!isReadOnly ? (
+							<div className="flex flex-wrap gap-2">
 								{EXPANDABLE_SKILL_GROUPS.map((group) => (
-									<Button
-										key={group.id}
-										variant="outlined"
-										size="small"
-										startIcon={<AddRoundedIcon />}
-										onClick={() => addSkillVariant(group.id)}>
+									<Button key={group.id} variant="outline" size="xs" onClick={() => addSkillVariant(group.id)}>
+										<Plus data-icon="inline-start" />
 										新增{group.label}
 									</Button>
 								))}
-								<Button
-									variant="outlined"
-									size="small"
-									startIcon={<AddRoundedIcon />}
-									onClick={addCustomSkill}>
+								<Button variant="outline" size="xs" onClick={addCustomSkill}>
+									<Plus data-icon="inline-start" />
 									新增自定义技能
 								</Button>
-							</Box>
-						</Box>
+							</div>
+						) : null}
+					</div>
 
-						<Autocomplete
-							freeSolo
-							options={searchOptions}
-							inputValue={search}
-							onInputChange={(_, value) => setSearch(value)}
-							sx={{ minWidth: { xs: "100%", md: 280 } }}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									placeholder="搜索技能或子类"
-									size="small"
-									slotProps={{
-										...params.slotProps,
-										input: {
-											...params.slotProps?.input,
-											startAdornment: (
-												<>
-													<InputAdornment position="start">
-														<SearchRoundedIcon fontSize="small" />
-													</InputAdornment>
-													{params.slotProps?.input?.startAdornment}
-												</>
-											),
-										},
-									}}
-								/>
-							)}
-						/>
-					</Box>
-				)}
+					{!isReadOnly ? (
+						<label className="relative min-w-full md:min-w-72">
+							<Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+							<Input
+								className="pl-9"
+								value={search}
+								onChange={(event) => setSearch(event.target.value)}
+								placeholder="搜索技能或子类"
+							/>
+						</label>
+					) : null}
+				</div>
 
-				<Box
-					sx={{
-						display: "grid",
-						gap: 2,
-						gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) minmax(0, 1fr)" },
-						alignItems: "start",
-					}}>
+				<div className="grid gap-4 md:grid-cols-2 md:items-start">
 					<SkillTableSection
 						skills={leftSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
@@ -241,9 +128,9 @@ export default function SkillTable({
 						onFieldChange={setSkillField}
 						onToggleCheck={toggleSkillCheck}
 					/>
-				</Box>
-			</Box>
-		</Paper>
+				</div>
+			</div>
+		</Panel>
 	);
 }
 
@@ -267,30 +154,19 @@ function SkillTableSection({
 	onToggleCheck: (id: string) => void;
 }) {
 	return (
-		<TableContainer
-			sx={{ borderRadius: 0.5, border: (theme) => `1px solid ${theme.palette.divider}` }}>
-			<Table stickyHeader size="small">
-				<TableHead>
-					<TableRow>
-						<TableCell padding="checkbox">成功</TableCell>
-						<TableCell sx={{ p: "2px" }}>技能</TableCell>
-						<TableCell sx={{ p: "2px" }} align="center">
-							初始
-						</TableCell>
-						<TableCell sx={{ p: "2px" }} align="center">
-							成长
-						</TableCell>
-						<TableCell sx={{ p: "2px" }} align="center">
-							职业
-						</TableCell>
-						<TableCell sx={{ p: "2px" }} align="center">
-							兴趣
-						</TableCell>
-						<TableCell sx={{ minWidth: 128 }} align="center">
-							常规/困难/极限
-						</TableCell>
+		<div className="overflow-hidden border border-border/60">
+			<Table>
+				<TableHeader>
+					<TableRow className="bg-background/60">
+						<TableHead className="w-12 text-center">成功</TableHead>
+						<TableHead>技能</TableHead>
+						<TableHead className="text-center">初始</TableHead>
+						<TableHead className="text-center">成长</TableHead>
+						<TableHead className="text-center">职业</TableHead>
+						<TableHead className="text-center">兴趣</TableHead>
+						<TableHead className="text-center">常规/困难/极限</TableHead>
 					</TableRow>
-				</TableHead>
+				</TableHeader>
 				<TableBody>
 					{skills.map((skill) => (
 						<SkillRow
@@ -305,7 +181,7 @@ function SkillTableSection({
 					))}
 				</TableBody>
 			</Table>
-		</TableContainer>
+		</div>
 	);
 }
 
@@ -337,71 +213,37 @@ function SkillRow({
 		skill.variantGroup || /（.*）|\(|[①②③：]/.test(skill.name) || skill.isCustom,
 	);
 	const occupationDisabled = skill.cannotAssignOccupation || !isOccupationSkill;
-	const occupationDisabledReason = skill.cannotAssignOccupation
-		? "特殊禁用"
-		: !isOccupationSkill
-			? "非本职"
-			: undefined;
+	const occupationDisabledReason = skill.cannotAssignOccupation ? "特殊禁用" : !isOccupationSkill ? "非本职" : undefined;
 	const interestDisabledReason = skill.cannotAssignInterest ? "特殊禁用" : undefined;
 
 	return (
 		<TableRow
-			hover
-			sx={{
-				backgroundColor: (theme) => {
-					if (isHighlighted) {
-						return alpha(theme.palette.warning.main, 0.2);
-					}
-
-					if (skill.checked) {
-						return alpha(theme.palette.primary.main, 0.08);
-					}
-
-					if (isOccupationSkill) {
-						return alpha(theme.palette.secondary.main, 0.06);
-					}
-
-					return undefined;
-				},
-				transition: (theme) =>
-					theme.transitions.create("background-color", {
-						duration: theme.transitions.duration.shorter,
-					}),
-			}}>
-			<TableCell sx={{ minWidth: 60 }} padding="checkbox">
-				<Checkbox
-					checked={skill.checked}
-					onChange={() => onToggleCheck(skill.id)}
-					color="primary"
-					disabled={readOnly}
-				/>
+			className={cn(
+				isHighlighted && "bg-amber-500/15",
+				skill.checked && "bg-primary/10",
+				!skill.checked && isOccupationSkill && "bg-secondary/10",
+			)}>
+			<TableCell className="text-center">
+				<Checkbox checked={skill.checked} onCheckedChange={() => onToggleCheck(skill.id)} disabled={readOnly} />
 			</TableCell>
-			<TableCell sx={{ minWidth: 120, p: "6px 2px" }}>
-				<Box sx={{ display: "grid", gap: 0.25 }}>
-					<Box sx={{ display: "flex", gap: 1, alignItems: "center", flexWrap: "wrap" }}>
-						<Typography variant="body2" sx={{ fontWeight: 700 }}>
-							{formatSkillDisplayName(skill)}
-						</Typography>
-						{isOccupationSkill && (
-							<Chip label="本职" size="small" color="secondary" variant="outlined" />
-						)}
-						{isSpecial && <Chip label="特殊" size="small" color="warning" variant="outlined" />}
-					</Box>
-					{hasSubName && !readOnly && !hiddenSubName && (
-						<TextField
-							sx={{ minWidth: 80, maxWidth: 128 }}
+			<TableCell className="min-w-40 whitespace-normal py-2">
+				<div className="grid gap-1">
+					<div className="flex flex-wrap items-center gap-2">
+						<span className="font-semibold">{formatSkillDisplayName(skill)}</span>
+						{isOccupationSkill ? <StatusBadge tone="default">本职</StatusBadge> : null}
+						{isSpecial ? <StatusBadge tone="warning">特殊</StatusBadge> : null}
+					</div>
+					{hasSubName && !readOnly && !hiddenSubName ? (
+						<Input
+							className="h-8 max-w-36"
 							value={skill.subName ?? ""}
 							onChange={(event) => onFieldChange(skill.id, "subName", event.target.value)}
 							placeholder="自定义"
-							size="small"
-							fullWidth
 						/>
-					)}
-				</Box>
+					) : null}
+				</div>
 			</TableCell>
-			<TableCell align="center" sx={{ minWidth: 40, p: "6px 2px" }}>
-				{skill.baseValue}
-			</TableCell>
+			<TableCell className="text-center tabular-nums">{skill.baseValue}</TableCell>
 			<EditableNumberCell
 				value={skill.growth}
 				onChange={(value) => onFieldChange(skill.id, "growth", value)}
@@ -421,7 +263,7 @@ function SkillRow({
 				disabledReason={interestDisabledReason}
 				readOnly={readOnly}
 			/>
-			<TableCell align="center" sx={{ minWidth: 128, p: "6px 2px" }}>
+			<TableCell className="text-center tabular-nums">
 				{total}/{hard}/{extreme}
 			</TableCell>
 		</TableRow>
@@ -442,53 +284,21 @@ function EditableNumberCell({
 	readOnly?: boolean;
 }) {
 	return (
-		<TableCell align="center" sx={{ minWidth: 80, p: "6px 2px" }}>
+		<TableCell className="min-w-20 text-center">
 			{readOnly ? (
-				<Typography variant="body2">{value || "—"}</Typography>
+				<span className="text-sm tabular-nums">{value || "—"}</span>
 			) : disabled ? (
-				<Box
-					sx={{
-						width: "100%",
-						minHeight: 40,
-						px: 1,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						borderRadius: 1,
-						color: "text.disabled",
-					}}>
-					<Box
-						sx={{
-							display: "flex",
-							alignItems: "end",
-							justifyContent: "center",
-							gap: 0.5,
-							textAlign: "center",
-						}}>
-						<ClearRoundedIcon sx={{ fontSize: 18, flexShrink: 0 }} />
-						{disabledReason && (
-							<Typography
-								variant="caption"
-								color="text.disabled"
-								sx={{
-									fontSize: 14,
-									lineHeight: "18px",
-									display: { xs: "none", xl: "inline" },
-									whiteSpace: "nowrap",
-								}}>
-								{disabledReason}
-							</Typography>
-						)}
-					</Box>
-				</Box>
+				<div className="flex min-h-9 items-center justify-center gap-1 text-muted-foreground">
+					<X />
+					{disabledReason ? <span className="hidden text-xs xl:inline">{disabledReason}</span> : null}
+				</div>
 			) : (
-				<TextField
+				<Input
 					type="number"
+					min={0}
 					value={value || ""}
 					onChange={(event) => onChange(Number(event.target.value) || 0)}
-					size="small"
-					disabled={disabled}
-					slotProps={{ htmlInput: { min: 0 } }}
+					className="h-8 min-w-16 text-center"
 				/>
 			)}
 		</TableCell>

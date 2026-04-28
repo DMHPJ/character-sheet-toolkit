@@ -1,144 +1,164 @@
-﻿"use client";
+"use client";
 
+import { TriangleAlert } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
-  Alert,
-  Autocomplete,
-  Box,
-  Chip,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { alpha } from "@mui/material/styles";
+	MetricTile,
+	Notice,
+	Panel,
+	StatusBadge,
+	SubPanel,
+	TextInput,
+} from "@/components/SheetPrimitives/SheetPrimitives";
 import { OCCUPATIONS, getOccupationById } from "@/data/occupations";
 import { useCharacterStore } from "@/stores/useCharacterStore";
+import { cn } from "@/lib/utils";
 
 export default function OccupationPanel({
-  inDialog = false,
-  readOnly,
+	inDialog = false,
+	readOnly,
 }: {
-  inDialog?: boolean;
-  readOnly?: boolean;
+	inDialog?: boolean;
+	readOnly?: boolean;
 }) {
-  const storeReadOnly = useCharacterStore((state) => state.readOnly);
-  const info = useCharacterStore((state) => state.info);
-  const occupationState = useCharacterStore((state) => state.occupationState);
-  const occupationSummary = useCharacterStore((state) => state.occupationSummary);
-  const setOccupation = useCharacterStore((state) => state.setOccupation);
-  const setOccupationSelection = useCharacterStore((state) => state.setOccupationSelection);
-  const isReadOnly = readOnly ?? storeReadOnly;
+	const storeReadOnly = useCharacterStore((state) => state.readOnly);
+	const info = useCharacterStore((state) => state.info);
+	const occupationState = useCharacterStore((state) => state.occupationState);
+	const occupationSummary = useCharacterStore((state) => state.occupationSummary);
+	const setOccupation = useCharacterStore((state) => state.setOccupation);
+	const setOccupationSelection = useCharacterStore((state) => state.setOccupationSelection);
+	const isReadOnly = readOnly ?? storeReadOnly;
+	const occupation = getOccupationById(occupationState.occupationId);
+	const [query, setQuery] = useState(occupation ? `${occupation.id}. ${occupation.name}` : "");
 
-  const occupation = getOccupationById(occupationState.occupationId);
+	const filteredOccupations = useMemo(() => {
+		const text = query.trim().toLowerCase();
+		if (!text) return OCCUPATIONS.slice(0, 12);
+		return OCCUPATIONS.filter((item) => `${item.id}. ${item.name}`.toLowerCase().includes(text)).slice(0, 12);
+	}, [query]);
 
-  const content = (
-    <Box sx={{ display: "grid", gap: 2.5 }}>
-      <Typography variant="h2" sx={{ fontSize: "1.15rem" }}>
-        职业模板
-      </Typography>
+	const content = (
+		<div className="grid gap-5">
+			<h2 className="text-base font-semibold uppercase tracking-widest">职业模板</h2>
 
-      <Autocomplete
-        size="small"
-        options={OCCUPATIONS}
-        value={occupation}
-        disabled={isReadOnly}
-        getOptionLabel={(option) => `${option.id}. ${option.name}`}
-        isOptionEqualToValue={(option, value) => option.id === value.id}
-        noOptionsText="没有匹配的职业"
-        clearText="清除"
-        openText="展开"
-        closeText="收起"
-        onChange={(_, value) => {
-          setOccupation(value?.id ?? null);
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="职业"
-            placeholder="搜索职业名称或编号"
-          />
-        )}
-      />
+			<div className="grid gap-2">
+				<TextInput
+					label="职业"
+					placeholder="搜索职业名称或编号"
+					value={query}
+					disabled={isReadOnly}
+					onChange={(event) => setQuery(event.target.value)}
+				/>
+				{!isReadOnly ? (
+					<div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto border border-border/60 bg-background/30 p-2">
+						{filteredOccupations.map((item) => (
+							<Button
+								key={item.id}
+								type="button"
+								size="xs"
+								variant={occupation?.id === item.id ? "secondary" : "outline"}
+								onClick={() => {
+									setOccupation(item.id);
+									setQuery(`${item.id}. ${item.name}`);
+								}}>
+								{item.id}. {item.name}
+							</Button>
+						))}
+					</div>
+				) : null}
+			</div>
 
-      {occupation ? (
-        <>
-          <Box sx={{ display: "grid", gap: 1.25, gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" } }}>
-            <SummaryCard label="职业点公式" value={occupationSummary.formulaLabel} />
-            <SummaryCard label="职业点 / 已分配" value={`${occupationSummary.occupationPointsTotal} / ${occupationSummary.occupationPointsSpent}`} />
-            <SummaryCard label="兴趣点 / 已分配" value={`${occupationSummary.interestPointsTotal} / ${occupationSummary.interestPointsSpent}`} />
-          </Box>
+			{occupation ? (
+				<>
+					<div className="grid gap-3 md:grid-cols-3">
+						<MetricTile label="职业点公式" value={occupationSummary.formulaLabel} />
+						<MetricTile label="职业点 / 已分配" value={`${occupationSummary.occupationPointsTotal} / ${occupationSummary.occupationPointsSpent}`} />
+						<MetricTile label="兴趣点 / 已分配" value={`${occupationSummary.interestPointsTotal} / ${occupationSummary.interestPointsSpent}`} />
+					</div>
 
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            <Chip label={`信用评级 ${occupationSummary.creditRatingMin}-${occupationSummary.creditRatingMax}`} color={occupationSummary.creditRatingInRange ? "success" : "warning"} variant="outlined" />
-            <Chip label={`当前职业：${info.occupation || "未选择"}`} variant="outlined" />
-            <Chip label={`剩余职业点 ${Math.max(0, occupationSummary.occupationPointsRemaining)}`} color={occupationSummary.occupationPointsRemaining < 0 ? "error" : "secondary"} variant="outlined" />
-          </Box>
+					<div className="flex flex-wrap gap-2">
+						<StatusBadge tone={occupationSummary.creditRatingInRange ? "success" : "warning"}>
+							信用评级 {occupationSummary.creditRatingMin}-{occupationSummary.creditRatingMax}
+						</StatusBadge>
+						<StatusBadge tone="muted">当前职业：{info.occupation || "未选择"}</StatusBadge>
+						<StatusBadge tone={occupationSummary.occupationPointsRemaining < 0 ? "danger" : "default"}>
+							剩余职业点 {Math.max(0, occupationSummary.occupationPointsRemaining)}
+						</StatusBadge>
+					</div>
 
-          <Typography variant="body2" color="text.secondary">{occupation.description}</Typography>
-          <Typography variant="body2" color="text.secondary">推荐关系人：{occupation.contacts}</Typography>
+					<div className="grid gap-1 text-sm text-muted-foreground">
+						<p>{occupation.description}</p>
+						<p>推荐关系人：{occupation.contacts}</p>
+					</div>
 
-          {occupation.choiceGroups.map((group) => (
-            <FormControl key={group.id} fullWidth size="small">
-              <InputLabel id={`${group.id}-label`}>{group.label}</InputLabel>
-              <Select
-                labelId={`${group.id}-label`}
-                multiple={group.count > 1}
-                label={group.label}
-                disabled={isReadOnly}
-                value={occupationState.selectedSkills[group.id] ?? []}
-                onChange={(event) => {
-                  const rawValue = event.target.value;
-                  const value = Array.isArray(rawValue) ? rawValue.map(String) : [String(rawValue)];
-                  setOccupationSelection(group.id, value.slice(0, group.count));
-                }}
-                renderValue={(selected) =>
-                  (selected as string[])
-                    .map((optionId) => {
-                      const find = group.options.find((item) => item.id === optionId);
-                      return find?.subName ? `${find.label}（${find.subName}）` : find?.label;
-                    })
-                    .join("，")
-                }
-              >
-                {group.options.map((option) => (
-                  <MenuItem key={option.id} value={option.id}>
-                    {option.label}
-                    {option.subName ? `（${option.subName}）` : ""}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ))}
+					{occupation.choiceGroups.map((group) => {
+						const selected = occupationState.selectedSkills[group.id] ?? [];
 
-          {!occupationSummary.creditRatingInRange && (
-            <Alert severity="warning">
-              当前信用评级为 {occupationSummary.creditRatingValue}，未落在该职业要求的 {occupationSummary.creditRatingMin}-{occupationSummary.creditRatingMax} 区间内。
-            </Alert>
-          )}
-        </>
-      ) : (
-        <Typography variant="body2" color="text.secondary">
-          先选择职业，再进入技能表分配本职技能点。未选择职业时，职业点输入将保持锁定。
-        </Typography>
-      )}
-    </Box>
-  );
+						return (
+							<SubPanel key={group.id} className="grid gap-3">
+								<div className="flex items-center justify-between gap-3">
+									<div className="font-semibold">{group.label}</div>
+									<StatusBadge tone="muted">
+										{selected.length}/{group.count}
+									</StatusBadge>
+								</div>
+								<div className="flex flex-wrap gap-2">
+									{group.options.map((option) => {
+										const active = selected.includes(option.id);
+										const disabled = isReadOnly || (!active && selected.length >= group.count);
 
-  if (inDialog) {
-    return content;
-  }
+										return (
+											<Button
+												key={option.id}
+												type="button"
+												size="xs"
+												variant={active ? "secondary" : "outline"}
+												disabled={disabled}
+												className={cn(disabled && !active && "opacity-45")}
+												onClick={() => {
+													if (active) {
+														setOccupationSelection(
+															group.id,
+															selected.filter((item) => item !== option.id),
+														);
+														return;
+													}
+													if (group.count === 1) {
+														setOccupationSelection(group.id, [option.id]);
+														return;
+													}
+													setOccupationSelection(group.id, [...selected, option.id].slice(0, group.count));
+												}}>
+												{option.label}
+												{option.subName ? `（${option.subName}）` : ""}
+											</Button>
+										);
+									})}
+								</div>
+							</SubPanel>
+						);
+					})}
 
-  return <Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) }}>{content}</Paper>;
-}
+					{!occupationSummary.creditRatingInRange ? (
+						<Notice title="信用评级不符合职业要求" tone="warning">
+							当前信用评级为 {occupationSummary.creditRatingValue}，未落在该职业要求的{" "}
+							{occupationSummary.creditRatingMin}-{occupationSummary.creditRatingMax} 区间内。
+						</Notice>
+					) : null}
+				</>
+			) : (
+				<div className="flex gap-2 text-sm text-muted-foreground">
+					<TriangleAlert className="mt-0.5" />
+					<span>先选择职业，再进入技能表分配本职技能点。未选择职业时，职业点输入将保持锁定。</span>
+				</div>
+			)}
+		</div>
+	);
 
-function SummaryCard({ label, value }: { label: string; value: string }) {
-  return (
-    <Box sx={{ p: 1.5, borderRadius: 0.5, border: (theme) => `1px solid ${theme.palette.divider}`, backgroundColor: alpha("#0d1110", 0.48) }}>
-      <Typography variant="caption" color="text.secondary">{label}</Typography>
-      <Typography variant="body2" sx={{ mt: 0.5, fontWeight: 700 }}>{value}</Typography>
-    </Box>
-  );
+	if (inDialog) {
+		return content;
+	}
+
+	return <Panel>{content}</Panel>;
 }

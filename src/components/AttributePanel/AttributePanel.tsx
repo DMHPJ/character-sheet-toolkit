@@ -1,8 +1,6 @@
-﻿"use client";
+"use client";
 
-import { Box, Chip, Paper, TextField, Typography } from "@mui/material";
-import { alpha } from "@mui/material/styles";
-import ReadOnlyField from "@/components/ReadOnlyField/ReadOnlyField";
+import { Panel, ReadOnlyBox, StatusBadge, TextInput } from "@/components/SheetPrimitives/SheetPrimitives";
 import { useCharacterStore } from "@/stores/useCharacterStore";
 import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { AttributeKey } from "@/types/character";
@@ -59,173 +57,63 @@ export default function AttributePanel({
 		0,
 	);
 
-	return isReadOnly ? (
-		<Box>
-			<Box
-				sx={{
-					display: "grid",
-					gap: 2,
-					gridTemplateColumns: {
-						xs: "repeat(2, minmax(0, 1fr))",
-            sm: "repeat(3, minmax(0, 1fr))",
-						lg: "repeat(4, minmax(0, 1fr))",
-            xl: "repeat(5, minmax(0, 1fr))",
-					},
-          mb: 2,
-				}}>
+	if (isReadOnly) {
+		return (
+			<div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 				{ATTR_META.map(({ key, label, en }) => {
 					const value = attributes[key];
 					const half = value > 0 ? Math.floor(value / 2) : "—";
 					const fifth = value > 0 ? Math.floor(value / 5) : "—";
 
 					return (
-						<Box
+						<ReadOnlyBox
 							key={key}
-							sx={{
-								py: 1,
-                px: 2,
-								borderRadius: 0.5,
-								border: (theme) => `1px solid ${theme.palette.divider}`,
-								background:
-									"linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))",
-							}}>
-							<Box sx={{ display: "grid", gap: 1.75 }}>
-								<Box
-									sx={{
-										display: "flex",
-										justifyContent: "space-between",
-										alignItems: "baseline",
-									}}>
-                  <Box sx={{display: "flex", alignItems: "baseline", gap: 1}}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                      {label}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {en}
-                    </Typography>
-                  </Box>
-									<Typography variant="caption" color="text.secondary">
-										{value}/{half}/{fifth}
-									</Typography>
-								</Box>
-							</Box>
-						</Box>
+							label={`${label} ${en}`}
+							value={`${value || "—"} / ${half} / ${fifth}`}
+						/>
 					);
 				})}
-			</Box>
-		</Box>
-	) : (
-		<Paper sx={{ p: { xs: 2, md: 3 }, backgroundColor: alpha("#171d1b", 0.84) }}>
-			<Box sx={{ display: "grid", gap: 2.5 }}>
-				<Box
-					sx={{
-						display: "flex",
-						gap: 1.5,
-						justifyContent: "space-between",
-						flexDirection: { xs: "column", sm: "row" },
-					}}>
-					<Typography variant="h2" sx={{ fontSize: "1.15rem" }}>
-						核心属性
-					</Typography>
-					<Chip label={`总点数 ${totalPoints}`} color="primary" variant="outlined" />
-				</Box>
+			</div>
+		);
+	}
 
-				<Box
-					sx={{
-						display: "grid",
-						gap: 2,
-						gridTemplateColumns: {
-							xs: "1fr",
-							sm: "repeat(3, minmax(0, 1fr))",
-							lg: "repeat(2, minmax(0, 1fr))",
-              xl: "repeat(3, minmax(0, 1fr))",
-						},
-					}}>
-					{ATTR_META.map(({ key, label, en }) => {
-						const value = attributes[key];
-						const half = value > 0 ? Math.floor(value / 2) : "—";
-						const fifth = value > 0 ? Math.floor(value / 5) : "—";
-
-						return (
-							<Box
-								key={key}
-								sx={{
-									p: 2,
-									borderRadius: 0.5,
-									border: (theme) => `1px solid ${theme.palette.divider}`,
-									background:
-										"linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))",
-								}}>
-								<Box sx={{ display: "grid", gap: 1.75 }}>
-									<Box
-										sx={{
-											display: "flex",
-											justifyContent: "space-between",
-											alignItems: "baseline",
-										}}>
-										<Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-											{label}
-										</Typography>
-										<Typography variant="caption" color="text.secondary">
-											{en}
-										</Typography>
-									</Box>
-
-									{isReadOnly ? (
-										<ReadOnlyField label={`${label}数值`} value={value || ""} />
-									) : (
-										<TextField
-											type="number"
-											value={value || ""}
-											onChange={(event) => {
-												const next = Number(event.target.value) || 0;
-												setAttribute(key, Math.max(0, Math.min(99, next)));
-											}}
-											slotProps={{ htmlInput: { min: 0, max: 99 } }}
-											fullWidth
-											size="small"
-										/>
-									)}
-
-									<Box
-										sx={{
-											display: "grid",
-											gap: 1,
-											gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-										}}>
-										<DerivedBadge label="困难" value={half} />
-										<DerivedBadge label="极限" value={fifth} />
-									</Box>
-
-									<Typography variant="body2" color="text.secondary">
-										{getAttrDescription(key, value)}
-									</Typography>
-								</Box>
-							</Box>
-						);
-					})}
-				</Box>
-			</Box>
-		</Paper>
-	);
-}
-
-function DerivedBadge({ label, value }: { label: string; value: string | number }) {
 	return (
-		<Box
-			sx={{
-				borderRadius: 0.5,
-				border: (theme) => `1px solid ${theme.palette.divider}`,
-				px: 1.25,
-				py: 1,
-				backgroundColor: alpha("#0d1110", 0.4),
-			}}>
-			<Typography variant="caption" color="text.secondary">
-				{label}
-			</Typography>
-			<Typography variant="body1" sx={{ fontWeight: 700 }}>
-				{value}
-			</Typography>
-		</Box>
+		<Panel
+			title="核心属性"
+			action={<StatusBadge tone="default">总点数 {totalPoints}</StatusBadge>}>
+			<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+				{ATTR_META.map(({ key, label, en }) => {
+					const value = attributes[key];
+					const half = value > 0 ? Math.floor(value / 2) : "—";
+					const fifth = value > 0 ? Math.floor(value / 5) : "—";
+
+					return (
+						<div key={key} className="grid gap-3 border border-border/60 bg-background/35 p-4">
+							<div className="flex items-baseline justify-between gap-3">
+								<div>
+									<div className="font-semibold">{label}</div>
+									<div className="text-xs uppercase tracking-widest text-muted-foreground">{en}</div>
+								</div>
+								<div className="text-xs text-muted-foreground">{getAttrDescription(key, value)}</div>
+							</div>
+							<TextInput
+								type="number"
+								min={0}
+								max={99}
+								value={value || ""}
+								onChange={(event) => {
+									const next = Number(event.target.value) || 0;
+									setAttribute(key, Math.max(0, Math.min(99, next)));
+								}}
+							/>
+							<div className="grid grid-cols-2 gap-2">
+								<ReadOnlyBox label="困难" value={half} />
+								<ReadOnlyBox label="极限" value={fifth} />
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		</Panel>
 	);
 }

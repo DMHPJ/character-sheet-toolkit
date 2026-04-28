@@ -1,9 +1,8 @@
-/* eslint-disable @next/next/no-page-custom-font */
-import { Box } from "@mui/material";
 import type { Metadata } from "next";
-import AppSider from "@/components/AppSider/AppSider";
-import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import "./globals.css";
+import { AppSidebar } from "@/components/AppSider/AppSider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
 	title: "CoC 7th 调查员工具箱",
@@ -17,30 +16,17 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="zh-CN">
-			<head>
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-				<link
-					href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"
-					rel="stylesheet"
-				/>
-			</head>
-			<body>
-				<ThemeRegistry>
-					<Box
-						sx={{
-							display: "flex",
-							alignItems: "stretch",
-              height: "100vh",
-						}}>
-						<AppSider />
-						<Box
-							component="main"
-							sx={{ flex: 1, minWidth: 0, overflow: "auto", height: "100%", py: 2 }}>
-							{children}
-						</Box>
-					</Box>
-				</ThemeRegistry>
+			<body className="min-h-screen bg-background text-foreground antialiased">
+				<SidebarProvider>
+					<AppSidebar />
+					<main className="min-h-screen flex-1 overflow-x-hidden">
+						<div className="sticky top-0 z-20 flex h-12 items-center border-b border-border/60 bg-background/85 px-3 backdrop-blur md:hidden">
+							<SidebarTrigger />
+						</div>
+						{children}
+					</main>
+					<Toaster richColors />
+				</SidebarProvider>
 			</body>
 		</html>
 	);
