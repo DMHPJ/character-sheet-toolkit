@@ -22,8 +22,8 @@ export default function RootLayout({
 				<ThemeProvider>
 					<SidebarProvider>
 						<AppSidebar />
-						<main className="min-h-screen flex-1 overflow-x-hidden">
-							<div className="sticky top-0 z-20 flex h-12 items-center justify-between border-b border-border/60 bg-background/85 px-3 backdrop-blur md:hidden">
+						<main className="min-h-screen min-w-0 flex-1 overflow-x-hidden">
+							<div className="sticky top-0 z-20 flex h-12 items-center justify-between border-b border-border/60 bg-background/88 px-3 shadow-sm backdrop-blur md:hidden">
 								<SidebarTrigger />
 								<ThemeToggle showLabel={false} />
 							</div>

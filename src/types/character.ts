@@ -88,7 +88,7 @@ export interface Weapon {
   damage: string;
   range: string;
   penetration: boolean;
-  attacksPerRound: number;
+  attacksPerRound: string;
   ammo: string;
   malfunction: string;
 }

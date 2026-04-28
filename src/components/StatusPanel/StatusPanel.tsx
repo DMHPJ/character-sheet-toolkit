@@ -16,7 +16,7 @@ export default function StatusPanel({ readOnly }: { readOnly?: boolean }) {
 	const isReadOnly = readOnly ?? storeReadOnly;
 
 	return (
-		<div className="grid gap-4">
+		<div className="grid min-w-0 gap-4">
 			<StatBlock
 				label="体力 HP"
 				current={status.currentHP}
@@ -26,7 +26,7 @@ export default function StatusPanel({ readOnly }: { readOnly?: boolean }) {
 				onChange={setCurrentHP}
 				readOnly={isReadOnly}
 			/>
-			<div className="grid gap-4 md:grid-cols-2">
+			<div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fit,minmax(13.5rem,1fr))]">
 				<StatBlock
 					label="理智 SAN"
 					current={status.currentSAN}
@@ -46,7 +46,7 @@ export default function StatusPanel({ readOnly }: { readOnly?: boolean }) {
 			</div>
 
 			<SubPanel>
-				<div className="grid gap-3">
+					<div className="grid min-w-0 gap-3">
 					<h3 className="font-semibold">异常状态</h3>
 					<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
 						<ConditionToggle label="重伤" checked={status.conditions.majorWound} onChange={(value) => setCondition("majorWound", value)} tone="danger" disabled={isReadOnly} />
@@ -82,36 +82,46 @@ function StatBlock({
 	const progress = max > 0 ? Math.min(100, Math.max(0, (current / max) * 100)) : 0;
 	const indicatorClass = {
 		primary: "bg-primary",
-		info: "bg-sky-300",
+		info: "bg-[color:var(--status-info)]",
 		danger: "bg-destructive",
 	}[tone];
 
 	return (
-		<Panel>
-			<div className="grid gap-4">
-				<div className="flex items-start justify-between gap-4">
-					<div>
+		<Panel contentClassName="px-4">
+			<div className="grid min-w-0 gap-4">
+				<div className="flex min-w-0 flex-wrap items-start justify-between gap-4">
+					<div className="min-w-0">
 						<h3 className="font-semibold">{label}</h3>
 						<div className="mt-1 flex flex-wrap gap-3 text-sm text-muted-foreground">
 							<span>最大值 {max}</span>
 							{extra ? <span>{extra}</span> : null}
 						</div>
 					</div>
-					<div className="text-2xl font-semibold tabular-nums">{current}</div>
+					<div className="shrink-0 text-2xl font-semibold tabular-nums">{current}</div>
 				</div>
 
-				<div className="h-2 bg-muted">
+				<div className="h-2 overflow-hidden rounded-full bg-muted">
 					<div className={cn("h-full transition-all", indicatorClass)} style={{ width: `${progress}%` }} />
 				</div>
 
-				<div className="flex items-center justify-center gap-2">
-					<Button variant="outline" size="sm" onClick={() => onChange(Math.max(0, current - 1))} disabled={readOnly}>
+				<div className="grid min-w-0 grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,0.7fr)] items-center gap-2">
+					<Button
+						variant="outline"
+						size="sm"
+						className="w-full px-0"
+						onClick={() => onChange(Math.max(0, current - 1))}
+						disabled={readOnly}>
 						-1
 					</Button>
-					<div className="min-w-24 border border-border/60 bg-background/40 px-5 py-2 text-center text-lg font-semibold tabular-nums">
+					<div className="min-w-0 rounded-sm border border-border/60 bg-background/45 px-2 py-2 text-center text-lg font-semibold tabular-nums">
 						{current}
 					</div>
-					<Button variant="outline" size="sm" onClick={() => onChange(Math.min(max, current + 1))} disabled={readOnly}>
+					<Button
+						variant="outline"
+						size="sm"
+						className="w-full px-0"
+						onClick={() => onChange(Math.min(max, current + 1))}
+						disabled={readOnly}>
 						+1
 					</Button>
 				</div>
@@ -136,7 +146,12 @@ function ConditionToggle({
 	return (
 		<Button
 			variant={checked ? (tone === "danger" ? "destructive" : "secondary") : "outline"}
-			className={cn("justify-start", checked && tone === "warning" && "bg-amber-500 text-black hover:bg-amber-400")}
+			className={cn(
+				"justify-start",
+				checked &&
+					tone === "warning" &&
+					"bg-[color:var(--status-warning)] text-background hover:opacity-90",
+			)}
 			onClick={() => onChange(!checked)}
 			disabled={disabled}>
 			{label}

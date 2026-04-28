@@ -1,0 +1,55 @@
+:root,
+.light,
+.theme-archive {
+  color-scheme: light;
+  --background: #e8e2d0;
+  --foreground: #261f1b;
+  --card: #f6f1e4;
+  --card-foreground: #261f1b;
+  --popover: #fffaf0;
+  --popover-foreground: #261f1b;
+  --primary: #7f1d2d;
+  --primary-foreground: #fff8ec;
+  --secondary: #2f5b54;
+  --secondary-foreground: #f7efe0;
+  --muted: #d7ccb5;
+  --muted-foreground: #675b4f;
+  --accent: #b9904d;
+  --accent-foreground: #221a12;
+  --destructive: #9a342f;
+  --destructive-foreground: #fff7ed;
+  --border: #8b7c67;
+  --input: #625845;
+  --ring: #7f1d2d;
+  --chart-1: #7f1d2d;
+  --chart-2: #2f5b54;
+  --chart-3: #b9904d;
+  --chart-4: #536f3c;
+  --chart-5: #5b4c8b;
+  --sidebar: #2b2420;
+  --sidebar-foreground: #f6f1e4;
+  --sidebar-primary: #d8af62;
+  --sidebar-primary-foreground: #201814;
+  --sidebar-accent: #493a32;
+  --sidebar-accent-foreground: #fff8ec;
+  --sidebar-border: #6d5a4e;
+  --sidebar-ring: #d8af62;
+  --font-sans: "Aptos", "Segoe UI", "Noto Sans SC", sans-serif;
+  --font-serif: "Georgia", "Songti SC", serif;
+  --font-mono: "Cascadia Code", "SFMono-Regular", monospace;
+  --radius: 0.375rem;
+  --shadow-color: #2a201a;
+  --surface-grid: color-mix(in oklab, var(--foreground) 8%, transparent);
+  --surface-vignette: color-mix(in oklab, var(--primary) 18%, transparent);
+  --surface-paper: color-mix(in oklab, var(--card) 70%, transparent);
+  --surface-noise-opacity: 0.32;
+  --panel-shadow: 0 18px 40px -28px color-mix(in oklab, var(--shadow-color) 70%, transparent), 0 1px 0 color-mix(in oklab, white 45%, transparent) inset;
+  --status-info: #1b5d76;
+  --status-info-bg: color-mix(in oklab, #1b5d76 14%, transparent);
+  --status-success: #2f6c46;
+  --status-success-bg: color-mix(in oklab, #2f6c46 14%, transparent);
+  --status-warning: #8a5c00;
+  --status-warning-bg: color-mix(in oklab, #b9904d 22%, transparent);
+  --status-danger: #9a342f;
+  --status-danger-bg: color-mix(in oklab, #9a342f 14%, transparent);
+}

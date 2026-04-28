@@ -1,114 +1,9 @@
 @import "tailwindcss";
+@import "./themes/archive.css";
+@import "./themes/abyss.css";
+@import "./themes/telegram.css";
 
 @custom-variant dark (&:is(.dark *));
-
-:root {
-  --background: #f7f5e9;
-  --foreground: #503e33;
-  --card: #f7f5e9;
-  --card-foreground: #503e33;
-  --popover: #ffffff;
-  --popover-foreground: #503e33;
-  --primary: #a95c64;
-  --primary-foreground: #ffffff;
-  --secondary: #c3a697;
-  --secondary-foreground: #ffffff;
-  --muted: #e9c9be;
-  --muted-foreground: #946f5c;
-  --accent: #e9c9be;
-  --accent-foreground: #503e33;
-  --destructive: #1f1c18;
-  --destructive-foreground: #ffffff;
-  --border: #946f5c;
-  --input: #946f5c;
-  --ring: #a95c64;
-  --chart-1: #a95c64;
-  --chart-2: #946f5c;
-  --chart-3: #c9a188;
-  --chart-4: #c3a697;
-  --chart-5: #a87d77;
-  --sidebar: #f2e6c3;
-  --sidebar-foreground: #503e33;
-  --sidebar-primary: #a95c64;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #c9a188;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #a87d77;
-  --sidebar-ring: #a95c64;
-  --font-sans: DM Sans, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
-  --radius: 0px;
-  --shadow-x: 2px;
-  --shadow-y: 2px;
-  --shadow-blur: 0px;
-  --shadow-spread: 2px;
-  --shadow-opacity: 1;
-  --shadow-color: #503E33;
-  --shadow-2xs: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 0.50);
-  --shadow-xs: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 0.50);
-  --shadow-sm: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 1px 2px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 1px 2px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-md: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 2px 4px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-lg: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 4px 6px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-xl: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 8px 10px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-2xl: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 2.50);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
-}
-
-.dark {
-  --background: #2b2421;
-  --foreground: #f7f5e9;
-  --card: #3c332e;
-  --card-foreground: #f7f5e9;
-  --popover: #3c332e;
-  --popover-foreground: #f7f5e9;
-  --primary: #c9a188;
-  --primary-foreground: #2b2421;
-  --secondary: #946f5c;
-  --secondary-foreground: #f7f5e9;
-  --muted: #503e33;
-  --muted-foreground: #c5aa9b;
-  --accent: #c3a697;
-  --accent-foreground: #2b2421;
-  --destructive: #e57373;
-  --destructive-foreground: #2b2421;
-  --border: #503e33;
-  --input: #503e33;
-  --ring: #c9a188;
-  --chart-1: #c9a188;
-  --chart-2: #c3a697;
-  --chart-3: #a95c64;
-  --chart-4: #946f5c;
-  --chart-5: #a87d77;
-  --sidebar: #1f1a17;
-  --sidebar-foreground: #f7f5e9;
-  --sidebar-primary: #c9a188;
-  --sidebar-primary-foreground: #1f1a17;
-  --sidebar-accent: #c3a697;
-  --sidebar-accent-foreground: #1f1a17;
-  --sidebar-border: #503e33;
-  --sidebar-ring: #c9a188;
-  --font-sans: DM Sans, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
-  --radius: 0px;
-  --shadow-x: 2px;
-  --shadow-y: 2px;
-  --shadow-blur: 0px;
-  --shadow-spread: 2px;
-  --shadow-opacity: 1;
-  --shadow-color: #503E33;
-  --shadow-2xs: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 0.50);
-  --shadow-xs: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 0.50);
-  --shadow-sm: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 1px 2px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 1px 2px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-md: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 2px 4px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-lg: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 4px 6px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-xl: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 1.00), 2px 8px 10px 1px hsl(22.7586 22.1374% 25.6863% / 1.00);
-  --shadow-2xl: 2px 2px 0px 2px hsl(22.7586 22.1374% 25.6863% / 2.50);
-}
 
 @theme inline {
   --color-background: var(--background);
@@ -148,28 +43,62 @@
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --shadow-2xs: var(--shadow-2xs);
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow: var(--shadow);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
+  --shadow-2xs: 0 1px 1px color-mix(in oklab, var(--shadow-color) 14%, transparent);
+  --shadow-xs: 0 2px 4px color-mix(in oklab, var(--shadow-color) 16%, transparent);
+  --shadow-sm: 0 8px 22px -18px color-mix(in oklab, var(--shadow-color) 62%, transparent);
+  --shadow: 0 16px 36px -26px color-mix(in oklab, var(--shadow-color) 70%, transparent);
+  --shadow-md: 0 22px 46px -30px color-mix(in oklab, var(--shadow-color) 78%, transparent);
+  --shadow-lg: 0 30px 70px -38px color-mix(in oklab, var(--shadow-color) 82%, transparent);
+  --shadow-xl: 0 42px 90px -46px color-mix(in oklab, var(--shadow-color) 88%, transparent);
+  --shadow-2xl: 0 56px 120px -58px color-mix(in oklab, var(--shadow-color) 92%, transparent);
 }
-
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    min-height: 100%;
+    background: var(--background);
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    min-height: 100svh;
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 1, "ss01" 1;
+    background:
+      radial-gradient(circle at 18% 8%, var(--surface-vignette), transparent 31rem),
+      radial-gradient(circle at 92% 16%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 28rem),
+      linear-gradient(var(--surface-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--surface-grid) 1px, transparent 1px),
+      var(--background);
+    background-attachment: fixed;
+    background-size: auto, auto, 34px 34px, 34px 34px, auto;
+  }
+
+  body::before {
+    pointer-events: none;
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    opacity: var(--surface-noise-opacity);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 9px, color-mix(in oklab, var(--foreground) 5%, transparent) 10px),
+      linear-gradient(135deg, transparent, var(--surface-paper));
+    mix-blend-mode: multiply;
+  }
+
+  ::selection {
+    color: var(--primary-foreground);
+    background: var(--primary);
   }
 
   input[type="number"] {
@@ -180,5 +109,23 @@
   input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
     -webkit-appearance: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: color-mix(in oklab, var(--background) 80%, var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 28%, transparent);
+    border: 2px solid color-mix(in oklab, var(--background) 80%, var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--primary) 58%, var(--foreground));
   }
 }

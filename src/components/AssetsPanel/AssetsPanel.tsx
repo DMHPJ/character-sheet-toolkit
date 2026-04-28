@@ -66,7 +66,7 @@ export default function AssetsPanel({
 
 	if (isReadOnly) {
 		return (
-			<div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+			<div className="mb-4 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
 				{MAIN_FIELDS.map((main) => (
 					<ReadOnlyBox key={main.key} label={main.label} value={assets[main.key]} />
 				))}
@@ -75,16 +75,16 @@ export default function AssetsPanel({
 	}
 
 	return (
-		<div className="grid gap-4">
-			<div className="grid gap-3 md:grid-cols-3">
+		<div className="grid min-w-0 gap-4">
+			<div className="grid min-w-0 gap-3 md:grid-cols-3">
 				<MetricTile label="信用评级" value={String(assets.creditRating)} />
 				<MetricTile label="当前现金" value={`${assets.currentCash || 0} ${assets.currency || ""}`.trim()} />
 				<MetricTile label="资产总和" value={String(totalAssetValue)} />
 			</div>
 
 			<Panel title="资产概览">
-				<div className="grid gap-4">
-					<div className="grid gap-3 md:grid-cols-2">
+				<div className="grid min-w-0 gap-4">
+					<div className="grid min-w-0 gap-3 md:grid-cols-2">
 						{MAIN_FIELDS.map(({ key, label, type, multiline, minRows }) =>
 							multiline ? (
 								<TextAreaInput
@@ -130,9 +130,9 @@ export default function AssetsPanel({
 				title="其他资产表"
 				description="对应交通工具、住所、奢侈品、股票证券和其他资产区域"
 				action={<StatusBadge tone="default">资产总和 {totalAssetValue}</StatusBadge>}>
-				<div className="grid gap-3">
+				<div className="grid min-w-0 gap-3">
 					{DETAIL_FIELDS.map(({ textKey, valueKey, label, placeholder }) => (
-						<SubPanel key={String(textKey)} className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px]">
+						<SubPanel key={String(textKey)} className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_180px]">
 							<TextAreaInput
 								label={label}
 								placeholder={placeholder}

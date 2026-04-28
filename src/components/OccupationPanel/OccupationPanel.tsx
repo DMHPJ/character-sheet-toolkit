@@ -2,18 +2,26 @@
 
 import { TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { AutoComplete, type AutoCompleteOption } from "@/components/AutoComplete/AutoComplete";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+} from "@/components/ui/select";
 import {
 	MetricTile,
 	Notice,
 	Panel,
 	StatusBadge,
 	SubPanel,
-	TextInput,
 } from "@/components/SheetPrimitives/SheetPrimitives";
 import { OCCUPATIONS, getOccupationById } from "@/data/occupations";
 import { useCharacterStore } from "@/stores/useCharacterStore";
-import { cn } from "@/lib/utils";
+import type { OccupationChoiceGroup, OccupationSkillOption } from "@/types/character";
+
+const EMPTY_SELECTION = "__none__";
 
 export default function OccupationPanel({
 	inDialog = false,
@@ -32,49 +40,44 @@ export default function OccupationPanel({
 	const occupation = getOccupationById(occupationState.occupationId);
 	const [query, setQuery] = useState(occupation ? `${occupation.id}. ${occupation.name}` : "");
 
-	const filteredOccupations = useMemo(() => {
-		const text = query.trim().toLowerCase();
-		if (!text) return OCCUPATIONS.slice(0, 12);
-		return OCCUPATIONS.filter((item) => `${item.id}. ${item.name}`.toLowerCase().includes(text)).slice(0, 12);
-	}, [query]);
+	const occupationOptions = useMemo<AutoCompleteOption[]>(
+		() =>
+			OCCUPATIONS.map((item) => ({
+				value: String(item.id),
+				label: `${item.id}. ${item.name}`,
+				description: `信用评级 ${item.creditRatingMin}-${item.creditRatingMax}`,
+				keywords: `${item.name} ${item.id} ${item.description} ${item.contacts}`,
+			})),
+		[],
+	);
 
 	const content = (
-		<div className="grid gap-5">
+		<div className="grid min-w-0 gap-5">
 			<h2 className="text-base font-semibold uppercase tracking-widest">职业模板</h2>
 
-			<div className="grid gap-2">
-				<TextInput
+			<div className="grid min-w-0 gap-2">
+				<AutoComplete
 					label="职业"
 					placeholder="搜索职业名称或编号"
 					value={query}
 					disabled={isReadOnly}
-					onChange={(event) => setQuery(event.target.value)}
+					options={occupationOptions}
+					onInputChange={setQuery}
+					onValueChange={(value, option) => {
+						setOccupation(Number(value));
+						setQuery(option.label);
+					}}
 				/>
-				{!isReadOnly ? (
-					<div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto border border-border/60 bg-background/30 p-2">
-						{filteredOccupations.map((item) => (
-							<Button
-								key={item.id}
-								type="button"
-								size="xs"
-								variant={occupation?.id === item.id ? "secondary" : "outline"}
-								onClick={() => {
-									setOccupation(item.id);
-									setQuery(`${item.id}. ${item.name}`);
-								}}>
-								{item.id}. {item.name}
-							</Button>
-						))}
-					</div>
-				) : null}
 			</div>
 
 			{occupation ? (
 				<>
-					<div className="grid gap-3 md:grid-cols-3">
+					<div className="grid min-w-0 gap-3">
 						<MetricTile label="职业点公式" value={occupationSummary.formulaLabel} />
-						<MetricTile label="职业点 / 已分配" value={`${occupationSummary.occupationPointsTotal} / ${occupationSummary.occupationPointsSpent}`} />
-						<MetricTile label="兴趣点 / 已分配" value={`${occupationSummary.interestPointsTotal} / ${occupationSummary.interestPointsSpent}`} />
+						<div className="grid gap-3 sm:grid-cols-2">
+							<MetricTile label="职业点 / 已分配" value={`${occupationSummary.occupationPointsTotal} / ${occupationSummary.occupationPointsSpent}`} />
+							<MetricTile label="兴趣点 / 已分配" value={`${occupationSummary.interestPointsTotal} / ${occupationSummary.interestPointsSpent}`} />
+						</div>
 					</div>
 
 					<div className="flex flex-wrap gap-2">
@@ -87,58 +90,20 @@ export default function OccupationPanel({
 						</StatusBadge>
 					</div>
 
-					<div className="grid gap-1 text-sm text-muted-foreground">
+					<div className="grid min-w-0 gap-1 text-sm break-words text-muted-foreground">
 						<p>{occupation.description}</p>
 						<p>推荐关系人：{occupation.contacts}</p>
 					</div>
 
-					{occupation.choiceGroups.map((group) => {
-						const selected = occupationState.selectedSkills[group.id] ?? [];
-
-						return (
-							<SubPanel key={group.id} className="grid gap-3">
-								<div className="flex items-center justify-between gap-3">
-									<div className="font-semibold">{group.label}</div>
-									<StatusBadge tone="muted">
-										{selected.length}/{group.count}
-									</StatusBadge>
-								</div>
-								<div className="flex flex-wrap gap-2">
-									{group.options.map((option) => {
-										const active = selected.includes(option.id);
-										const disabled = isReadOnly || (!active && selected.length >= group.count);
-
-										return (
-											<Button
-												key={option.id}
-												type="button"
-												size="xs"
-												variant={active ? "secondary" : "outline"}
-												disabled={disabled}
-												className={cn(disabled && !active && "opacity-45")}
-												onClick={() => {
-													if (active) {
-														setOccupationSelection(
-															group.id,
-															selected.filter((item) => item !== option.id),
-														);
-														return;
-													}
-													if (group.count === 1) {
-														setOccupationSelection(group.id, [option.id]);
-														return;
-													}
-													setOccupationSelection(group.id, [...selected, option.id].slice(0, group.count));
-												}}>
-												{option.label}
-												{option.subName ? `（${option.subName}）` : ""}
-											</Button>
-										);
-									})}
-								</div>
-							</SubPanel>
-						);
-					})}
+					{occupation.choiceGroups.map((group) => (
+						<OccupationChoiceSelectGroup
+							key={group.id}
+							group={group}
+							selected={occupationState.selectedSkills[group.id] ?? []}
+							disabled={isReadOnly}
+							onChange={setOccupationSelection}
+						/>
+					))}
 
 					{!occupationSummary.creditRatingInRange ? (
 						<Notice title="信用评级不符合职业要求" tone="warning">
@@ -161,4 +126,72 @@ export default function OccupationPanel({
 	}
 
 	return <Panel>{content}</Panel>;
+}
+
+function OccupationChoiceSelectGroup({
+	group,
+	selected,
+	disabled,
+	onChange,
+}: {
+	group: OccupationChoiceGroup;
+	selected: string[];
+	disabled: boolean;
+	onChange: (groupId: string, selectedSkillIds: string[]) => void;
+}) {
+	const multiple = group.count > 1;
+	const selectedLabel = selected.length
+		? selected
+				.map((optionId) => group.options.find((option) => option.id === optionId))
+				.filter((option): option is OccupationSkillOption => Boolean(option))
+				.map(formatOccupationSkillOption)
+				.join("、")
+		: "";
+
+	return (
+		<SubPanel className="grid gap-3">
+			<div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+				<div className="min-w-0 font-semibold break-words">{group.label}</div>
+				<StatusBadge tone="muted">
+					{selected.length}/{group.count}
+				</StatusBadge>
+			</div>
+			<Select
+				multiple={multiple}
+				value={multiple ? selected : selected[0] ?? EMPTY_SELECTION}
+				onValueChange={(value) => {
+					if (Array.isArray(value)) {
+						onChange(group.id, value.slice(0, group.count));
+						return;
+					}
+					onChange(group.id, value && value !== EMPTY_SELECTION ? [value] : []);
+				}}
+				disabled={disabled}>
+				<SelectTrigger className="w-full min-w-0">
+					<span className={selectedLabel ? "truncate" : "truncate text-muted-foreground"}>
+						{selectedLabel || (multiple ? `请选择 ${group.count} 项` : "请选择")}
+					</span>
+				</SelectTrigger>
+				<SelectContent align="start" alignItemWithTrigger={false}>
+					<SelectGroup>
+						{!multiple ? <SelectItem value={EMPTY_SELECTION}>未选择</SelectItem> : null}
+						{group.options.map((option) => {
+							const active = selected.includes(option.id);
+							const disabledByLimit = multiple && !active && selected.length >= group.count;
+
+							return (
+								<SelectItem key={option.id} value={option.id} disabled={disabledByLimit}>
+									{formatOccupationSkillOption(option)}
+								</SelectItem>
+							);
+						})}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+		</SubPanel>
+	);
+}
+
+function formatOccupationSkillOption(option: OccupationSkillOption): string {
+	return `${option.label}${option.subName ? `（${option.subName}）` : ""}`;
 }

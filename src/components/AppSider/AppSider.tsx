@@ -43,8 +43,8 @@ export function AppSidebar() {
 			<SidebarHeader>
 				<div className="flex items-start justify-between gap-2 px-2 py-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
 					<div className="grid min-w-0 gap-1 group-data-[collapsible=icon]:hidden">
-						<div className="truncate text-sm font-semibold uppercase tracking-widest">CoC Toolkit</div>
-						<div className="truncate text-xs text-muted-foreground">Keeper archive console</div>
+						<div className="truncate font-serif text-lg font-semibold">CoC Toolkit</div>
+						<div className="truncate text-xs uppercase tracking-widest text-muted-foreground">Keeper archive console</div>
 					</div>
 					<SidebarTrigger
 						size="icon-sm"

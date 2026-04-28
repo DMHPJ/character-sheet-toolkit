@@ -802,7 +802,7 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
           damage: "",
           range: "",
           penetration: false,
-          attacksPerRound: 1,
+          attacksPerRound: "1",
           ammo: "",
           malfunction: "",
         },

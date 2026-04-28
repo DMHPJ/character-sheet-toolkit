@@ -14,7 +14,7 @@ export default function ReadOnlyCharacterSheet({
 	return (
 		<div className="grid gap-4">
 			<AttributePanel readOnly={true} store={store} />
-			<SkillTable readOnly={true} store={store} />
+			<SkillTable readOnly={true} store={store} className="gap-0 data-[size=sm]:gap-0"/>
 			<CombatPanel readOnly={true} store={store} />
 			<AssetsPanel readOnly={true} store={store} />
 		</div>

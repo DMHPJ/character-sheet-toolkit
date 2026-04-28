@@ -45,25 +45,33 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 	}, [activeTab, readOnly]);
 
 	return (
-		<div className="mx-auto grid w-full max-w-[1800px] gap-5 p-3 md:p-5">
+		<div className="mx-auto grid min-h-[100svh] w-full min-w-0 max-w-[1800px] gap-5 p-2 sm:p-3 md:p-5 xl:p-6 2xl:h-[100svh] 2xl:grid-rows-[auto_minmax(0,1fr)] 2xl:overflow-hidden">
 			<Header onOpenInfo={() => setInfoDialogOpen(true)} readOnly={readOnly} />
 			{readOnly ? (
-				<ReadOnlyCharacterSheet />
+				<div className="2xl:min-h-0 2xl:overflow-y-auto 2xl:pr-1">
+					<ReadOnlyCharacterSheet />
+				</div>
 			) : (
-				<div className="grid gap-5 xl:grid-cols-[minmax(360px,0.68fr)_minmax(0,1.55fr)] xl:items-start">
-					<div className="grid gap-5">
-						<AttributePanel readOnly={false} />
-						<OccupationPanel readOnly={false} />
+				<div className="grid min-w-0 gap-5 2xl:min-h-0 2xl:grid-cols-[minmax(360px,0.68fr)_minmax(0,1.55fr)] 2xl:overflow-hidden">
+					<div className="flex min-w-0 flex-col gap-5 2xl:min-h-0 2xl:overflow-y-auto 2xl:pr-1">
+						<div className="shrink-0">
+							<AttributePanel readOnly={false} />
+						</div>
+						<div className="shrink-0">
+							<OccupationPanel readOnly={false} />
+						</div>
 
 						<Panel
 							title="状态、背景与扩展"
 							description={`当前最大体力 ${derived.maxHP}，最大理智 ${derived.maxSAN}，最大魔法值 ${derived.maxMP}`}
+							className="shrink-0 gap-0 data-[size=sm]:gap-0"
+							contentClassName="pt-0"
 							action={<StatusBadge tone="default">当前页签 {TABS.find((tab) => tab.id === activeTab)?.label}</StatusBadge>}>
 							<Tabs
 								value={activeTab}
 								onValueChange={(value) => setActiveTab(value as TabId)}
-								className="flex flex-col gap-5">
-								<TabsList variant="line" className="mb-5 flex w-full justify-start overflow-x-auto">
+								className="flex flex-col gap-2">
+								<TabsList variant="line" className="flex h-10 w-full justify-start overflow-x-auto border-b border-border/60 p-0">
 									{TABS.map((tab) => (
 										<TabsTrigger key={tab.id} value={tab.id}>
 											<tab.icon data-icon="inline-start" />
@@ -72,7 +80,7 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 									))}
 								</TabsList>
 								{TABS.map((tab) => (
-									<TabsContent key={tab.id} value={tab.id}>
+									<TabsContent key={tab.id} value={tab.id} className="min-w-0">
 										{activeTab === tab.id ? tabContent : null}
 									</TabsContent>
 								))}
@@ -80,7 +88,7 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 						</Panel>
 					</div>
 
-					<SkillTable readOnly={false} />
+					<SkillTable readOnly={false} className="2xl:min-h-0 gap-0 data-[size=sm]:gap-0" />
 				</div>
 			)}
 

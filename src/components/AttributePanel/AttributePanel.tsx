@@ -59,7 +59,7 @@ export default function AttributePanel({
 
 	if (isReadOnly) {
 		return (
-			<div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			<div className="mb-4 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 				{ATTR_META.map(({ key, label, en }) => {
 					const value = attributes[key];
 					const half = value > 0 ? Math.floor(value / 2) : "—";
@@ -81,20 +81,20 @@ export default function AttributePanel({
 		<Panel
 			title="核心属性"
 			action={<StatusBadge tone="default">总点数 {totalPoints}</StatusBadge>}>
-			<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+			<div className="grid min-w-0 grid-cols-1 gap-3 min-[520px]:grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(9.25rem,1fr))]">
 				{ATTR_META.map(({ key, label, en }) => {
 					const value = attributes[key];
 					const half = value > 0 ? Math.floor(value / 2) : "—";
 					const fifth = value > 0 ? Math.floor(value / 5) : "—";
 
 					return (
-						<div key={key} className="grid gap-3 border border-border/60 bg-background/35 p-4">
-							<div className="flex items-baseline justify-between gap-3">
-								<div>
+						<div key={key} className="grid min-w-0 gap-3 border border-border/60 bg-background/35 p-4">
+							<div className="flex min-w-0 flex-wrap items-baseline justify-between gap-2">
+								<div className="min-w-0">
 									<div className="font-semibold">{label}</div>
 									<div className="text-xs uppercase tracking-widest text-muted-foreground">{en}</div>
 								</div>
-								<div className="text-xs text-muted-foreground">{getAttrDescription(key, value)}</div>
+								<div className="min-w-0 text-xs break-words text-muted-foreground">{getAttrDescription(key, value)}</div>
 							</div>
 							<TextInput
 								type="number"
@@ -106,7 +106,7 @@ export default function AttributePanel({
 									setAttribute(key, Math.max(0, Math.min(99, next)));
 								}}
 							/>
-							<div className="grid grid-cols-2 gap-2">
+							<div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-2">
 								<ReadOnlyBox label="困难" value={half} />
 								<ReadOnlyBox label="极限" value={fifth} />
 							</div>

@@ -1,7 +1,8 @@
 "use client";
 
-import { Plus, Search, X, TriangleAlert } from "lucide-react";
+import { Plus, X, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
+import { AutoComplete, type AutoCompleteOption } from "@/components/AutoComplete/AutoComplete";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -20,9 +21,11 @@ import { cn } from "@/lib/utils";
 export default function SkillTable({
 	readOnly,
 	store,
+	className,
 }: {
 	readOnly?: boolean;
 	store?: CharacterStoreSnapshot;
+	className?: string;
 }) {
 	const globalReadOnly = useCharacterStore((state) => state.readOnly);
 	const globalSkills = useCharacterStore((state) => state.skills);
@@ -57,14 +60,28 @@ export default function SkillTable({
 				.map((skill) => skill.id),
 		);
 	}, [baseSkills, search]);
+	const skillSearchOptions = useMemo<AutoCompleteOption[]>(
+		() =>
+			baseSkills.map((skill) => ({
+				value: skill.id,
+				label: formatSkillDisplayName(skill),
+				description: `${skill.category} / 初始 ${skill.baseValue}`,
+				keywords: `${skill.name} ${skill.subName ?? ""} ${skill.variantBaseName ?? ""} ${skill.category}`,
+			})),
+		[baseSkills],
+	);
 
 	const splitIndex = Math.ceil(baseSkills.length / 2);
 	const leftSkills = baseSkills.slice(0, splitIndex);
 	const rightSkills = baseSkills.slice(splitIndex);
 
 	return (
-		<Panel title="技能表" description={isReadOnly ? undefined : "职业点只允许分配到当前职业模板覆盖的技能，兴趣点按 INT×2 计算"}>
-			<div className="grid gap-5">
+		<Panel
+			title="技能表"
+			description={isReadOnly ? undefined : "职业点只允许分配到当前职业模板覆盖的技能，兴趣点按 INT×2 计算"}
+			className={cn("min-w-0 overflow-visible 2xl:h-full 2xl:overflow-hidden", className)}
+			contentClassName="2xl:min-h-0 2xl:flex-1 2xl:overflow-hidden">
+			<div className="grid min-w-0 gap-5 2xl:h-full 2xl:min-h-0 2xl:grid-rows-[auto_minmax(0,1fr)]">
 				<div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
 					<div className="grid gap-3">
 						<div className="flex flex-wrap gap-2">
@@ -99,19 +116,18 @@ export default function SkillTable({
 					</div>
 
 					{!isReadOnly ? (
-						<label className="relative min-w-full md:min-w-72">
-							<Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-							<Input
-								className="pl-9"
-								value={search}
-								onChange={(event) => setSearch(event.target.value)}
-								placeholder="搜索技能或子类"
-							/>
-						</label>
+						<AutoComplete
+							className="min-w-full md:min-w-72"
+							value={search}
+							options={skillSearchOptions}
+							placeholder="搜索技能或子类"
+							onInputChange={setSearch}
+							onValueChange={(_, option) => setSearch(option.label)}
+						/>
 					) : null}
 				</div>
 
-				<div className="grid gap-4 md:grid-cols-2 md:items-start">
+				<div className="grid min-w-0 gap-4 md:grid-cols-2 2xl:min-h-0">
 					<SkillTableSection
 						skills={leftSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
@@ -154,10 +170,10 @@ function SkillTableSection({
 	onToggleCheck: (id: string) => void;
 }) {
 	return (
-		<div className="overflow-hidden border border-border/60">
+		<div className="min-w-0 overflow-hidden rounded-sm border border-border/60 2xl:min-h-0">
 			<Table>
-				<TableHeader>
-					<TableRow className="bg-background/60">
+				<TableHeader className="sticky top-0 z-10 bg-card">
+					<TableRow className="bg-background/85 backdrop-blur">
 						<TableHead className="w-12 text-center">成功</TableHead>
 						<TableHead>技能</TableHead>
 						<TableHead className="text-center">初始</TableHead>
@@ -219,7 +235,7 @@ function SkillRow({
 	return (
 		<TableRow
 			className={cn(
-				isHighlighted && "bg-amber-500/15",
+				isHighlighted && "bg-[color:var(--status-warning-bg)]",
 				skill.checked && "bg-primary/10",
 				!skill.checked && isOccupationSkill && "bg-secondary/10",
 			)}>

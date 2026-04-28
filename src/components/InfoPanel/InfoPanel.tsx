@@ -30,10 +30,10 @@ export default function InfoPanel({
 	const isReadOnly = readOnly ?? storeReadOnly;
 
 	const content = (
-		<div className="grid gap-5">
-			<div className="flex items-start gap-3">
+		<div className="grid min-w-0 gap-5">
+			<div className="flex min-w-0 items-start gap-3">
 				<IdCard className="mt-0.5 text-primary" />
-				<div className="grid gap-1">
+				<div className="grid min-w-0 gap-1">
 					<h2 className="text-base font-semibold uppercase tracking-widest">调查员信息</h2>
 					<p className="text-sm text-muted-foreground">
 						填写角色的基础身份信息，职业模板和职业点配置在职业面板中处理
@@ -41,7 +41,7 @@ export default function InfoPanel({
 				</div>
 			</div>
 
-			<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+			<div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
 				{INFO_FIELDS.map(({ key, label, placeholder, ...rest }) =>
 					isReadOnly ? (
 						<ReadOnlyField key={key} label={label} value={info[key] ?? ""} placeholder={placeholder} />
