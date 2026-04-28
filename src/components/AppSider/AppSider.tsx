@@ -1,4 +1,5 @@
 import { ClipboardCheck, FileText, IdCard, Plus } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle";
 import {
 	Sidebar,
 	SidebarContent,
@@ -11,6 +12,8 @@ import {
 	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarRail,
+	SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 const NAV_ITEMS = [
@@ -36,25 +39,35 @@ const NAV_ITEMS = [
 
 export function AppSidebar() {
 	return (
-		<Sidebar>
+		<Sidebar collapsible="icon">
 			<SidebarHeader>
-				<div className="grid gap-1 px-2 py-3">
-					<div className="text-sm font-semibold uppercase tracking-widest">CoC Toolkit</div>
-					<div className="text-xs text-muted-foreground">Keeper archive console</div>
+				<div className="flex items-start justify-between gap-2 px-2 py-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+					<div className="grid min-w-0 gap-1 group-data-[collapsible=icon]:hidden">
+						<div className="truncate text-sm font-semibold uppercase tracking-widest">CoC Toolkit</div>
+						<div className="truncate text-xs text-muted-foreground">Keeper archive console</div>
+					</div>
+					<SidebarTrigger
+						size="icon-sm"
+						variant="outline"
+						title="收缩侧边栏"
+						className="shrink-0"
+					/>
 				</div>
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>工作区</SidebarGroupLabel>
+					<SidebarGroupLabel className="group-data-[collapsible=icon]:sr-only">工作区</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{NAV_ITEMS.map((item) => (
 								<SidebarMenuItem key={item.href}>
-									<SidebarMenuButton render={<a href={item.href} />}>
+									<SidebarMenuButton render={<a href={item.href} title={item.description} />}>
 										<item.icon data-icon="inline-start" />
-										<span>{item.label}</span>
+										<span className="group-data-[collapsible=icon]:sr-only">{item.label}</span>
 									</SidebarMenuButton>
-									<SidebarMenuAction title={item.description}>
+									<SidebarMenuAction
+										title={item.description}
+										className="group-data-[collapsible=icon]:hidden">
 										<Plus />
 									</SidebarMenuAction>
 								</SidebarMenuItem>
@@ -64,10 +77,14 @@ export function AppSidebar() {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
-				<div className="px-2 py-3 text-xs leading-relaxed text-muted-foreground">
-					克苏鲁的呼唤第七版调查员档案工具
+				<div className="grid justify-items-start gap-3 px-2 py-3 group-data-[collapsible=icon]:justify-items-center group-data-[collapsible=icon]:px-0">
+					<ThemeToggle showLabel={false} />
+					<div className="text-xs leading-relaxed text-muted-foreground group-data-[collapsible=icon]:hidden">
+						克苏鲁的呼唤第七版调查员档案工具
+					</div>
 				</div>
 			</SidebarFooter>
+			<SidebarRail />
 		</Sidebar>
 	);
 }
