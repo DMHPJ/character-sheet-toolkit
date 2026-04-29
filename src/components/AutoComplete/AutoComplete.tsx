@@ -146,7 +146,7 @@ export function AutoComplete({
 	return (
 		<label className={cn("relative grid w-full min-w-0 gap-1.5", className)}>
 			{label ? (
-				<span className="text-xs font-semibold uppercase tracking-widest whitespace-nowrap text-muted-foreground">
+				<span className="text-xs font-semibold uppercase tracking-widest break-words text-muted-foreground">
 					{label}
 				</span>
 			) : null}

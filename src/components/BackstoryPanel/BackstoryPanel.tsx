@@ -24,16 +24,6 @@ export default function BackstoryPanel({ readOnly }: { readOnly?: boolean }) {
 
 	return (
 		<div className="grid min-w-0 gap-5">
-			<div className="flex min-w-0 items-start gap-3">
-				<BookOpen className="mt-0.5 text-primary" />
-				<div className="grid min-w-0 gap-1">
-					<h2 className="text-base font-semibold uppercase tracking-widest">背景故事</h2>
-					<p className="text-sm text-muted-foreground">
-						把人物的动机、关系和创伤都记录下来，方便在跑团中快速代入
-					</p>
-				</div>
-			</div>
-
 			<div className="grid min-w-0 gap-3">
 				{STORY_FIELDS.map(({ key, label, rows }) =>
 					isReadOnly ? (

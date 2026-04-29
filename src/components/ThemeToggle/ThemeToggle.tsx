@@ -47,11 +47,10 @@ export function ThemeToggle({ showLabel = true }: { showLabel?: boolean }) {
 						const Icon = item.icon;
 
 						return (
-							<SelectItem key={item.value} value={item.value}>
+							<SelectItem className="item-center" key={item.value} value={item.value}>
 								<Icon data-icon="inline-start" />
 								<span className="grid gap-0.5">
 									<span>{item.label}</span>
-									<span className="text-xs text-muted-foreground">{item.description}</span>
 								</span>
 							</SelectItem>
 						);

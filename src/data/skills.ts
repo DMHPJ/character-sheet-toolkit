@@ -90,14 +90,8 @@ export function getExpandableSkillGroupIdFromSkillId(skillId: string): string | 
 }
 
 export function formatSkillDisplayName(skill: Skill): string {
-  const subName = skill.subName?.trim();
-  const baseName = skill.variantBaseName ?? skill.name;
-
-  if (!subName) {
-    return skill.variantBaseName ? baseName : skill.name;
-  }
-
-  return `${baseName}：${subName}`;
+  if (!skill.subName?.trim()) return skill.name;
+  return `${skill.name}：${skill.subName}`;
 }
 
 export function hasAllocatedSkillValue(skill: Skill): boolean {

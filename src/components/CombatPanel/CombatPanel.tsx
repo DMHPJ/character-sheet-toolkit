@@ -486,7 +486,7 @@ function PlainSelectField({
 }) {
 	return (
 		<label className="grid min-w-0 gap-1.5">
-			<span className="text-xs font-semibold uppercase tracking-widest whitespace-nowrap text-muted-foreground">{label}</span>
+			<span className="text-xs font-semibold uppercase tracking-widest break-words text-muted-foreground">{label}</span>
 			<Select value={value || undefined} onValueChange={(nextValue) => onChange(nextValue ?? "")}>
 				<SelectTrigger className="w-full min-w-0">
 					<SelectValue placeholder="请选择" />

@@ -117,7 +117,7 @@ export default function SkillTable({
 
 					{!isReadOnly ? (
 						<AutoComplete
-							className="min-w-full md:min-w-72"
+							className="min-w-full md:w-72 md:min-w-72"
 							value={search}
 							options={skillSearchOptions}
 							placeholder="搜索技能或子类"
@@ -176,10 +176,10 @@ function SkillTableSection({
 					<TableRow className="bg-background/85 backdrop-blur">
 						<TableHead className="w-12 text-center">成功</TableHead>
 						<TableHead>技能</TableHead>
-						<TableHead className="text-center">初始</TableHead>
-						<TableHead className="text-center">成长</TableHead>
-						<TableHead className="text-center">职业</TableHead>
-						<TableHead className="text-center">兴趣</TableHead>
+						<TableHead className="w-14 px-1 text-center">初始</TableHead>
+						<TableHead className="w-14 px-1 text-center">成长</TableHead>
+						<TableHead className="w-14 px-1 text-center">职业</TableHead>
+						<TableHead className="w-14 px-1 text-center">兴趣</TableHead>
 						<TableHead className="text-center">常规/困难/极限</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -259,7 +259,7 @@ function SkillRow({
 					) : null}
 				</div>
 			</TableCell>
-			<TableCell className="text-center tabular-nums">{skill.baseValue}</TableCell>
+			<TableCell className="w-14 px-1 text-center tabular-nums">{skill.baseValue}</TableCell>
 			<EditableNumberCell
 				value={skill.growth}
 				onChange={(value) => onFieldChange(skill.id, "growth", value)}
@@ -300,13 +300,12 @@ function EditableNumberCell({
 	readOnly?: boolean;
 }) {
 	return (
-		<TableCell className="min-w-20 text-center">
+		<TableCell className="w-14 min-w-14 px-1 text-center">
 			{readOnly ? (
 				<span className="text-sm tabular-nums">{value || "—"}</span>
 			) : disabled ? (
-				<div className="flex min-h-9 items-center justify-center gap-1 text-muted-foreground">
+				<div className="flex min-h-9 items-center justify-center gap-1 text-muted-foreground" title={disabledReason}>
 					<X />
-					{disabledReason ? <span className="hidden text-xs xl:inline">{disabledReason}</span> : null}
 				</div>
 			) : (
 				<Input
@@ -314,7 +313,7 @@ function EditableNumberCell({
 					min={0}
 					value={value || ""}
 					onChange={(event) => onChange(Number(event.target.value) || 0)}
-					className="h-8 min-w-16 text-center"
+					className="h-8 w-12 min-w-0 px-2 text-center"
 				/>
 			)}
 		</TableCell>
