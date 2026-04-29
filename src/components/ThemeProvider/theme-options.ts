@@ -16,8 +16,13 @@ export const APP_THEMES = [
 		label: "电报码",
 		icon: RadioTower,
 	},
+	{
+		value: "theme-obsidian-cinnabar",
+		label: "深海",
+		icon: RadioTower,
+	},
 ] as const;
 
-export const THEME_CLASS_VALUES = ["theme-archive", "theme-abyss", "theme-telegram"];
+export const THEME_CLASS_VALUES = ["theme-archive", "theme-abyss", "theme-telegram", "theme-obsidian-cinnabar", "theme-lantern-manuscript", "theme-night-bureau"];
 
 export type AppThemeValue = (typeof APP_THEMES)[number]["value"];

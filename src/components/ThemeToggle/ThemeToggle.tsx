@@ -1,9 +1,9 @@
 "use client";
 
 import { Palette } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import { APP_THEMES, type AppThemeValue } from "@/components/ThemeProvider/theme-options";
+import { useTheme } from "@/components/ThemeProvider/ThemeProvider";
 import {
 	Select,
 	SelectContent,

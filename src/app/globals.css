@@ -2,6 +2,7 @@
 @import "./themes/archive.css";
 @import "./themes/abyss.css";
 @import "./themes/telegram.css";
+@import "./themes/obsidian-cinnabar.css";
 
 @custom-variant dark (&:is(.dark *));
 
