@@ -66,7 +66,7 @@ export default function AssetsPanel({
 
 	if (isReadOnly) {
 		return (
-			<div className="mb-4 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+			<div className="mb-4 grid min-w-0 gap-3 grid-cols-3 xl:grid-cols-6">
 				{MAIN_FIELDS.map((main) => (
 					<ReadOnlyBox key={main.key} label={main.label} value={assets[main.key]} />
 				))}

@@ -103,7 +103,7 @@ export default function CombatPanel({
 	if (isReadOnly) {
 		return (
 			<div className="mb-4 grid min-w-0 gap-4">
-				<div className="grid min-w-0 gap-3 sm:grid-cols-3">
+				<div className="grid min-w-0 gap-3 grid-cols-2 sm:grid-cols-3">
 					<CombatSummaryCard
 						title="徒手攻击"
 						value={`${getSkillTotal(brawlSkill)} / ${Math.floor(getSkillTotal(brawlSkill) / 2)} / ${Math.floor(getSkillTotal(brawlSkill) / 5)}`}

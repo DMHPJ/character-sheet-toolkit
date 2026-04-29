@@ -59,7 +59,7 @@ export default function AttributePanel({
 
 	if (isReadOnly) {
 		return (
-			<div className="mb-4 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			<div className="mb-4 grid min-w-0 gap-3 grid-cols-3 xl:grid-cols-5">
 				{ATTR_META.map(({ key, label, en }) => {
 					const value = attributes[key];
 					const half = value > 0 ? Math.floor(value / 2) : "—";
