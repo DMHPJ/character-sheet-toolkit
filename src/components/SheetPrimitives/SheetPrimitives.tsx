@@ -29,7 +29,7 @@ export function Panel({
 		<Card
 			size="sm"
 			className={cn(
-				"min-w-0 rounded-md border border-border/70 bg-card/88 shadow-[var(--panel-shadow)] backdrop-blur",
+				"min-w-0 rounded-md border border-border/70 bg-card/88 shadow-(--panel-shadow) backdrop-blur",
 				className,
 			)}
 			{...props}>
@@ -102,7 +102,7 @@ export function StatusBadge({
 }
 
 export function FieldLabel({ children }: { children: ReactNode }) {
-	return <label className="text-xs font-semibold uppercase tracking-widest break-words text-muted-foreground">{children}</label>;
+	return <label className="text-xs font-semibold uppercase tracking-widest wrap-break-word text-muted-foreground">{children}</label>;
 }
 
 export function TextInput({
@@ -166,9 +166,9 @@ export function ReadOnlyBox({
 			<FieldLabel>{label}</FieldLabel>
 			<span
 				className={cn(
-					"min-w-0 break-words text-sm text-foreground",
+					"min-w-0 wrap-break-word text-sm text-foreground",
 					isEmpty && "text-muted-foreground",
-					multiline && "whitespace-pre-wrap break-words",
+					multiline && "whitespace-pre-wrap wrap-break-word",
 				)}>
 				{isEmpty ? placeholder : value}
 			</span>
@@ -178,7 +178,7 @@ export function ReadOnlyBox({
 
 export function EmptyHint({ children }: { children: ReactNode }) {
 	return (
-		<div className="min-w-0 rounded-sm border border-dashed border-border/80 bg-background/35 px-4 py-5 text-sm break-words text-muted-foreground">
+		<div className="min-w-0 rounded-sm border border-dashed border-border/80 bg-background/35 px-4 py-5 text-sm wrap-break-word text-muted-foreground">
 			{children}
 		</div>
 	);

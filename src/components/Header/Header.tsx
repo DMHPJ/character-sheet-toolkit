@@ -78,7 +78,7 @@ export default function Header({
 	};
 
 	return (
-		<header className="relative min-w-0 overflow-hidden rounded-md border border-border/70 bg-card/90 p-2.5 shadow-[var(--panel-shadow)] backdrop-blur md:p-4">
+		<header className="relative min-w-0 overflow-hidden rounded-md border border-border/70 bg-card/90 p-2.5 shadow-(--panel-shadow) backdrop-blur md:p-4">
 			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_right_top,color-mix(in_oklab,var(--accent)_24%,transparent),transparent_28rem)]" />
 			<div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-primary/45" />
 

@@ -150,7 +150,7 @@ function ConditionToggle({
 				"justify-start",
 				checked &&
 					tone === "warning" &&
-					"bg-[color:var(--status-warning)] text-background hover:opacity-90",
+					"bg-(--status-warning-bg) text-background hover:opacity-90",
 			)}
 			onClick={() => onChange(!checked)}
 			disabled={disabled}>

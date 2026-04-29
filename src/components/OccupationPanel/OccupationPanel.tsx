@@ -90,7 +90,7 @@ export default function OccupationPanel({
 						</StatusBadge>
 					</div>
 
-					<div className="grid min-w-0 gap-1 text-sm break-words text-muted-foreground">
+					<div className="grid min-w-0 gap-1 text-sm wrap-break-word text-muted-foreground">
 						<p>{occupation.description}</p>
 						<p>推荐关系人：{occupation.contacts}</p>
 					</div>
@@ -151,7 +151,7 @@ function OccupationChoiceSelectGroup({
 	return (
 		<SubPanel className="grid gap-3">
 			<div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-				<div className="min-w-0 font-semibold break-words">{group.label}</div>
+				<div className="min-w-0 font-semibold wrap-break-word">{group.label}</div>
 				<StatusBadge tone="muted">
 					{selected.length}/{group.count}
 				</StatusBadge>

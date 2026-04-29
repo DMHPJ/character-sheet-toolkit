@@ -15,7 +15,6 @@ import { Panel, StatusBadge } from "@/components/SheetPrimitives/SheetPrimitives
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";

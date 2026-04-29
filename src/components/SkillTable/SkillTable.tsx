@@ -298,7 +298,7 @@ function SkillCard({
 		<div
 			className={cn(
 				"grid min-w-0 gap-3 rounded-sm border border-border/60 bg-background/35 p-3",
-				isHighlighted && "bg-[color:var(--status-warning-bg)]",
+				isHighlighted && "bg-(--status-warning-bg)",
 				skill.checked && "bg-primary/10",
 				!skill.checked && isOccupationSkill && "bg-secondary/10",
 			)}>
@@ -311,7 +311,7 @@ function SkillCard({
 				/>
 				<div className="grid min-w-0 flex-1 gap-2">
 					<div className="flex min-w-0 flex-wrap items-center gap-1.5">
-						<span className="min-w-0 break-words font-semibold leading-tight">{formatSkillDisplayName(skill)}</span>
+						<span className="min-w-0 wrap-break-word font-semibold leading-tight">{formatSkillDisplayName(skill)}</span>
 						{hasSubName && !readOnly && !hiddenSubName ? (
 							<Input
 								className="h-7 w-24 px-2 text-xs"
@@ -403,7 +403,7 @@ function SkillRow({
 	return (
 		<TableRow
 			className={cn(
-				isHighlighted && "bg-[color:var(--status-warning-bg)]",
+				isHighlighted && "bg-(--status-warning-bg)",
 				skill.checked && "bg-primary/10",
 				!skill.checked && isOccupationSkill && "bg-secondary/10",
 			)}>

@@ -64,7 +64,7 @@ export default function KpCheckingTable() {
 	};
 
 	return (
-		<div className="mx-auto w-full max-w-[1800px] p-3 md:p-5">
+		<div className="mx-auto w-full max-w-450 p-3 md:p-5">
 			<Panel
 				title="人物卡表"
 				description="支持同时导入多张角色卡，每一张角色卡会追加为一行。"
