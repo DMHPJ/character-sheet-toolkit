@@ -85,7 +85,7 @@ export default function AttributePanel({
 					<StatusBadge tone="default">总点数 {totalPoints}</StatusBadge>
 				</div>
 			}>
-			<div className="grid min-w-0 grid-cols-2 gap-2">
+			<div className="grid min-w-0 grid-cols-2 gap-2 lg:grid-cols-3">
 				{ATTR_META.map(({ key, label, en }) => {
 					const value = attributes[key];
 					const half = value > 0 ? Math.floor(value / 2) : "—";

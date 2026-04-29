@@ -102,7 +102,7 @@ export default function SkillTable({
 			className={cn("min-w-0 overflow-visible 2xl:h-full 2xl:overflow-hidden", className)}
 			contentClassName="2xl:min-h-0 2xl:flex-1 2xl:overflow-hidden">
 			<div className="grid min-w-0 gap-5 2xl:h-full 2xl:min-h-0 2xl:grid-rows-[auto_minmax(0,1fr)]">
-				<div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+				<div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
 					<div className="grid gap-3">
 						<div className="flex flex-wrap gap-2">
 							<StatusBadge tone={occupationSummary.occupationPointsRemaining < 0 ? "danger" : "default"}>
@@ -137,7 +137,7 @@ export default function SkillTable({
 
 					{!isReadOnly ? (
 						<AutoComplete
-							className="min-w-full md:w-72 md:min-w-72"
+							className="min-w-full lg:w-72 lg:min-w-72"
 							value={search}
 							options={skillSearchOptions}
 							placeholder="搜索技能或子类"
@@ -155,7 +155,7 @@ export default function SkillTable({
 					onToggleCheck={toggleSkillCheck}
 				/>
 
-				<div className="hidden min-w-0 gap-4 md:grid md:grid-cols-2 2xl:min-h-0">
+				<div className="hidden min-w-0 gap-4 md:grid lg:grid-cols-2 2xl:min-h-0">
 					<SkillTableSection
 						skills={leftSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
@@ -196,7 +196,7 @@ function SkillCardList({
 	onToggleCheck: (id: string) => void;
 }) {
 	return (
-		<div className="grid min-w-0 gap-3 md:hidden">
+		<div className="grid min-w-0 gap-3 lg:hidden">
 			{skills.map((skill) => (
 				<SkillCard
 					key={skill.id}
