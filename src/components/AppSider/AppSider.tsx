@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardCheck, FileText, IdCard } from "lucide-react";
+import { ClipboardCheck, FileText, Gavel, IdCard } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle";
@@ -39,11 +39,19 @@ const NAV_ITEMS = [
 		icon: FileText,
 	},
 	{
+		href: "/combatList",
+		label: "武器列表",
+		description: "已有的武器内容列表",
+		badge: "资料",
+		code: "03",
+		icon: Gavel,
+	},
+	{
 		href: "/kpChecking",
 		label: "KP 审卡",
 		description: "守秘人核查角色卡合法性",
 		badge: "核查",
-		code: "03",
+		code: "04",
 		icon: ClipboardCheck,
 	},
 ];

@@ -45,7 +45,7 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 	}, [activeTab, readOnly]);
 
 	return (
-		<div className="mx-auto grid min-h-[100svh] w-full min-w-0 max-w-[1800px] gap-5 p-2 sm:p-3 md:p-5 xl:p-6 2xl:h-[100svh] 2xl:grid-rows-[auto_minmax(0,1fr)] 2xl:overflow-hidden">
+		<div className="mx-auto grid min-h-svh w-full min-w-0 max-w-450 gap-5 p-2 sm:p-3 md:p-5 xl:p-6 2xl:h-svh 2xl:grid-rows-[auto_minmax(0,1fr)] 2xl:overflow-hidden">
 			<Header onOpenInfo={() => setInfoDialogOpen(true)} readOnly={readOnly} />
 			{readOnly ? (
 				<div className="2xl:min-h-0 2xl:overflow-y-auto 2xl:pr-1">
