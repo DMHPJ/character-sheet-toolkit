@@ -15,8 +15,9 @@
 
 - Next.js
 - TypeScript ^5
-- Material UI ^9
-- zustand
+- Shadcn ^4.5.0
+- Tailwind CSS ^4.2.4
+- zustand ^5.0.12
 
 ## 预览网址
 
