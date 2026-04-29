@@ -74,7 +74,7 @@ export default function OccupationPanel({
 				<>
 					<div className="grid min-w-0 gap-3">
 						<MetricTile label="职业点公式" value={occupationSummary.formulaLabel} />
-						<div className="grid gap-3 sm:grid-cols-2">
+						<div className="grid gap-3 grid-cols-2">
 							<MetricTile label="职业点 / 已分配" value={`${occupationSummary.occupationPointsTotal} / ${occupationSummary.occupationPointsSpent}`} />
 							<MetricTile label="兴趣点 / 已分配" value={`${occupationSummary.interestPointsTotal} / ${occupationSummary.interestPointsSpent}`} />
 						</div>

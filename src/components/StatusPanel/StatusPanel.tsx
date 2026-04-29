@@ -48,7 +48,7 @@ export default function StatusPanel({ readOnly }: { readOnly?: boolean }) {
 			<SubPanel>
 				<div className="grid min-w-0 gap-3">
 					<h3 className="font-semibold">异常状态</h3>
-					<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+					<div className="grid gap-2 grid-cols-2 md:grid-cols-3">
 						<ConditionToggle label="重伤" checked={status.conditions.majorWound} onChange={(value) => setCondition("majorWound", value)} tone="danger" disabled={isReadOnly} />
 						<ConditionToggle label="昏迷" checked={status.conditions.unconscious} onChange={(value) => setCondition("unconscious", value)} tone="warning" disabled={isReadOnly} />
 						<ConditionToggle label="濒死" checked={status.conditions.dying} onChange={(value) => setCondition("dying", value)} tone="danger" disabled={isReadOnly} />

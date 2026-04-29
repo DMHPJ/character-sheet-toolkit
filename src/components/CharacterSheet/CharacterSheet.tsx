@@ -96,7 +96,6 @@ export default function CharacterSheet({ readOnly = false }: { readOnly?: boolea
 				<DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
 					<DialogHeader>
 						<DialogTitle>调查员档案</DialogTitle>
-						<DialogDescription>编辑基础身份与职业模板。</DialogDescription>
 					</DialogHeader>
 					<div className="grid gap-5">
 						<InfoPanel inDialog readOnly={readOnly} />

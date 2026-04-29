@@ -79,24 +79,35 @@ export default function AttributePanel({
 
 	return (
 		<Panel
-			title="核心属性"
-			action={<StatusBadge tone="default">总点数 {totalPoints}</StatusBadge>}>
-			<div className="grid min-w-0 grid-cols-1 gap-3 min-[520px]:grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(9.25rem,1fr))]">
+			title={
+				<div className="flex min-w-0 flex-wrap items-center gap-2">
+					<span>核心属性</span>
+					<StatusBadge tone="default">总点数 {totalPoints}</StatusBadge>
+				</div>
+			}>
+			<div className="grid min-w-0 grid-cols-2 gap-2">
 				{ATTR_META.map(({ key, label, en }) => {
 					const value = attributes[key];
 					const half = value > 0 ? Math.floor(value / 2) : "—";
 					const fifth = value > 0 ? Math.floor(value / 5) : "—";
 
 					return (
-						<div key={key} className="grid min-w-0 gap-3 border border-border/60 bg-background/35 p-4">
-							<div className="flex min-w-0 flex-wrap items-baseline justify-between gap-2">
-								<div className="min-w-0">
-									<div className="font-semibold">{label}</div>
-									<div className="text-xs uppercase tracking-widest text-muted-foreground">{en}</div>
+						<div
+							key={key}
+							className="grid min-w-0 gap-2 rounded-sm border border-border/60 bg-background/35 px-2.5 py-2.5 sm:px-3">
+							<div className="flex min-w-0 items-start justify-between gap-2">
+								<div className="min-w-0 leading-tight">
+									<div className="truncate font-semibold">{label}</div>
+									<div className="text-[0.6875rem] uppercase tracking-widest text-muted-foreground">{en}</div>
 								</div>
-								<div className="min-w-0 text-xs break-words text-muted-foreground">{getAttrDescription(key, value)}</div>
+								<div
+									className="min-w-0 truncate text-right text-[0.6875rem] text-muted-foreground"
+									title={getAttrDescription(key, value)}>
+									{getAttrDescription(key, value)}
+								</div>
 							</div>
 							<TextInput
+								className="[&_input]:h-8"
 								type="number"
 								min={0}
 								max={99}
@@ -106,9 +117,15 @@ export default function AttributePanel({
 									setAttribute(key, Math.max(0, Math.min(99, next)));
 								}}
 							/>
-							<div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-2">
-								<ReadOnlyBox label="困难" value={half} />
-								<ReadOnlyBox label="极限" value={fifth} />
+							<div className="grid grid-cols-2 gap-1.5 text-xs">
+								<div className="flex min-w-0 items-center justify-between gap-1 rounded-sm border border-border/50 bg-background/35 px-2 py-1">
+									<span className="truncate text-muted-foreground">困难</span>
+									<span className="shrink-0 font-semibold tabular-nums">{half}</span>
+								</div>
+								<div className="flex min-w-0 items-center justify-between gap-1 rounded-sm border border-border/50 bg-background/35 px-2 py-1">
+									<span className="truncate text-muted-foreground">极限</span>
+									<span className="shrink-0 font-semibold tabular-nums">{fifth}</span>
+								</div>
 							</div>
 						</div>
 					);

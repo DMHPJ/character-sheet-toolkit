@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-type PanelProps = ComponentProps<"div"> & {
+type PanelProps = Omit<ComponentProps<"div">, "title"> & {
 	title?: ReactNode;
 	description?: ReactNode;
 	action?: ReactNode;

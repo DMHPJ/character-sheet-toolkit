@@ -18,6 +18,18 @@ import type { CharacterStoreSnapshot } from "@/stores/useCharacterStore";
 import type { Skill } from "@/types/character";
 import { cn } from "@/lib/utils";
 
+function getSkillSearchText(skill: Skill): string {
+	return [
+		formatSkillDisplayName(skill),
+		skill.name,
+		skill.subName ?? "",
+		skill.variantBaseName ?? "",
+		skill.category,
+	]
+		.join(" ")
+		.toLowerCase();
+}
+
 export default function SkillTable({
 	readOnly,
 	store,
@@ -59,6 +71,14 @@ export default function SkillTable({
 				.filter((skill) => formatSkillDisplayName(skill).toLowerCase().includes(query))
 				.map((skill) => skill.id),
 		);
+	}, [baseSkills, search]);
+	const mobileFilteredSkills = useMemo(() => {
+		const query = search.trim().toLowerCase();
+		if (!query) {
+			return baseSkills;
+		}
+
+		return baseSkills.filter((skill) => getSkillSearchText(skill).includes(query));
 	}, [baseSkills, search]);
 	const skillSearchOptions = useMemo<AutoCompleteOption[]>(
 		() =>
@@ -127,7 +147,15 @@ export default function SkillTable({
 					) : null}
 				</div>
 
-				<div className="grid min-w-0 gap-4 md:grid-cols-2 2xl:min-h-0">
+				<SkillCardList
+					skills={mobileFilteredSkills}
+					occupationSkillIds={occupationSummary.allowedSkillIds}
+					readOnly={isReadOnly}
+					onFieldChange={setSkillField}
+					onToggleCheck={toggleSkillCheck}
+				/>
+
+				<div className="hidden min-w-0 gap-4 md:grid md:grid-cols-2 2xl:min-h-0">
 					<SkillTableSection
 						skills={leftSkills}
 						occupationSkillIds={occupationSummary.allowedSkillIds}
@@ -147,6 +175,40 @@ export default function SkillTable({
 				</div>
 			</div>
 		</Panel>
+	);
+}
+
+function SkillCardList({
+	skills,
+	occupationSkillIds,
+	readOnly,
+	onFieldChange,
+	onToggleCheck,
+}: {
+	skills: Skill[];
+	occupationSkillIds: string[];
+	readOnly: boolean;
+	onFieldChange: (
+		id: string,
+		field: "growth" | "occupationPoints" | "interestPoints" | "subName",
+		value: number | string,
+	) => void;
+	onToggleCheck: (id: string) => void;
+}) {
+	return (
+		<div className="grid min-w-0 gap-3 md:hidden">
+			{skills.map((skill) => (
+				<SkillCard
+					key={skill.id}
+					skill={skill}
+					isOccupationSkill={occupationSkillIds.includes(skill.id)}
+					isHighlighted={false}
+					readOnly={readOnly}
+					onFieldChange={onFieldChange}
+					onToggleCheck={onToggleCheck}
+				/>
+			))}
+		</div>
 	);
 }
 
@@ -197,6 +259,112 @@ function SkillTableSection({
 					))}
 				</TableBody>
 			</Table>
+		</div>
+	);
+}
+
+function SkillCard({
+	skill,
+	isOccupationSkill,
+	isHighlighted,
+	readOnly,
+	onFieldChange,
+	onToggleCheck,
+}: {
+	skill: Skill;
+	isOccupationSkill: boolean;
+	isHighlighted: boolean;
+	readOnly: boolean;
+	onFieldChange: (
+		id: string,
+		field: "growth" | "occupationPoints" | "interestPoints" | "subName",
+		value: number | string,
+	) => void;
+	onToggleCheck: (id: string) => void;
+}) {
+	const total = skill.baseValue + skill.growth + skill.occupationPoints + skill.interestPoints;
+	const hard = Math.floor(total / 2);
+	const extreme = Math.floor(total / 5);
+	const isSpecial = skill.id === "cthulhu_mythos" || skill.id === "credit_rating";
+	const hiddenSubName = skill.id === "fighting_brawl" || skill.id === "firearms_handgun";
+	const hasSubName = Boolean(
+		skill.variantGroup || /（.*）|\(|[①②③：]/.test(skill.name) || skill.isCustom,
+	);
+	const occupationDisabled = skill.cannotAssignOccupation || !isOccupationSkill;
+	const occupationDisabledReason = skill.cannotAssignOccupation ? "特殊禁用" : !isOccupationSkill ? "非本职" : undefined;
+	const interestDisabledReason = skill.cannotAssignInterest ? "特殊禁用" : undefined;
+
+	return (
+		<div
+			className={cn(
+				"grid min-w-0 gap-3 rounded-sm border border-border/60 bg-background/35 p-3",
+				isHighlighted && "bg-[color:var(--status-warning-bg)]",
+				skill.checked && "bg-primary/10",
+				!skill.checked && isOccupationSkill && "bg-secondary/10",
+			)}>
+			<div className="flex min-w-0 items-start gap-3">
+				<Checkbox
+					checked={skill.checked}
+					onCheckedChange={() => onToggleCheck(skill.id)}
+					disabled={readOnly}
+					aria-label={`${formatSkillDisplayName(skill)} 成功标记`}
+				/>
+				<div className="grid min-w-0 flex-1 gap-2">
+					<div className="flex min-w-0 flex-wrap items-center gap-1.5">
+						<span className="min-w-0 break-words font-semibold leading-tight">{formatSkillDisplayName(skill)}</span>
+						{hasSubName && !readOnly && !hiddenSubName ? (
+							<Input
+								className="h-7 w-24 px-2 text-xs"
+								value={skill.subName ?? ""}
+								onChange={(event) => onFieldChange(skill.id, "subName", event.target.value)}
+								placeholder="自定义"
+							/>
+						) : null}
+						{isOccupationSkill ? <StatusBadge tone="default">本职</StatusBadge> : null}
+						{isSpecial ? <StatusBadge tone="warning">特殊</StatusBadge> : null}
+					</div>
+				</div>
+			</div>
+
+			<div className="grid grid-cols-3 gap-1.5">
+				<SkillValue label="常规" value={total} />
+				<SkillValue label="困难" value={hard} />
+				<SkillValue label="极限" value={extreme} />
+			</div>
+
+			<div className="grid grid-cols-3 gap-1.5">
+				<EditableNumberField
+					label="成长"
+					value={skill.growth}
+					onChange={(value) => onFieldChange(skill.id, "growth", value)}
+					readOnly={readOnly}
+				/>
+				<EditableNumberField
+					label="职业"
+					value={skill.occupationPoints}
+					onChange={(value) => onFieldChange(skill.id, "occupationPoints", value)}
+					disabled={occupationDisabled}
+					disabledReason={occupationDisabledReason}
+					readOnly={readOnly}
+				/>
+				<EditableNumberField
+					label="兴趣"
+					value={skill.interestPoints}
+					onChange={(value) => onFieldChange(skill.id, "interestPoints", value)}
+					disabled={skill.cannotAssignInterest}
+					disabledReason={interestDisabledReason}
+					readOnly={readOnly}
+				/>
+			</div>
+		</div>
+	);
+}
+
+function SkillValue({ label, value }: { label: string; value: number }) {
+	return (
+		<div className="min-w-0 rounded-sm border border-border/50 bg-background/45 px-2 py-1 text-center">
+			<div className="truncate text-[0.6875rem] text-muted-foreground">{label}</div>
+			<div className="font-semibold tabular-nums leading-tight">{value}</div>
 		</div>
 	);
 }
@@ -283,6 +451,47 @@ function SkillRow({
 				{total}/{hard}/{extreme}
 			</TableCell>
 		</TableRow>
+	);
+}
+
+function EditableNumberField({
+	label,
+	value,
+	onChange,
+	disabled = false,
+	disabledReason,
+	readOnly = false,
+}: {
+	label: string;
+	value: number;
+	onChange: (value: number) => void;
+	disabled?: boolean;
+	disabledReason?: string;
+	readOnly?: boolean;
+}) {
+	return (
+		<label className="grid min-w-0 gap-1">
+			<span className="truncate text-center text-[0.6875rem] font-semibold text-muted-foreground">{label}</span>
+			{readOnly ? (
+				<span className="flex h-8 items-center justify-center rounded-sm border border-border/50 bg-background/45 text-sm tabular-nums">
+					{value || "—"}
+				</span>
+			) : disabled ? (
+				<span
+					className="flex h-8 items-center justify-center rounded-sm border border-border/50 bg-background/35 text-muted-foreground"
+					title={disabledReason}>
+					<X />
+				</span>
+			) : (
+				<Input
+					type="number"
+					min={0}
+					value={value || ""}
+					onChange={(event) => onChange(Number(event.target.value) || 0)}
+					className="h-8 px-2 text-center"
+				/>
+			)}
+		</label>
 	);
 }
 
